@@ -1,0 +1,3554 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Table0</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table><tr><td style="vertical-align:top;width:50%;">
+                <h3 style="margin-bottom:3px;text-align: left;">
+                    CERAMICAS TERRAZOS Y PULIDOS UNIVERSAL
+                </h3>
+                <div style="margin-bottom:3px;"><b>Cedula:</b> 01061977002516
+    
+                </div>
+                <div style="margin-bottom:3px;"><b>Agencia:</b> AGENCIA PRINCIPAL</div>
+                <div style="margin-bottom:3px;">                 
+        <b>Teléfono:</b> 2440-0037 <b>Email:</b> mauricio_argenal@hotmail.com</div><div style="margin-bottom:3px;"><b>Direccion:</b> CASA MATRIZ, BARRIO LA MERCED, AVENIDA 14 DE JULIO ENTRE 15 Y 16 CALLE FRENTE A REPUESTOS DEL ATLáNTICO. LA CEIBA, ATLáNTIDA</div></td>
+            <td style="vertical-align:top;text-align:right;width:50%;">
+                <img style="width:400px;display:inline-block;" width="350" src="https://adm.premium-soft.com/empresas/sb_46535/imagenes/logo_logo.png">
+            </td>
+        
+        </tr><tr>
+                            <th style="padding:2px 5px; background-color:#EEE;">Emision</th>
+                        
+                                <th style="padding:2px 5px; background-color:#EEE;">Agencia</th>
+                            
+                            <th style="padding:2px 5px; background-color:#EEE;">Documento</th>
+                        
+                                <th style="padding:2px 5px; background-color:#EEE;">Resolucion</th>
+                            
+                            <th style="padding:2px 5px; background-color:#EEE;">Doc.Afectado</th>
+                            <th style="padding:2px 5px; background-color:#EEE;">Cliente</th>
+                            <th style="padding:2px 5px; background-color:#EEE;">Vendedor</th>
+                            <th style="padding:2px 5px; background-color:#EEE;">#ID</th>
+                            <th style="padding:2px 5px; background-color:#EEE;">Estatus</th>
+                        
+                            <th style="padding:2px 5px; background-color:#EEE;">Neto</th>
+                        
+                            <th style="padding:2px 5px; background-color:#EEE;">Impuesto</th>
+                            <th style="padding:2px 5px; background-color:#EEE;">Retencion</th>
+                            <th style="padding:2px 5px; background-color:#EEE;">Descuentos</th>
+                            <th style="padding:2px 5px; background-color:#EEE;">Recargos</th>
+                            <th style="padding:2px 5px; background-color:#EEE;">Total</th>
+                            <th style="padding:2px 5px; background-color:#EEE;">Devuelto</th>
+                    
+                            <th style="padding:2px 5px; background-color:#EEE;">Pagado</th>
+                            <th style="padding:2px 5px; background-color:#EEE;">Saldo</th>
+                        
+                        </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        03/11/2025<br>
+                        08:40 AM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18296&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031778</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18295&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005359</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        3,112.75
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        466.91
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        590.34
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        4,170.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        4,170.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        03/11/2025<br>
+                        09:26 AM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18298&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031779</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18297&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005360</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        5,650.70
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        847.61
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        324.19
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        6,822.50
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        6,822.50
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        03/11/2025<br>
+                        10:10 AM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18305&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031780</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18304&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005362</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,222.40
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        183.36
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,405.76
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,405.76
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        03/11/2025<br>
+                        10:15 AM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18307&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031781</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18306&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005363</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,483.20
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        222.48
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,705.68
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,705.68
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        03/11/2025<br>
+                        01:10 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18313&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031782</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18312&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005364</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>DEVUELTO</div>
+                    
+                    <div><b>Nta/Credito:</b> 0000000021</div>
+                
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        28,599.20
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        4,289.88
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,200.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        34,089.08
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        34,089.08
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        34,089.08
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        03/11/2025<br>
+                        01:25 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18315&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031783</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18314&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005365</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        36,579.20
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        5,486.88
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,200.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        43,266.08
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        43,266.08
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        03/11/2025<br>
+                        01:34 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18317&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031784</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18316&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005366</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        440.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        66.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        24.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        530.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        530.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        03/11/2025<br>
+                        02:34 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18319&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031785</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18318&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005367</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        4,118.40
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        617.76
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        4,736.16
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        4,736.16
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        03/11/2025<br>
+                        02:37 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">DEVOLUCION</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18321&amp;formato_doc=&amp;id_fact_elect=&amp;tipo_reporte=ver">0000000021</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACTURA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18313&amp;formato_doc=&amp;id_fact_elect=&amp;tipo_reporte=ver">0000031782</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>DEVUELTO</div>
+                    
+                    <div><b>Nta/Credito:</b> 0000000021</div>
+                
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        -28,599.20
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        -4,289.88
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        -0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        -0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        -1,200.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        -34,089.08
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        -0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        -34,089.08
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        -0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        03/11/2025<br>
+                        04:04 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18325&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031786</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18324&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005368</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CARLOS ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        3,024.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        453.60
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        3,477.60
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        3,477.60
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        03/11/2025<br>
+                        04:45 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18329&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031787</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18328&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005369</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        482.40
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        72.36
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        554.76
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        554.76
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        04/11/2025<br>
+                        11:16 AM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18337&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031788</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18334&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005370</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        2,484.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        372.60
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        2,856.60
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        2,856.60
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        05/11/2025<br>
+                        07:56 AM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18349&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031789</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18348&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005372</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,022.40
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        153.36
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,175.76
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,175.76
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        05/11/2025<br>
+                        09:19 AM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18352&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031790</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18351&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005373</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CARLOS ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        7,725.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,158.75
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        8,883.75
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        8,883.75
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        05/11/2025<br>
+                        11:13 AM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18353&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031791</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18350&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005374</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,512.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        226.80
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        88.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,826.80
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,826.80
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        05/11/2025<br>
+                        02:43 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18356&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031792</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18354&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005375</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        10,382.20
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,557.33
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        900.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        12,839.53
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        12,839.53
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        05/11/2025<br>
+                        03:20 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18358&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031793</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18357&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005376</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,022.40
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        153.36
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,175.76
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,175.76
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        05/11/2025<br>
+                        04:20 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18361&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031794</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18360&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005377</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        FERREBLOCK
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        0202199400172
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        8,690.40
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,303.56
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        9,993.96
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        9,993.96
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        06/11/2025<br>
+                        11:12 AM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18371&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031795</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18370&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005378</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        RESORTES ATLáNTICO
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        01019016819985
+             SAR. 01019016819985
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        570.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        85.50
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        655.50
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        655.50
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        06/11/2025<br>
+                        12:45 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18374&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031796</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div></div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver"></a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        MAURICIO ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        994.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        149.10
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,143.10
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,143.10
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        06/11/2025<br>
+                        01:10 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18378&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031797</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18377&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005379</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,475.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        221.25
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,696.25
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,696.25
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        06/11/2025<br>
+                        01:13 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18380&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031798</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18379&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005380</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        285.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        42.75
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        327.75
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        327.75
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        06/11/2025<br>
+                        03:39 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18390&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031799</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18389&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005383</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,998.60
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        299.79
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        115.61
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        2,414.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        2,414.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        06/11/2025<br>
+                        03:44 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18391&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031800</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18388&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005382</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CARLOS ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        6,521.74
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        978.26
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        7,500.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        7,500.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        07/11/2025<br>
+                        11:04 AM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18404&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031801</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18403&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005387</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        LR INVERSIONES
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CARLOS ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        01011980008993
+             SAR. 01011980008993
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        604.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        90.60
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        694.60
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        694.60
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        07/11/2025<br>
+                        11:10 AM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18406&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031802</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18405&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005388</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CARLOS ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,713.60
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        257.04
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,970.64
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,970.64
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        07/11/2025<br>
+                        11:21 AM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18408&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031803</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18407&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005389</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        MAURICIO ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        2,044.50
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        306.68
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        2,351.18
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        2,351.18
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        07/11/2025<br>
+                        11:25 AM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18413&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031804</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18412&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005390</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        SOLUCIONES INTEGRALES
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CARLOS ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        18049018017451
+             SAR. 18049018017451
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        5,913.04
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        886.96
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        6,800.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        6,800.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        07/11/2025<br>
+                        02:23 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18422&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031805</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18421&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005391</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,810.50
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        271.58
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        2,082.08
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        2,082.08
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        07/11/2025<br>
+                        04:17 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18424&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031806</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18423&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005392</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,799.80
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        269.97
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        2,069.77
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        2,069.77
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        07/11/2025<br>
+                        04:19 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18426&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031807</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18425&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005393</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        400.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        60.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        460.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        460.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        07/11/2025<br>
+                        04:50 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18428&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031808</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18427&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005394</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        JULIO CESAR SANTACREO PONCE
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CARLOS ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        01011953010704
+             SAR. 01011953010704
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        8,434.78
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,265.22
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        9,700.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        9,700.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        08/11/2025<br>
+                        10:42 AM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18433&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031809</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div></div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver"></a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        MAURICIO ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        442.50
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        66.38
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        508.88
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        508.88
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        08/11/2025<br>
+                        10:49 AM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18435&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031810</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18434&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005395</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        JOSé ROLANDO FLORES
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        01071971001507
+             SAR. 01071971001507
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,555.20
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        233.28
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        89.52
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,878.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,878.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        08/11/2025<br>
+                        11:38 AM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18438&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031811</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18437&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005396</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        3,069.60
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        460.44
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        3,530.04
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        3,530.04
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        08/11/2025<br>
+                        11:42 AM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18440&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031812</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18439&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005397</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        495.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        74.25
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        569.25
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        569.25
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        08/11/2025<br>
+                        11:48 AM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18442&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031813</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18441&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005398</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        230.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        34.50
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        264.50
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        264.50
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        08/11/2025<br>
+                        12:34 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18444&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031814</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18443&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005399</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        540.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        81.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        621.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        621.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        08/11/2025<br>
+                        01:25 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18448&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031815</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18447&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005400</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        MAURICIO ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,120.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        168.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,288.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,288.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        10/11/2025<br>
+                        09:37 AM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18461&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031816</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18460&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005402</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        JULIO CESAR SANTACREO PONCE
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        01011953010704
+             SAR. 01011953010704
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        12,046.60
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,806.99
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        13,853.59
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        13,853.59
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        10/11/2025<br>
+                        10:07 AM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18464&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031817</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18463&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005403</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        7,130.44
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,069.57
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        8,200.01
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        8,200.01
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        10/11/2025<br>
+                        10:43 AM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18466&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031818</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18465&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005404</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        245.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        36.75
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        281.75
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        281.75
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        10/11/2025<br>
+                        12:14 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18471&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031819</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18470&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005405</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,288.80
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        193.32
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,482.12
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,482.12
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        10/11/2025<br>
+                        12:45 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18473&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031820</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18472&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005406</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        7,391.30
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,108.70
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        8,500.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        8,500.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        10/11/2025<br>
+                        12:47 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18475&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031821</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18474&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005407</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        200.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        30.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        230.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        230.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        10/11/2025<br>
+                        12:54 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18477&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031822</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18476&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005408</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        245.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        36.75
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        281.75
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        281.75
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        10/11/2025<br>
+                        01:32 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18481&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031823</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18480&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005409</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        MAURICIO ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        2,328.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        349.20
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        2,677.20
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        2,677.20
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        10/11/2025<br>
+                        03:45 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18490&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031824</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18487&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005411</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CARLOS ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        6,587.40
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        988.11
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        378.78
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        7,954.29
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        7,954.29
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        10/11/2025<br>
+                        04:22 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18498&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031825</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18497&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005412</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        9,424.80
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        1,413.72
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        541.93
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        11,380.45
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        11,380.45
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        10/11/2025<br>
+                        04:26 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18500&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031826</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18499&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005413</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        756.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        113.40
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        869.40
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        869.40
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <td style="text-align:center;padding:2px 5px;">
+                        10/11/2025<br>
+                        04:28 PM
+                    </td>
+                
+                        <td style="text-align:center;padding:2px 5px;">
+                            AGENCIA PRINCIPAL
+                        </td>
+                    
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div style="font-size:11px;">FACTURA</div>
+                <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18502&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">000-002-01-00031827</a></div>                 
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        2A9170-F8828A-8815E0-63BE03-090956-9D
+                    </td>
+                
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>FACT EN ESPERA</div>
+            <div><a style="color:#000;text-decoration:none;" target="_blank" href="https://adm.premium-soft.com/Reportes_ventas/ComprobanteDocVenta?pin=46535&amp;id_operti=18501&amp;formato_doc=tiquete&amp;id_fact_elect=&amp;tipo_reporte=ver">0000005414</a></div>
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        CONSUMIDOR FINAL
+                    </td>
+                    <td style="text-align:left;padding:2px 5px;">
+                        DANIEL ARGEÑAL
+                    </td>               
+                    <td style="text-align:center;padding:2px 5px;">
+                        00000000000000
+            
+                    </td>
+                    <td style="text-align:center;padding:2px 5px;">
+                        <div>COBRADO</div>
+                    
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        295.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        44.25
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>              
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        339.25
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+            
+                    <td style="text-align:right;padding:2px 5px;">
+                        339.25
+                    </td>
+                    <td style="text-align:right;padding:2px 5px;">
+                        0.00
+                    </td>
+                
+                </tr><tr>
+                    <th>51 Registros</th>
+                <th></th><th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th style="text-align:left;padding:2px 5px;">TOTALES: </th>
+                
+                    <th style="text-align:right;padding:2px 5px;">
+                        L&nbsp;178,906.65
+                    </th>
+                
+                    <th style="text-align:right;padding:2px 5px;">
+                        L&nbsp;26,836.03
+                    </th>
+                    <th style="text-align:right;padding:2px 5px;">
+                        L&nbsp;0.00
+                    </th>
+                    <th style="text-align:right;padding:2px 5px;">
+                        L&nbsp;0.00
+                    </th>
+                    <th style="text-align:right;padding:2px 5px;">
+                        L&nbsp;4,252.37
+                    </th>
+                    <th style="text-align:right;padding:2px 5px;">
+                        L&nbsp;209,995.05
+                    </th>
+                    <th style="text-align:right;padding:2px 5px;">
+                        L&nbsp;34,089.08
+                    </th>
+            
+                    <th style="text-align:right;padding:2px 5px;">
+                        L&nbsp;209,995.05
+                    </th>
+                    <th style="text-align:right;padding:2px 5px;">
+                        L&nbsp;0.00
+                    </th>
+                
+                </tr></table></body></html>

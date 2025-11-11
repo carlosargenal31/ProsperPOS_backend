@@ -1,0 +1,2 @@
+id,numero_resolucion,prefijo,fecha_inicio,fecha_fin,is_active,notas,created_at,updated_at,deleted_at,created_by,updated_by,deleted_by,nro_inicial_control,nro_final_control,nro_actual_control,prefijo_control,sufijo_control,nro_critico,alertar_dias_antes,alertar_porcentaje_uso,alertar_en_nro_control
+1,2A9170-F8828A-8815E0-63BE03-090956-9D,0,31/12/2024,31/12/2025,,,,,,,,,30001,40000,30001,0,002-01,0,6,99,0

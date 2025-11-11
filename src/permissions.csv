@@ -1,0 +1,67 @@
+id,name,slug,module,description,is_active,created_at,updated_at,deleted_at
+1,products.read,products_read,products,"Ver listado de productos",1,"2025-10-30 10:33:27",NULL,NULL
+2,products.create,products_create,products,"Crear nuevos productos",1,"2025-10-30 10:33:27",NULL,NULL
+3,products.update,products_update,products,"Actualizar información de productos",1,"2025-10-30 10:33:27",NULL,NULL
+4,products.delete,products_delete,products,"Eliminar productos",1,"2025-10-30 10:33:27",NULL,NULL
+5,products.import,products_import,products,"Importar productos desde Excel/CSV",1,"2025-10-30 10:33:27",NULL,NULL
+6,products.export,products_export,products,"Exportar productos a Excel/CSV",1,"2025-10-30 10:33:27",NULL,NULL
+7,categories.read,categories_read,categories,"Ver listado de categorías",1,"2025-10-30 10:33:27",NULL,NULL
+8,categories.create,categories_create,categories,"Crear nuevas categorías",1,"2025-10-30 10:33:27",NULL,NULL
+9,categories.update,categories_update,categories,"Actualizar categorías",1,"2025-10-30 10:33:27",NULL,NULL
+10,categories.delete,categories_delete,categories,"Eliminar categorías",1,"2025-10-30 10:33:27",NULL,NULL
+11,brands.read,brands_read,brands,"Ver listado de marcas",1,"2025-10-30 10:33:27",NULL,NULL
+12,brands.create,brands_create,brands,"Crear nuevas marcas",1,"2025-10-30 10:33:27",NULL,NULL
+13,brands.update,brands_update,brands,"Actualizar marcas",1,"2025-10-30 10:33:27",NULL,NULL
+14,brands.delete,brands_delete,brands,"Eliminar marcas",1,"2025-10-30 10:33:27",NULL,NULL
+15,customers.read,customers_read,customers,"Ver listado de clientes",1,"2025-10-30 10:33:27",NULL,NULL
+16,customers.create,customers_create,customers,"Registrar nuevos clientes",1,"2025-10-30 10:33:27",NULL,NULL
+17,customers.update,customers_update,customers,"Actualizar información de clientes",1,"2025-10-30 10:33:27",NULL,NULL
+18,customers.delete,customers_delete,customers,"Eliminar clientes",1,"2025-10-30 10:33:27",NULL,NULL
+19,customers.import,customers_import,customers,"Importar clientes desde Excel/CSV",1,"2025-10-30 10:33:27",NULL,NULL
+20,customers.export,customers_export,customers,"Exportar clientes a Excel/CSV",1,"2025-10-30 10:33:27",NULL,NULL
+21,suppliers.read,suppliers_read,suppliers,"Ver listado de proveedores",1,"2025-10-30 10:33:27",NULL,NULL
+22,suppliers.create,suppliers_create,suppliers,"Registrar nuevos proveedores",1,"2025-10-30 10:33:27",NULL,NULL
+23,suppliers.update,suppliers_update,suppliers,"Actualizar información de proveedores",1,"2025-10-30 10:33:27",NULL,NULL
+24,suppliers.delete,suppliers_delete,suppliers,"Eliminar proveedores",1,"2025-10-30 10:33:27",NULL,NULL
+25,sales.read,sales_read,sales,"Ver historial de ventas",1,"2025-10-30 10:33:27",NULL,NULL
+26,sales.create,sales_create,sales,"Registrar nuevas ventas",1,"2025-10-30 10:33:27",NULL,NULL
+27,sales.update,sales_update,sales,"Modificar ventas",1,"2025-10-30 10:33:27",NULL,NULL
+28,sales.delete,sales_delete,sales,"Anular ventas",1,"2025-10-30 10:33:27",NULL,NULL
+29,sales.return,sales_return,sales,"Procesar devoluciones",1,"2025-10-30 10:33:27",NULL,NULL
+30,sales.discount,sales_discount,sales,"Aplicar descuentos en ventas",1,"2025-10-30 10:33:27",NULL,NULL
+31,sales.export,sales_export,sales,"Exportar ventas a Excel/PDF",1,"2025-10-30 10:33:27",NULL,NULL
+32,purchases.read,purchases_read,purchases,"Ver historial de compras",1,"2025-10-30 10:33:27",NULL,NULL
+33,purchases.create,purchases_create,purchases,"Registrar nuevas compras",1,"2025-10-30 10:33:27",NULL,NULL
+34,purchases.update,purchases_update,purchases,"Modificar compras",1,"2025-10-30 10:33:27",NULL,NULL
+35,purchases.delete,purchases_delete,purchases,"Anular compras",1,"2025-10-30 10:33:27",NULL,NULL
+36,purchases.return,purchases_return,purchases,"Procesar devoluciones a proveedores",1,"2025-10-30 10:33:27",NULL,NULL
+37,inventory.read,inventory_read,inventory,"Ver niveles de inventario",1,"2025-10-30 10:33:27",NULL,NULL
+38,inventory.adjust,inventory_adjust,inventory,"Realizar ajustes de inventario",1,"2025-10-30 10:33:27",NULL,NULL
+39,inventory.transfer,inventory_transfer,inventory,"Transferir productos entre almacenes",1,"2025-10-30 10:33:27",NULL,NULL
+40,inventory.count,inventory_count,inventory,"Realizar conteos físicos",1,"2025-10-30 10:33:27",NULL,NULL
+41,inventory.movements,inventory_movements,inventory,"Ver movimientos de inventario",1,"2025-10-30 10:33:27",NULL,NULL
+42,users.read,users_read,users,"Ver listado de usuarios",1,"2025-10-30 10:33:27",NULL,NULL
+43,users.create,users_create,users,"Crear nuevos usuarios",1,"2025-10-30 10:33:27",NULL,NULL
+44,users.update,users_update,users,"Actualizar información de usuarios",1,"2025-10-30 10:33:27",NULL,NULL
+45,users.delete,users_delete,users,"Eliminar usuarios",1,"2025-10-30 10:33:27",NULL,NULL
+46,users.reset_password,users_reset_password,users,"Resetear contraseñas de usuarios",1,"2025-10-30 10:33:27",NULL,NULL
+47,roles.read,roles_read,roles,"Ver listado de roles",1,"2025-10-30 10:33:27",NULL,NULL
+48,roles.create,roles_create,roles,"Crear nuevos roles",1,"2025-10-30 10:33:27",NULL,NULL
+49,roles.update,roles_update,roles,"Actualizar roles",1,"2025-10-30 10:33:27",NULL,NULL
+50,roles.delete,roles_delete,roles,"Eliminar roles",1,"2025-10-30 10:33:27",NULL,NULL
+51,roles.assign_permissions,roles_assign_permissions,roles,"Asignar permisos a roles",1,"2025-10-30 10:33:27",NULL,NULL
+52,reports.inventory,reports_inventory,reports,"Ver reportes de inventario",1,"2025-10-30 10:33:27",NULL,NULL
+53,reports.sales,reports_sales,reports,"Ver reportes de ventas",1,"2025-10-30 10:33:27",NULL,NULL
+54,reports.purchases,reports_purchases,reports,"Ver reportes de compras",1,"2025-10-30 10:33:27",NULL,NULL
+55,reports.financial,reports_financial,reports,"Ver reportes financieros",1,"2025-10-30 10:33:27",NULL,NULL
+56,reports.customers,reports_customers,reports,"Ver reportes de clientes",1,"2025-10-30 10:33:27",NULL,NULL
+57,reports.export,reports_export,reports,"Exportar reportes",1,"2025-10-30 10:33:27",NULL,NULL
+58,settings.read,settings_read,settings,"Ver configuración del sistema",1,"2025-10-30 10:33:27",NULL,NULL
+59,settings.update,settings_update,settings,"Modificar configuración del sistema",1,"2025-10-30 10:33:27",NULL,NULL
+60,settings.backup,settings_backup,settings,"Realizar respaldos del sistema",1,"2025-10-30 10:33:27",NULL,NULL
+61,settings.restore,settings_restore,settings,"Restaurar respaldos",1,"2025-10-30 10:33:27",NULL,NULL
+62,dashboard.view,dashboard_view,dashboard,"Ver dashboard principal",1,"2025-10-30 10:33:27",NULL,NULL
+63,dashboard.stats,dashboard_stats,dashboard,"Ver estadísticas generales",1,"2025-10-30 10:33:27",NULL,NULL
+64,pos.access,pos_access,pos,"Acceder al punto de venta",1,"2025-10-30 10:33:27",NULL,NULL
+65,pos.open_close,pos_open_close,pos,"Abrir y cerrar caja",1,"2025-10-30 10:33:27",NULL,NULL
+66,pos.cash_management,pos_cash_management,pos,"Gestionar efectivo en caja",1,"2025-10-30 10:33:27",NULL,NULL
