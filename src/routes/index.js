@@ -36,6 +36,15 @@ const employeeRoutes = require('./employee.routes');
 const beneficiaryTypeRoutes = require('./beneficiary-type.routes');
 const couponRoutes = require('./coupon.routes');
 const resolutionRoutes = require('./resolution.routes');
+const billingRoutes = require('./billing.routes');
+const invoicesSalesRoutes = require('./invoices-sales.routes');
+const sellerReportRoutes = require('./seller-report.routes');
+const shipmentRoutes = require('./shipment.routes');
+const salesReturnsRoutes = require('./sales-returns.routes');
+const pendingInvoicesRoutes = require('./pending-invoices.routes');
+const quotesRoutes = require('./quotes.routes');
+const purchaseRoutes = require('./purchase.routes');
+const offerRoutes = require('./offer.routes');
 
 
 // ===================================================================
@@ -69,13 +78,21 @@ router.use('/v1/beneficiary-types', beneficiaryTypeRoutes);
 router.use('/v1/coupons', couponRoutes);
 router.use('/v1/resolutions', resolutionRoutes);
 router.use('/v1/pos', posRoutes);
+router.use('/v1/billing', billingRoutes);
+router.use('/v1/invoices-sales', invoicesSalesRoutes);
+router.use('/v1/reports', sellerReportRoutes);
+router.use('/v1/shipments', shipmentRoutes);
+router.use('/v1/sales-returns', salesReturnsRoutes);
+router.use('/v1/pending-invoices', pendingInvoicesRoutes);
+router.use('/v1/quotes', quotesRoutes);
+router.use('/v1/purchases', purchaseRoutes);
+router.use('/v1/offers', offerRoutes);
 
 // ===================================================================
 // RUTAS FUTURAS (Comentadas)
 // ===================================================================
 
 // router.use('/v1/sales', salesRoutes);
-// router.use('/v1/purchases', purchaseRoutes);
 // router.use('/v1/reports', reportRoutes);
 // router.use('/v1/settings', settingsRoutes);
 
@@ -127,7 +144,10 @@ router.get('/', (req, res) => {
       '/api/v1/employees',
       '/api/v1/beneficiary-types',
       '/api/v1/resolutions',
-      '/api/v1/pos'
+      '/api/v1/pos',
+      '/api/v1/billing',
+      '/api/v1/shipments',
+      '/api/v1/offers'
     ],
     comingSoon: [
       '/api/v1/sales',

@@ -33,6 +33,40 @@ router.get('/',
   }
 );
 
+
+/**
+ * @route   GET /api/v1/resolutions/active
+ * @desc    Obtener la resolución activa actual
+ * @access  Private
+ */
+router.get('/active',
+  requirePermission('resolutions.read'),
+  async (req, res) => {
+    try {
+      const query = `
+        SELECT * FROM resolutions
+        WHERE is_active = 1
+        AND deleted_at IS NULL
+        AND fecha_inicio <= CURDATE()
+        AND fecha_fin >= CURDATE()
+        ORDER BY created_at DESC
+        LIMIT 1
+      `;
+      const resolutions = await db.query(query);
+
+      if (!resolutions || resolutions.length === 0) {
+        return sendErrorResponse(res, 404, 'No hay resolución activa disponible');
+      }
+
+      return sendSuccessResponse(res, resolutions[0], 'Resolución activa obtenida exitosamente');
+
+    } catch (error) {
+      logger.error('Error getting active resolution:', error);
+      return sendErrorResponse(res, 500, 'Error al obtener la resolución activa');
+    }
+  }
+);
+
 /**
  * @route   GET /api/v1/resolutions/:id
  * @desc    Obtener una resolución por ID

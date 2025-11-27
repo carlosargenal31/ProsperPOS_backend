@@ -13,14 +13,21 @@ const dbConfig = {
   host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT || 3306,
   user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '310104',
+  password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'prosperpos',
   connectionLimit: parseInt(process.env.DB_CONNECTION_LIMIT) || 10,
   acquireTimeout: 60000,
   timeout: 60000,
   reconnect: true,
   charset: 'utf8mb4',
-  timezone: '+00:00'
+  timezone: '+00:00',
+  // Configuración crítica para caracteres especiales
+  typeCast: function (field, next) {
+    if (field.type === 'VAR_STRING' || field.type === 'STRING' || field.type === 'VARCHAR') {
+      return field.string();
+    }
+    return next();
+  }
 };
 
 // ===================================================================
@@ -46,8 +53,11 @@ async function connectDatabase() {
     // Crear pool de conexiones
     pool = mysql.createPool(dbConfig);
 
-    // Verificar conexión
+    // Verificar conexión y configurar UTF-8
     const connection = await pool.getConnection();
+    await connection.query("SET NAMES 'utf8mb4'");
+    await connection.query("SET CHARACTER SET utf8mb4");
+    await connection.query("SET character_set_results = 'utf8mb4'");
     await connection.ping();
     connection.release();
 

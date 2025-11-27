@@ -23,6 +23,16 @@ router.get(
 );
 
 /**
+ * GET /api/v1/subcategories/active
+ * Obtener subcategorías activas
+ */
+router.get(
+  '/active',
+  requirePermission('subcategory.view'),
+  SubcategoryController.getSubcategories
+);
+
+/**
  * GET /api/v1/subcategories/:id
  * Obtener subcategoría por ID
  */
