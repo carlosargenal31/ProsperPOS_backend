@@ -85,7 +85,9 @@
       "Bash(timeout 10 npm run dev:*)",
       "Bash(timeout:*)",
       "Bash(git commit -m \"$(cat <<''EOF''\nInitial commit: ProsperPOS backend implementation\n\nImplements complete backend API for ProsperPOS including:\n- Authentication and authorization system with JWT\n- RBAC (Role-Based Access Control) with permissions module\n- Product management with categories, brands, and subcategories\n- Sales and POS system with invoice generation\n- Inventory and warehouse management\n- Customer and supplier management\n- Employee and HR module\n- Payment processing and financial tracking\n- Tax rates and currency management\n- Reports and dashboard analytics\n- File upload middleware and utilities\n- Database migrations and seeding scripts\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git checkout:*)",
+      "Bash(git merge:*)"
     ],
     "deny": [],
     "ask": []
