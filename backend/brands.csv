@@ -1,0 +1,26 @@
+id,name,code,slug,description,logo_url,website,is_active,created_by,updated_by,created_at,updated_at,deleted_at
+brand-001,Samsung,SAM,samsung,"Líder mundial en electrónica de consumo",/images/brands/samsung.png,https://www.samsung.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-002,Apple,APL,apple,"Innovación en tecnología",/images/brands/apple.png,https://www.apple.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-003,Huawei,HUA,huawei,"Tecnología de telecomunicaciones",/images/brands/huawei.png,https://www.huawei.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-004,Lenovo,LNV,lenovo,"Computadoras y equipos empresariales",/images/brands/lenovo.png,https://www.lenovo.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-005,HP,HP,hp,"Hewlett-Packard Computing",/images/brands/hp.png,https://www.hp.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-006,Dell,DEL,dell,"Soluciones de tecnología",/images/brands/dell.png,https://www.dell.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-007,LG,LG,lg,"Life is Good - Electrónica",/images/brands/lg.png,https://www.lg.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-008,Sony,SNY,sony,"Audio, video y entretenimiento",/images/brands/sony.png,https://www.sony.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-009,Nike,NKE,nike,"Just Do It - Ropa deportiva",/images/brands/nike.png,https://www.nike.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-010,Adidas,ADI,adidas,"Impossible is Nothing",/images/brands/adidas.png,https://www.adidas.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-011,Puma,PMA,puma,"Forever Faster",/images/brands/puma.png,https://www.puma.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-012,Zara,ZRA,zara,"Moda europea",/images/brands/zara.png,https://www.zara.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-013,H&M,HM,hm,"Moda asequible",/images/brands/hm.png,https://www.hm.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-014,Levis,LVI,levis,"Original jeans desde 1873",/images/brands/levis.png,https://www.levi.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-015,IKEA,IKE,ikea,"Muebles y decoración",/images/brands/ikea.png,https://www.ikea.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-016,Whirlpool,WHP,whirlpool,"Electrodomésticos de calidad",/images/brands/whirlpool.png,https://www.whirlpool.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-017,Mabe,MAB,mabe,"Electrodomésticos mexicanos",/images/brands/mabe.png,https://www.mabe.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-018,Genérica,GEN,generica,"Marca genérica para productos sin marca específica",NULL,NULL,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-019,Xiaomi,XIA,xiaomi,"Tecnología inteligente",/images/brands/xiaomi.png,https://www.mi.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-020,Motorola,MOT,motorola,"Comunicaciones móviles",/images/brands/motorola.png,https://www.motorola.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-021,Coca-Cola,CCL,coca-cola,"Bebidas refrescantes",/images/brands/cocacola.png,https://www.coca-cola.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-022,Pepsi,PEP,pepsi,"Bebidas y snacks",/images/brands/pepsi.png,https://www.pepsi.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-023,Nestlé,NES,nestle,"Alimentos y bebidas",/images/brands/nestle.png,https://www.nestle.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-024,Bimbo,BIM,bimbo,"Productos de panificación",/images/brands/bimbo.png,https://www.grupobimbo.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+brand-025,Sabritas,SAB,sabritas,"Botanas y snacks",/images/brands/sabritas.png,https://www.sabritas.com,1,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL

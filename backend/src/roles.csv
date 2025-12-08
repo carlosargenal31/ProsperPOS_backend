@@ -1,0 +1,8 @@
+id,name,slug,description,is_active,created_by,updated_by,deleted_by,created_at,updated_at,deleted_at
+1,"Super Administrador",super_admin,"Acceso completo al sistema sin restricciones",1,NULL,NULL,NULL,"2025-10-30 10:33:27",NULL,NULL
+2,Administrador,admin,"Gestión completa de la tienda y configuraciones",1,NULL,NULL,NULL,"2025-10-30 10:33:27",NULL,NULL
+3,Gerente,manager,"Gestión de ventas, compras e inventario",1,NULL,NULL,NULL,"2025-10-30 10:33:27",NULL,NULL
+4,Vendedor,cashier,"Operación del punto de venta y atención al cliente",1,NULL,NULL,NULL,"2025-10-30 10:33:27",NULL,NULL
+5,Almacenista,warehouse,"Gestión de inventario y control de stock",1,NULL,NULL,NULL,"2025-10-30 10:33:27",NULL,NULL
+6,Contador,accountant,"Acceso a reportes financieros y contables",1,NULL,NULL,NULL,"2025-10-30 10:33:27",NULL,NULL
+7,Visor,viewer,"Solo lectura de información del sistema",1,NULL,NULL,NULL,"2025-10-30 10:33:27",NULL,NULL

@@ -1,0 +1,125 @@
+BENEFICIARY TYPE IMPLEMENTATION - QUICK REFERENCE
+
+=== FRONTEND FILES ===
+
+1. beneficiary-type-settings.vue
+   Location: template/src/views/pages/settings/financal-settings/
+   Purpose: Main settings page with CRUD table
+   Key Methods:
+   - loadBeneficiaryTypes(): Fetch all records
+   - openAddModal(): Show add form
+   - openEditModal(type): Show edit form with data
+   - openDeleteModal(type): Show delete confirmation
+   - onBeneficiaryTypeSaved(): Reload after save
+   - onBeneficiaryTypeDeleted(): Reload after delete
+
+2. beneficiary-type-settings-modal.vue
+   Location: template/src/components/modal/
+   Purpose: All forms (add, edit, delete)
+   Contains 3 modals:
+   - Add Modal: POST /beneficiary-types
+   - Edit Modal: PUT /beneficiary-types/:id
+   - Delete Modal: DELETE /beneficiary-types/:id
+
+3. settings.json
+   Location: template/src/assets/json/
+   Navigation: Ajustes Financieros > Tipos de Beneficiarios
+   Route: /financial-settings/beneficiary-type-settings
+
+=== BACKEND FILES ===
+
+1. beneficiary-type.routes.js
+   Location: backend/src/routes/
+   Endpoints:
+   - GET / (all non-deleted)
+   - GET /active (active only)
+   - GET /:id (single)
+   - POST / (create)
+   - PUT /:id (update)
+   - DELETE /:id (soft delete)
+
+2. create_beneficiary_types_table.sql
+   Columns: id, codigo, nombre, is_active
+   Audit: created_by, updated_by, deleted_by
+   Timestamps: created_at, updated_at, deleted_at
+
+3. update_beneficiary_type_foreign_keys.sql
+   Links: customers.tipo_beneficiario -> beneficiary_types.id
+   Links: suppliers.tipo_beneficiario -> beneficiary_types.id
+
+=== DATABASE SCHEMA ===
+
+CREATE TABLE beneficiary_types (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  codigo VARCHAR(10) UNIQUE,
+  nombre VARCHAR(100),
+  is_active TINYINT(1) DEFAULT 1,
+  created_by INT, updated_by INT, deleted_by INT,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP AUTO UPDATE,
+  deleted_at TIMESTAMP NULL,
+  
+  FOREIGN KEY (created_by) REFERENCES users(id),
+  FOREIGN KEY (updated_by) REFERENCES users(id),
+  FOREIGN KEY (deleted_by) REFERENCES users(id)
+);
+
+=== API ENDPOINTS ===
+
+GET /api/v1/beneficiary-types
+  Returns all non-deleted records
+  Query: SELECT * WHERE deleted_at IS NULL
+
+POST /api/v1/beneficiary-types
+  Create new record
+  Body: {nombre, is_active}
+  Validations: required, unique
+
+PUT /api/v1/beneficiary-types/:id
+  Update record
+  Body: {nombre, is_active}
+  Auto sets: updated_by, updated_at
+
+DELETE /api/v1/beneficiary-types/:id
+  Soft delete (sets deleted_at, deleted_by)
+  Checks: not used in customers/suppliers
+
+=== PERMISSIONS ===
+
+beneficiary_types.read (GET endpoints)
+beneficiary_types.create (POST)
+beneficiary_types.update (PUT)
+beneficiary_types.delete (DELETE)
+
+=== KEY PATTERNS ===
+
+1. Soft Delete
+   - Delete sets deleted_at = NOW()
+   - SELECT always filters WHERE deleted_at IS NULL
+
+2. Audit Trail
+   - created_by, updated_by, deleted_by track users
+   - created_at, updated_at, deleted_at track changes
+
+3. Modal Forms
+   - Single modal component for add/edit/delete
+   - Reusable across different tables
+
+4. Parent-Child Events
+   - Child emits: 'beneficiary-type-saved', 'beneficiary-type-deleted'
+   - Parent reloads list on event
+
+5. Error Handling
+   - Frontend: SweetAlert2 notifications
+   - Backend: sendErrorResponse() with HTTP codes
+
+=== FOR RESOLUTION MANAGEMENT ===
+
+Follow same pattern:
+1. Create resolutions table (same structure)
+2. Create resolution.routes.js (same endpoints)
+3. Create resolution-settings.vue (same page structure)
+4. Create resolution-settings-modal.vue (same modal forms)
+5. Add to settings.json navigation
+6. Create resolution permissions
+

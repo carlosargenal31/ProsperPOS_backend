@@ -1,0 +1,233 @@
+# DETAILED CODE STRUCTURE FOR RESOLUTION MANAGEMENT
+
+## IMPLEMENTATION GUIDE
+
+### 1. FRONTEND - beneficiary-type-settings.vue Structure
+
+TEMPLATE SECTION:
+- Page wrapper with header and sidebar
+- Card with table showing all records
+- Columns: ID, Nombre, Estado (badge), Acciones (edit/delete)
+- Add button that opens add modal
+- Refresh button that reloads data
+- Loading spinner during fetch
+- Error alert for failures
+- Empty state when no records
+
+DATA PROPERTIES:
+- beneficiaryTypes: [] - array of records
+- selectedBeneficiaryType: null - currently selected item
+- isEditMode: false - track if editing or creating
+- loading: false - show spinner
+- error: null - error message
+
+MOUNTED HOOK:
+- Call this.loadBeneficiaryTypes() on mount
+
+METHODS:
+1. loadBeneficiaryTypes()
+   - Set loading = true, error = null
+   - Get token from localStorage
+   - axios.get() to /api/v1/beneficiary-types with auth header
+   - Set this.beneficiaryTypes = response.data.data
+   - Catch errors, set error message
+   - Finally set loading = false
+
+2. openAddModal()
+   - Set selectedBeneficiaryType = null
+   - Set isEditMode = false
+   - Modal auto-opens via data-bs-toggle
+
+3. openEditModal(type)
+   - Set selectedBeneficiaryType = { ...type }
+   - Set isEditMode = true
+
+4. openDeleteModal(type)
+   - Set selectedBeneficiaryType = type
+
+5. onBeneficiaryTypeSaved()
+   - Call this.loadBeneficiaryTypes()
+
+6. onBeneficiaryTypeDeleted()
+   - Call this.loadBeneficiaryTypes()
+
+7. toggleHeader()
+   - Toggle collapse state on header
+
+### 2. FRONTEND - beneficiary-type-settings-modal.vue Structure
+
+PROPS:
+- beneficiaryType: Object (default null)
+- isEdit: Boolean (default false)
+
+DATA:
+- formData: { nombre: '', is_active: true }
+- editFormData: { id: null, nombre: '', is_active: true }
+- isSubmitting: false
+
+WATCH:
+- Watch beneficiaryType prop with immediate: true
+- When changes, update editFormData with new values
+- Convert is_active to Boolean
+
+METHODS:
+1. submitAddForm()
+   - Prevent default
+   - Set isSubmitting = true
+   - Get token from localStorage
+   - axios.post() to /api/v1/beneficiary-types
+   - Send formData in body
+   - On success:
+     * Reset formData to defaults
+     * Emit 'beneficiary-type-saved' event
+     * Click close button to close modal
+     * Show success Swal notification
+   - On error:
+     * Show error Swal with error.response?.data?.message
+   - Finally set isSubmitting = false
+
+2. submitEditForm()
+   - Similar to add but:
+   - Extract id from editFormData
+   - axios.put() to /api/v1/beneficiary-types/{id}
+   - Send updateData (without id)
+   - Emit 'beneficiary-type-saved' event
+
+3. confirmDelete()
+   - Check if beneficiaryType and id exist
+   - Set isSubmitting = true
+   - Get token from localStorage
+   - axios.delete() to /api/v1/beneficiary-types/{id}
+   - On success:
+     * Emit 'beneficiary-type-deleted' event
+     * Close modal
+     * Show success Swal
+   - On error: Show error Swal
+   - Finally set isSubmitting = false
+
+MODALS (3 modals in template):
+1. Add Modal (id=add-beneficiary-type)
+   - v-model formData.nombre
+   - v-model formData.is_active
+   - @submit.prevent=submitAddForm
+   - Button disabled when isSubmitting
+
+2. Edit Modal (id=edit-beneficiary-type)
+   - v-model editFormData.nombre
+   - v-model editFormData.is_active
+   - @submit.prevent=submitEditForm
+   - Button disabled when isSubmitting
+
+3. Delete Modal (id=delete-modal)
+   - Confirmation message
+   - @click.prevent=confirmDelete
+   - Button disabled when isSubmitting
+
+### 3. BACKEND - beneficiary-type.routes.js Structure
+
+IMPORTS:
+- express, router
+- db from utils/database
+- { authenticateToken, requirePermission } from middleware
+- { sendSuccessResponse, sendErrorResponse } from utils
+- logger from utils
+
+MIDDLEWARE:
+- router.use(authenticateToken) - protect all routes
+
+ENDPOINTS:
+
+1. GET / (all records)
+   - Query: SELECT * FROM beneficiary_types WHERE deleted_at IS NULL ORDER BY id ASC
+   - No parameters
+   - Response: array of all non-deleted records
+   - Success response with message 'Tipos de beneficiarios obtenidos exitosamente'
+
+2. GET /active (active only)
+   - Query: SELECT * WHERE is_active = 1 AND deleted_at IS NULL
+   - Response: array of active records
+
+3. GET /:id (single record)
+   - Get id from req.params
+   - Query: SELECT * WHERE id = ? AND deleted_at IS NULL
+   - Check length === 0, return 404 if not found
+   - Response: single record object
+
+4. POST / (create)
+   - Get nome, is_active from req.body
+   - Get created_by from req.user.id
+   - Validate: nombre required
+   - Query: SELECT id WHERE nombre = ? AND deleted_at IS NULL
+   - If exists, return 409 'Already exists'
+   - Query: INSERT INTO beneficiary_types
+   - Return created record with 201 status
+   - Auto-set created_by, created_at
+
+5. PUT /:id (update)
+   - Get id from req.params
+   - Get updated_by from req.user.id
+   - Query: SELECT id WHERE id = ? AND deleted_at IS NULL
+   - If not found, return 404
+   - Validate allowed fields: ['nombre', 'is_active']
+   - Check unique name if updating nombre
+   - Query: UPDATE beneficiary_types SET ... WHERE id = ?
+   - Auto-set updated_by, updated_at
+   - Return updated record
+
+6. DELETE /:id (soft delete)
+   - Get id from req.params
+   - Get deleted_by from req.user.id
+   - Query: SELECT id WHERE id = ? AND deleted_at IS NULL
+   - If not found, return 404
+   - Query: SELECT COUNT(*) FROM customers WHERE tipo_beneficiario = ?
+   - If count > 0, return 409 with message about customers
+   - Query: SELECT COUNT(*) FROM suppliers WHERE tipo_beneficiario = ?
+   - If count > 0, return 409 with message about suppliers
+   - Query: UPDATE beneficiary_types SET deleted_at = NOW(), deleted_by = ? WHERE id = ?
+   - Return success with null data
+
+### 4. DATABASE MIGRATION SQL
+
+CREATE TABLE beneficiary_types (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  codigo VARCHAR(10) NOT NULL UNIQUE,
+  nombre VARCHAR(100) NOT NULL,
+  is_active TINYINT(1) DEFAULT 1,
+  created_by INT NULL,
+  updated_by INT NULL,
+  deleted_by INT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  deleted_at TIMESTAMP NULL,
+
+  INDEX idx_codigo (codigo),
+  INDEX idx_is_active (is_active),
+  INDEX idx_created_by (created_by),
+  INDEX idx_updated_by (updated_by),
+  INDEX idx_deleted_by (deleted_by),
+
+  CONSTRAINT fk_beneficiary_types_created_by FOREIGN KEY (created_by) REFERENCES users(id),
+  CONSTRAINT fk_beneficiary_types_updated_by FOREIGN KEY (updated_by) REFERENCES users(id),
+  CONSTRAINT fk_beneficiary_types_deleted_by FOREIGN KEY (deleted_by) REFERENCES users(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INITIAL DATA:
+INSERT INTO beneficiary_types (codigo, nombre, is_active, created_by, created_at) VALUES
+('001', 'JURIDICA DOMICILIADA', 1, 1, NOW()),
+('002', 'JURIDICA NO DOMICILIADA', 1, 1, NOW()),
+('003', 'NATURAL RESIDENTE', 1, 1, NOW()),
+('004', 'NATURAL NO RESIDENTE', 1, 1, NOW());
+
+### 5. REGISTER ROUTES
+
+In backend/src/routes/index.js:
+- Add: const beneficiaryTypeRoutes = require('./beneficiary-type.routes');
+- Add: router.use('/v1/beneficiary-types', beneficiaryTypeRoutes);
+
+### 6. SETTINGS NAVIGATION
+
+In template/src/assets/json/settings.json:
+Add to Ajustes Financieros subMenu:
+{ "title": "Tipos de Beneficiarios", "routes": "/financial-settings/beneficiary-type-settings" }
+
+

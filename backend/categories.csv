@@ -1,0 +1,41 @@
+id,name,slug,description,parent_id,image_url,sort_order,is_active,meta_title,meta_description,created_by,updated_by,created_at,updated_at,deleted_at
+cat-001,Electrónica,electronica,"Productos electrónicos y tecnología",NULL,/images/categories/electronica.jpg,1,1,"Electrónica - ProsperPOS","Encuentra los mejores productos electrónicos",1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+cat-002,"Ropa y Calzado",ropa-calzado,"Vestimenta y calzado para toda la familia",NULL,/images/categories/ropa.jpg,2,1,"Ropa y Calzado - ProsperPOS","Moda y estilo para todos",1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+cat-003,"Hogar y Muebles",hogar-muebles,"Todo para tu hogar",NULL,/images/categories/hogar.jpg,3,1,"Hogar y Muebles - ProsperPOS","Productos para el hogar",1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+cat-004,Deportes,deportes,"Artículos deportivos y fitness",NULL,/images/categories/deportes.jpg,4,1,"Deportes - ProsperPOS","Equipamiento deportivo",1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+cat-005,"Alimentos y Bebidas",alimentos-bebidas,"Productos comestibles y bebidas",NULL,/images/categories/alimentos.jpg,5,1,"Alimentos y Bebidas - ProsperPOS","Productos alimenticios",1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+cat-006,"Salud y Belleza",salud-belleza,"Productos de cuidado personal",NULL,/images/categories/salud.jpg,6,1,"Salud y Belleza - ProsperPOS","Cuidado personal y belleza",1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+cat-007,"Juguetes y Juegos",juguetes-juegos,"Entretenimiento para niños",NULL,/images/categories/juguetes.jpg,7,1,"Juguetes y Juegos - ProsperPOS","Diversión para los más pequeños",1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+cat-008,"Librería y Papelería",libreria-papeleria,"Útiles escolares y de oficina",NULL,/images/categories/libreria.jpg,8,1,"Librería y Papelería - ProsperPOS","Útiles escolares y oficina",1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+cat-009,Mascotas,mascotas,"Productos para animales",NULL,/images/categories/mascotas.jpg,9,1,"Mascotas - ProsperPOS","Todo para tu mascota",1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+cat-010,Automotriz,automotriz,"Accesorios y repuestos para vehículos",NULL,/images/categories/automotriz.jpg,10,1,"Automotriz - ProsperPOS","Repuestos y accesorios",1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-001,"Celulares y Smartphones",celulares-smartphones,"Teléfonos móviles y accesorios",cat-001,NULL,1,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-002,"Computadoras y Laptops",computadoras-laptops,"Equipos de cómputo",cat-001,NULL,2,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-003,Tablets,tablets,"Tabletas electrónicas",cat-001,NULL,3,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-004,"Audio y Video",audio-video,"Equipos de sonido y video",cat-001,NULL,4,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-005,"Cámaras y Fotografía",camaras-fotografia,"Equipos fotográficos",cat-001,NULL,5,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-006,"Smart Home",smart-home,"Dispositivos inteligentes para el hogar",cat-001,NULL,6,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-007,"Ropa de Hombre",ropa-hombre,"Vestimenta masculina",cat-002,NULL,1,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-008,"Ropa de Mujer",ropa-mujer,"Vestimenta femenina",cat-002,NULL,2,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-009,"Ropa de Niños",ropa-ninos,"Ropa infantil",cat-002,NULL,3,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-010,"Calzado Deportivo",calzado-deportivo,"Zapatos para deporte",cat-002,NULL,4,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-011,"Calzado Casual",calzado-casual,"Zapatos para uso diario",cat-002,NULL,5,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-012,"Accesorios de Moda",accesorios-moda,"Complementos de vestir",cat-002,NULL,6,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-013,"Muebles de Sala",muebles-sala,"Muebles para sala",cat-003,NULL,1,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-014,"Muebles de Comedor",muebles-comedor,"Muebles para comedor",cat-003,NULL,2,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-015,"Muebles de Dormitorio",muebles-dormitorio,"Muebles para recámaras",cat-003,NULL,3,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-016,Electrodomésticos,electrodomesticos,"Aparatos eléctricos para el hogar",cat-003,NULL,4,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-017,Decoración,decoracion,"Artículos decorativos",cat-003,NULL,5,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-018,"Cocina y Comedor",cocina-comedor,"Utensilios de cocina",cat-003,NULL,6,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-019,"Ropa Deportiva",ropa-deportiva,"Vestimenta para ejercicio",cat-004,NULL,1,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-020,"Equipamiento de Gimnasio",equipamiento-gimnasio,"Equipos para fitness",cat-004,NULL,2,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-021,Fútbol,futbol,"Artículos de fútbol",cat-004,NULL,3,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-022,Basketball,basketball,"Artículos de baloncesto",cat-004,NULL,4,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-023,Ciclismo,ciclismo,"Bicicletas y accesorios",cat-004,NULL,5,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-024,Natación,natacion,"Artículos de natación",cat-004,NULL,6,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-025,Despensa,despensa,"Productos de despensa",cat-005,NULL,1,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-026,Lácteos,lacteos,"Productos lácteos",cat-005,NULL,2,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-027,"Carnes y Embutidos",carnes-embutidos,"Productos cárnicos",cat-005,NULL,3,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-028,"Frutas y Verduras",frutas-verduras,"Productos frescos",cat-005,NULL,4,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-029,Bebidas,bebidas,"Bebidas varias",cat-005,NULL,5,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL
+sub-030,"Snacks y Dulces",snacks-dulces,"Botanas y golosinas",cat-005,NULL,6,1,NULL,NULL,1,NULL,"2025-11-06 18:58:48","2025-11-06 18:58:48",NULL

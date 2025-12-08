@@ -1,0 +1,115 @@
+# Beneficiary Type Implementation Reference
+
+## Quick Summary
+
+The beneficiary type implementation uses a complete CRUD pattern across frontend and backend. This serves as the reference for building a similar Resolution Management system.
+
+## 1. FRONTEND COMPONENTS
+
+### Main Page: beneficiary-type-settings.vue
+- Location: template/src/views/pages/settings/financal-settings/
+- Features: Table display, CRUD operations, loading states, error handling
+- Methods: loadBeneficiaryTypes(), openAddModal(), openEditModal(), openDeleteModal()
+- API: GET /api/v1/beneficiary-types
+
+### Modal Forms: beneficiary-type-settings-modal.vue
+- Location: template/src/components/modal/
+- Three modals: Add, Edit, Delete
+- Form fields: nombre (text), is_active (checkbox)
+- Methods: submitAddForm(), submitEditForm(), confirmDelete()
+- Events: 'beneficiary-type-saved', 'beneficiary-type-deleted'
+
+### Navigation: settings.json
+- Route: /financial-settings/beneficiary-type-settings
+- Section: Ajustes Financieros (Financial Settings)
+
+## 2. BACKEND API ENDPOINTS
+
+### GET /api/v1/beneficiary-types
+Returns all non-deleted beneficiary types
+Query: SELECT * FROM beneficiary_types WHERE deleted_at IS NULL
+
+### GET /api/v1/beneficiary-types/active
+Returns only active beneficiary types
+Query: SELECT * FROM beneficiary_types WHERE is_active = 1 AND deleted_at IS NULL
+
+### GET /api/v1/beneficiary-types/:id
+Returns single beneficiary type by ID
+
+### POST /api/v1/beneficiary-types
+Creates new beneficiary type
+Body: { nombre, is_active }
+Validations: nombre required, must be unique, converts to UPPERCASE
+
+### PUT /api/v1/beneficiary-types/:id
+Updates beneficiary type
+Body: { nombre, is_active }
+Sets: updated_by, updated_at automatically
+
+### DELETE /api/v1/beneficiary-types/:id
+Soft deletes beneficiary type
+Checks: Cannot delete if used in customers or suppliers
+Sets: deleted_at, deleted_by timestamps
+
+## 3. DATABASE SCHEMA
+
+### Table: beneficiary_types
+- id (INT, PK, AUTO_INCREMENT)
+- codigo (VARCHAR 10, UNIQUE)
+- nombre (VARCHAR 100)
+- is_active (TINYINT 1, default 1)
+- created_by (INT, FK to users)
+- updated_by (INT, FK to users)
+- deleted_by (INT, FK to users)
+- created_at (TIMESTAMP)
+- updated_at (TIMESTAMP)
+- deleted_at (TIMESTAMP, NULL)
+
+Indexes: codigo, is_active, created_by, updated_by, deleted_by
+
+### Foreign Keys:
+- customers.tipo_beneficiario -> beneficiary_types.id
+- suppliers.tipo_beneficiario -> beneficiary_types.id
+
+## 4. KEY PATTERNS
+
+### Permission-Based Access Control
+All endpoints require JWT token and specific permissions:
+- beneficiary_types.read (GET endpoints)
+- beneficiary_types.create (POST)
+- beneficiary_types.update (PUT)
+- beneficiary_types.delete (DELETE)
+
+### Soft Delete Pattern
+DELETE sets deleted_at and deleted_by instead of removing records
+SELECT queries always filter: WHERE deleted_at IS NULL
+
+### Error Handling
+- Frontend: try-catch with SweetAlert2 notifications
+- Backend: sendSuccessResponse() and sendErrorResponse() utilities
+- HTTP codes: 200, 201, 400, 404, 409, 500
+
+## 5. FILE LOCATIONS
+
+Frontend:
+- beneficiary-type-settings.vue: template/src/views/pages/settings/financal-settings/
+- beneficiary-type-settings-modal.vue: template/src/components/modal/
+- settings.json: template/src/assets/json/
+
+Backend:
+- beneficiary-type.routes.js: backend/src/routes/
+- Schema: backend/database/migrations/create_beneficiary_types_table.sql
+- FK Setup: backend/database/migrations/update_beneficiary_type_foreign_keys.sql
+
+## 6. FOR RESOLUTION MANAGEMENT
+
+Use this as template and:
+1. Create database table with same structure (id, codigo, nombre, is_active, audit fields)
+2. Create routes file following same pattern with CRUD endpoints
+3. Create frontend page and modal components
+4. Add navigation entry to settings.json
+5. Implement permission checks for all operations
+6. Add deletion constraint checks for related entities
+7. Use same soft-delete pattern for audit trail
+
+
