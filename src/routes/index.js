@@ -44,7 +44,12 @@ const salesReturnsRoutes = require('./sales-returns.routes');
 const pendingInvoicesRoutes = require('./pending-invoices.routes');
 const quotesRoutes = require('./quotes.routes');
 const purchaseRoutes = require('./purchase.routes');
+const purchaseReturnRoutes = require('./purchase-return.routes');
 const offerRoutes = require('./offer.routes');
+const consecutiveRoutes = require('./consecutive.routes');
+const accountStatementRoutes = require('./account-statement.routes');
+const dashboardRoutes = require('./dashboard.routes');
+const cargoDescargoRoutes = require('./cargo-descargo.routes');
 
 
 // ===================================================================
@@ -86,7 +91,12 @@ router.use('/v1/sales-returns', salesReturnsRoutes);
 router.use('/v1/pending-invoices', pendingInvoicesRoutes);
 router.use('/v1/quotes', quotesRoutes);
 router.use('/v1/purchases', purchaseRoutes);
+router.use('/v1/purchase-returns', purchaseReturnRoutes);
 router.use('/v1/offers', offerRoutes);
+router.use('/v1/consecutives', consecutiveRoutes);
+router.use('/v1/account-statement', accountStatementRoutes);
+router.use('/v1/dashboard', dashboardRoutes);
+router.use('/v1/cargo-descargo', cargoDescargoRoutes);
 
 // ===================================================================
 // RUTAS FUTURAS (Comentadas)

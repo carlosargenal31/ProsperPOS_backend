@@ -260,6 +260,48 @@ router.put('/:id',
 );
 
 /**
+ * @route   PATCH /api/v1/resolutions/:id/increment
+ * @desc    Incrementar el consecutivo actual de una resolución
+ * @access  Private
+ */
+router.patch('/:id/increment',
+  requirePermission('resolutions.update'),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      // Verificar que existe
+      const checkQuery = 'SELECT id, nro_actual_control FROM resolutions WHERE id = ? AND deleted_at IS NULL';
+      const existing = await db.query(checkQuery, [id]);
+
+      if (!existing || existing.length === 0) {
+        return sendErrorResponse(res, 404, 'Resolución no encontrada');
+      }
+
+      // Incrementar consecutivo
+      const updateQuery = `
+        UPDATE resolutions
+        SET nro_actual_control = nro_actual_control + 1,
+            updated_by = ?
+        WHERE id = ? AND deleted_at IS NULL
+      `;
+
+      await db.query(updateQuery, [req.user.id, id]);
+
+      // Obtener el nuevo valor
+      const newValueQuery = 'SELECT nro_actual_control FROM resolutions WHERE id = ?';
+      const result = await db.query(newValueQuery, [id]);
+
+      return sendSuccessResponse(res, { nro_actual_control: result[0].nro_actual_control }, 'Consecutivo incrementado exitosamente');
+
+    } catch (error) {
+      logger.error('Error incrementing resolution consecutive:', error);
+      return sendErrorResponse(res, 500, 'Error al incrementar el consecutivo');
+    }
+  }
+);
+
+/**
  * @route   DELETE /api/v1/resolutions/:id
  * @desc    Eliminar resolución (soft delete)
  * @access  Private

@@ -35,11 +35,11 @@ class PurchaseService {
         throw new Error('El nombre del proveedor es requerido');
       }
 
-      if (!items || items.length === 0) {
-        throw new Error('Debe agregar al menos un producto');
-      }
+      // Permitir crear compras sin items (solo documento escaneado)
+      // Si no hay items, crear array vacío
+      const purchaseItems = items && items.length > 0 ? items : [];
 
-      return await Purchase.create(purchaseData, items);
+      return await Purchase.create(purchaseData, purchaseItems);
     } catch (error) {
       logger.error('Error in PurchaseService.createPurchase:', error);
       throw error;

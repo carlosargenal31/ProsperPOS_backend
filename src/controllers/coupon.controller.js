@@ -39,12 +39,14 @@ exports.getNextCode = async (req, res) => {
  */
 exports.getCoupons = async (req, res) => {
   try {
-    const query = `
+    const { is_active } = req.query;
+
+    let query = `
       SELECT c.*,
              cat.name as categoria_nombre,
              sub.name as subcategoria_nombre,
              p.name as producto_nombre,
-             p.codigo as producto_codigo,
+             p.code as producto_codigo,
              b.nombre as agencia_nombre
       FROM coupons c
       LEFT JOIN categories cat ON c.grupo_id = cat.id
@@ -52,8 +54,16 @@ exports.getCoupons = async (req, res) => {
       LEFT JOIN products p ON c.articulo_id = p.id
       LEFT JOIN branches b ON c.agencia_id = b.id
       WHERE c.deleted_at IS NULL
-      ORDER BY c.id DESC
     `;
+
+    // Filtrar por estado activo si se especifica
+    if (is_active === '1' || is_active === 'true') {
+      query += ` AND c.is_active = 1 AND c.suspendida = 0`;
+      query += ` AND (c.limitar_fecha = 0 OR c.fecha_hasta IS NULL OR c.fecha_hasta >= CURDATE())`;
+    }
+
+    query += ` ORDER BY c.id DESC`;
+
     const coupons = await db.query(query);
 
     // Obtener items para cupones de tipo 'multiple'
@@ -67,6 +77,12 @@ exports.getCoupons = async (req, res) => {
         const items = await db.query(itemsQuery, [coupon.id]);
         coupon.items = items;
       }
+
+      // Formatear datos para el frontend
+      coupon.code = coupon.codigo;
+      coupon.discount_type = coupon.tipo_descuento;
+      coupon.discount_value = coupon.valor_descuento;
+      coupon.valid_until = coupon.fecha_hasta;
     }
 
     return sendSuccessResponse(res, coupons, 'Cupones obtenidos exitosamente');
@@ -74,6 +90,87 @@ exports.getCoupons = async (req, res) => {
   } catch (error) {
     logger.error('Error getting coupons:', error);
     return sendErrorResponse(res, 500, 'Error al obtener cupones');
+  }
+};
+
+/**
+ * Validar cupón por código
+ */
+exports.validateCoupon = async (req, res) => {
+  try {
+    const { code } = req.params;
+
+    const query = `
+      SELECT c.*,
+             cat.name as categoria_nombre,
+             sub.name as subcategoria_nombre,
+             p.name as producto_nombre,
+             p.code as producto_codigo,
+             b.nombre as agencia_nombre
+      FROM coupons c
+      LEFT JOIN categories cat ON c.grupo_id = cat.id
+      LEFT JOIN subcategories sub ON c.subgrupo_id = sub.id
+      LEFT JOIN products p ON c.articulo_id = p.id
+      LEFT JOIN branches b ON c.agencia_id = b.id
+      WHERE c.codigo = ? AND c.deleted_at IS NULL
+    `;
+    const coupons = await db.query(query, [code.trim().toUpperCase()]);
+
+    if (coupons.length === 0) {
+      return sendErrorResponse(res, 404, 'Cupón no encontrado');
+    }
+
+    const coupon = coupons[0];
+
+    // Validar si el cupón está activo
+    if (!coupon.is_active || coupon.suspendida) {
+      return sendErrorResponse(res, 400, 'Este cupón no está activo');
+    }
+
+    // Validar fechas si está limitado por fecha
+    if (coupon.limitar_fecha) {
+      const now = new Date();
+      const fechaDesde = coupon.fecha_desde ? new Date(coupon.fecha_desde) : null;
+      const fechaHasta = coupon.fecha_hasta ? new Date(coupon.fecha_hasta) : null;
+
+      if (fechaDesde && now < fechaDesde) {
+        return sendErrorResponse(res, 400, 'Este cupón aún no es válido');
+      }
+
+      if (fechaHasta && now > fechaHasta) {
+        return sendErrorResponse(res, 400, 'Este cupón ha expirado');
+      }
+    }
+
+    // Si es múltiples artículos, obtener los productos relacionados
+    if (coupon.tipo_aplicacion === 'multiple') {
+      const productsQuery = `
+        SELECT cp.*
+        FROM coupon_products cp
+        WHERE cp.coupon_id = ?
+      `;
+      const products = await db.query(productsQuery, [coupon.id]);
+      coupon.items = products;
+    }
+
+    // Formatear la respuesta para el frontend
+    const response = {
+      id: coupon.id,
+      code: coupon.codigo,
+      name: coupon.nombre,
+      discount_type: coupon.tipo_descuento, // 'percentage' o 'fixed'
+      discount_value: coupon.valor_descuento,
+      is_active: Boolean(coupon.is_active),
+      valid_until: coupon.fecha_hasta,
+      tipo_aplicacion: coupon.tipo_aplicacion,
+      items: coupon.items || []
+    };
+
+    return sendSuccessResponse(res, response, 'Cupón validado exitosamente');
+
+  } catch (error) {
+    logger.error('Error validating coupon:', error);
+    return sendErrorResponse(res, 500, 'Error al validar cupón');
   }
 };
 
@@ -89,7 +186,7 @@ exports.getCoupon = async (req, res) => {
              cat.name as categoria_nombre,
              sub.name as subcategoria_nombre,
              p.name as producto_nombre,
-             p.codigo as producto_codigo,
+             p.code as producto_codigo,
              b.nombre as agencia_nombre
       FROM coupons c
       LEFT JOIN categories cat ON c.grupo_id = cat.id
@@ -192,18 +289,23 @@ exports.createCoupon = async (req, res) => {
 
     // Si es múltiples artículos, insertar relaciones
     if (tipo_aplicacion === 'multiple' && items && items.length > 0) {
-      const values = items.map(item => [
-        result.insertId,
-        item.product_id,
-        item.product_code || '',
-        item.product_name || '',
-        item.descuento_porcentaje || 0,
-        item.descuento_monto || 0
-      ]);
-      await db.query(
-        'INSERT INTO coupon_products (coupon_id, product_id, product_code, product_name, descuento_porcentaje, descuento_monto) VALUES ?',
-        [values]
-      );
+      const insertQuery = `
+        INSERT INTO coupon_products (
+          coupon_id, product_id, product_code, product_name,
+          descuento_porcentaje, descuento_monto
+        ) VALUES (?, ?, ?, ?, ?, ?)
+      `;
+
+      for (const item of items) {
+        await db.query(insertQuery, [
+          result.insertId,
+          item.product_id || null,
+          item.product_code || '',
+          item.product_name || '',
+          item.descuento_porcentaje || 0,
+          item.descuento_monto || 0
+        ]);
+      }
     }
 
     const newCoupon = await db.query(
@@ -304,18 +406,23 @@ exports.updateCoupon = async (req, res) => {
 
       // Insertar nuevas relaciones
       if (req.body.items.length > 0) {
-        const productValues = req.body.items.map(item => [
-          id,
-          item.product_id,
-          item.product_code || '',
-          item.product_name || '',
-          item.descuento_porcentaje || 0,
-          item.descuento_monto || 0
-        ]);
-        await db.query(
-          'INSERT INTO coupon_products (coupon_id, product_id, product_code, product_name, descuento_porcentaje, descuento_monto) VALUES ?',
-          [productValues]
-        );
+        const insertQuery = `
+          INSERT INTO coupon_products (
+            coupon_id, product_id, product_code, product_name,
+            descuento_porcentaje, descuento_monto
+          ) VALUES (?, ?, ?, ?, ?, ?)
+        `;
+
+        for (const item of req.body.items) {
+          await db.query(insertQuery, [
+            id,
+            item.product_id || null,
+            item.product_code || '',
+            item.product_name || '',
+            item.descuento_porcentaje || 0,
+            item.descuento_monto || 0
+          ]);
+        }
       }
     }
 

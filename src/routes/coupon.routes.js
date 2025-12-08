@@ -25,6 +25,13 @@ router.get('/next-code', CouponController.getNextCode);
 router.get('/', requirePermission('coupons.read'), CouponController.getCoupons);
 
 /**
+ * @route   GET /api/v1/coupons/validate/:code
+ * @desc    Validar cupón por código
+ * @access  Private
+ */
+router.get('/validate/:code', requirePermission('coupons.read'), CouponController.validateCoupon);
+
+/**
  * @route   GET /api/v1/coupons/:id
  * @desc    Obtener cupón por ID
  * @access  Private

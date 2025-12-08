@@ -140,7 +140,7 @@ class SellerReportController {
         SELECT
           company_name,
           commercial_name,
-          company_rtn as cedula,
+          company_rtn as rtn,
           company_address as direccion,
           company_phone as telefono,
           company_email as email
@@ -152,7 +152,7 @@ class SellerReportController {
       const company = results.length > 0 ? results[0] : {
         company_name: 'EMPRESA SIN CONFIGURAR',
         commercial_name: '',
-        cedula: '00000000000000',
+        rtn: '00000000000000',
         direccion: 'Sin dirección',
         telefono: 'Sin teléfono',
         email: 'sin@email.com'

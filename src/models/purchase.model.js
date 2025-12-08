@@ -15,18 +15,16 @@ class Purchase {
       const {
         search = '',
         supplier_id,
-        payment_status,
         status,
         document_type,
         date_from,
         date_to,
-        warehouse_id,
         page = 1,
         limit = 50
       } = filters;
 
       const offset = (page - 1) * limit;
-      let whereConditions = ['1=1'];
+      let whereConditions = ['1=1', 'deleted_at IS NULL', 'status != "Devuelta"']; // Excluir eliminados y devueltos
       const params = [];
 
       if (search) {
@@ -40,13 +38,8 @@ class Purchase {
       }
 
       if (supplier_id) {
-        whereConditions.push('supplier_id = ?');
-        params.push(supplier_id);
-      }
-
-      if (payment_status) {
-        whereConditions.push('payment_status = ?');
-        params.push(payment_status);
+        whereConditions.push('supplier_name = ?');
+        params.push(supplier_id); // Actually receiving supplier_name from frontend
       }
 
       if (status) {
@@ -57,11 +50,6 @@ class Purchase {
       if (document_type) {
         whereConditions.push('document_type = ?');
         params.push(document_type);
-      }
-
-      if (warehouse_id) {
-        whereConditions.push('warehouse_id = ?');
-        params.push(warehouse_id);
       }
 
       if (date_from) {
@@ -76,21 +64,34 @@ class Purchase {
 
       const whereClause = whereConditions.join(' AND ');
 
-      const [countResult] = await db.query(
-        `SELECT COUNT(*) as total FROM purchases_documents WHERE ${whereClause}`,
-        params
-      );
-      const totalRecords = countResult[0].total;
+      // Count query
+      const countQuery = `SELECT COUNT(*) as total FROM purchases_documents WHERE ${whereClause}`;
+      const countResult = await db.query(countQuery, params);
+      const totalRecords = countResult && countResult[0] ? countResult[0].total : 0;
+
+      console.log('📊 Count result:', countResult);
+      console.log('📊 Total records:', totalRecords);
+
+      // Main query - usar valores directos en lugar de placeholders para LIMIT/OFFSET
+      const limitValue = parseInt(limit) || 50;
+      const offsetValue = parseInt(offset) || 0;
 
       const query = `
         SELECT *
         FROM purchases_documents
         WHERE ${whereClause}
         ORDER BY created_at DESC
-        LIMIT ? OFFSET ?
+        LIMIT ${limitValue} OFFSET ${offsetValue}
       `;
 
-      const [purchases] = await db.query(query, [...params, parseInt(limit), parseInt(offset)]);
+      console.log('📊 Purchase.getAll - Query:', query);
+      console.log('📊 Query params:', params);
+
+      // Ejecutar query - db.query ya retorna el array de resultados directamente
+      const purchases = await db.query(query, params);
+
+      console.log('📊 Purchases found:', purchases.length);
+      console.log('📊 First purchase:', purchases[0]);
 
       return {
         data: purchases,
@@ -150,20 +151,24 @@ class Purchase {
       // Generate purchase number
       const purchaseNumber = await this.generatePurchaseNumber(connection, purchaseData.document_type);
 
-      // Calculate totals
-      let netAmount = 0;
-      let taxAmount = 0;
-      let totalAmount = 0;
+      // Calculate totals from items OR use provided values from OCR/form
+      let netAmount = parseFloat(purchaseData.net_amount || 0);
+      let taxAmount = parseFloat(purchaseData.tax_amount || 0);
+      let totalAmount = parseFloat(purchaseData.total_amount || 0);
 
-      items.forEach(item => {
-        const subtotal = parseFloat(item.quantity) * parseFloat(item.unit_price);
-        const itemDiscount = parseFloat(item.discount_amount || 0);
-        const itemTax = parseFloat(item.tax_amount || 0);
-        netAmount += (subtotal - itemDiscount);
-        taxAmount += itemTax;
-      });
-
-      totalAmount = netAmount + taxAmount;
+      // If items exist, calculate from items
+      if (items && items.length > 0) {
+        netAmount = 0;
+        taxAmount = 0;
+        items.forEach(item => {
+          const subtotal = parseFloat(item.quantity) * parseFloat(item.unit_price);
+          const itemDiscount = parseFloat(item.discount_amount || 0);
+          const itemTax = parseFloat(item.tax_amount || 0);
+          netAmount += (subtotal - itemDiscount);
+          taxAmount += itemTax;
+        });
+        totalAmount = netAmount + taxAmount;
+      }
 
       // Insert purchase
       const [result] = await connection.query(
@@ -172,35 +177,27 @@ class Purchase {
           document_type,
           purchase_date,
           agency,
-          resolution,
+          invoice_number,
           supplier_name,
           supplier_id_number,
-          buyer_name,
           status,
-          payment_status,
           net_amount,
           tax_amount,
-          discount_amount,
           total_amount,
-          warehouse_id,
           notes
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           purchaseNumber,
           purchaseData.document_type || 'FACTURA',
           purchaseData.purchase_date || new Date(),
           purchaseData.agency || 'AGENCIA PRINCIPAL',
-          purchaseData.resolution || null,
+          purchaseData.invoice_number || null,
           purchaseData.supplier_name,
           purchaseData.supplier_id_number || null,
-          purchaseData.buyer_name || null,
           purchaseData.status || 'Completed',
-          purchaseData.payment_status || 'Unpaid',
           netAmount,
           taxAmount,
-          purchaseData.discount_amount || 0,
           totalAmount,
-          purchaseData.warehouse_id || null,
           purchaseData.notes || null
         ]
       );
@@ -273,8 +270,8 @@ class Purchase {
       const params = [];
 
       const allowedFields = [
-        'supplier_name', 'supplier_id_number', 'warehouse_id',
-        'status', 'payment_status', 'notes'
+        'supplier_name', 'supplier_id_number',
+        'status', 'notes'
       ];
 
       allowedFields.forEach(field => {
@@ -290,7 +287,7 @@ class Purchase {
 
       params.push(id);
 
-      const [result] = await db.query(
+      const result = await db.query(
         `UPDATE purchases_documents SET ${updates.join(', ')} WHERE id = ?`,
         params
       );
@@ -307,17 +304,18 @@ class Purchase {
   }
 
   /**
-   * Delete a purchase
+   * Delete a purchase (soft delete)
    */
   static async delete(id) {
     try {
-      const [result] = await db.query(
-        'DELETE FROM purchases_documents WHERE id = ?',
+      // Soft delete - solo marca como eliminado, NO borra de la BD
+      const result = await db.query(
+        'UPDATE purchases_documents SET deleted_at = NOW() WHERE id = ? AND deleted_at IS NULL',
         [id]
       );
 
       if (result.affectedRows === 0) {
-        throw new Error('Compra no encontrada');
+        throw new Error('Compra no encontrada o ya fue eliminada');
       }
 
       return { message: 'Compra eliminada exitosamente' };
@@ -404,7 +402,6 @@ class Purchase {
           pd.net_amount,
           pd.tax_amount,
           pd.total_amount,
-          pd.payment_status,
           pd.status,
           COUNT(pdi.id) as items_count
         FROM purchases_documents pd
@@ -439,9 +436,7 @@ class Purchase {
           COUNT(DISTINCT pd.id) as total_documents,
           SUM(pd.net_amount) as total_net,
           SUM(pd.tax_amount) as total_tax,
-          SUM(pd.total_amount) as total_amount,
-          SUM(CASE WHEN pd.payment_status = 'Paid' THEN pd.total_amount ELSE 0 END) as total_paid,
-          SUM(CASE WHEN pd.payment_status IN ('Unpaid', 'Partial', 'Overdue') THEN pd.total_amount ELSE 0 END) as total_pending
+          SUM(pd.total_amount) as total_amount
         FROM purchases_documents pd
         WHERE ${whereClause}`,
         params
@@ -454,9 +449,7 @@ class Purchase {
           total_documents: 0,
           total_net: 0,
           total_tax: 0,
-          total_amount: 0,
-          total_paid: 0,
-          total_pending: 0
+          total_amount: 0
         },
         filters: {
           date_from: date_from || null,
@@ -522,7 +515,6 @@ class Purchase {
           pd.net_amount,
           pd.tax_amount,
           pd.total_amount,
-          pd.payment_status,
           pd.status,
           pd.notes
         FROM purchases_documents pd
@@ -535,9 +527,7 @@ class Purchase {
       const [totals] = await db.query(
         `SELECT
           COUNT(*) as total_purchases,
-          SUM(total_amount) as total_amount,
-          SUM(CASE WHEN payment_status = 'Paid' THEN total_amount ELSE 0 END) as total_paid,
-          SUM(CASE WHEN payment_status IN ('Unpaid', 'Partial', 'Overdue') THEN total_amount ELSE 0 END) as total_pending
+          SUM(total_amount) as total_amount
         FROM purchases_documents pd
         WHERE ${whereClause}`,
         params
@@ -548,9 +538,7 @@ class Purchase {
         transactions,
         totals: totals[0] || {
           total_purchases: 0,
-          total_amount: 0,
-          total_paid: 0,
-          total_pending: 0
+          total_amount: 0
         },
         filters: {
           date_from: date_from || null,

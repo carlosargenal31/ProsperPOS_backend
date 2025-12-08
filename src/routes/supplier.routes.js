@@ -29,7 +29,17 @@ router.get('/',
         WHERE s.deleted_at IS NULL
         ORDER BY s.id ASC
       `;
+
+      // IMPORTANTE: db.query ya devuelve solo el array de rows (no [rows, fields])
       const suppliers = await db.query(query);
+
+      console.log('📊 Suppliers endpoint - Sending response:', {
+        totalSuppliers: Array.isArray(suppliers) ? suppliers.length : 'NOT AN ARRAY!',
+        suppliersType: typeof suppliers,
+        isArray: Array.isArray(suppliers),
+        firstSupplier: Array.isArray(suppliers) && suppliers.length > 0 ? suppliers[0] : null,
+        allSuppliers: suppliers
+      });
 
       return sendSuccessResponse(res, suppliers, 'Proveedores obtenidos exitosamente');
 
@@ -52,7 +62,7 @@ router.get('/:id',
     try {
       const { id } = req.params;
 
-      const suppliers = await db.query(
+      const [suppliers] = await db.query(
         'SELECT * FROM suppliers WHERE id = ? AND deleted_at IS NULL',
         [id]
       );
@@ -104,13 +114,13 @@ router.post('/',
         ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
       `;
 
-      const result = await db.query(query, [
+      const [result] = await db.query(query, [
         nombre, tipo_proveedor || null, doc_identificacion || null,
         usa_credito !== undefined ? usa_credito : false, tipo_beneficiario || '1',
         is_active !== undefined ? is_active : true, created_by
       ]);
 
-      const newSupplier = await db.query(
+      const [newSupplier] = await db.query(
         'SELECT * FROM suppliers WHERE id = ?',
         [result.insertId]
       );
@@ -137,7 +147,7 @@ router.put('/:id',
       const updated_by = req.user.id;
 
       // Verificar que existe
-      const existing = await db.query(
+      const [existing] = await db.query(
         'SELECT id FROM suppliers WHERE id = ? AND deleted_at IS NULL',
         [id]
       );
@@ -174,7 +184,7 @@ router.put('/:id',
       const query = `UPDATE suppliers SET ${updates.join(', ')} WHERE id = ?`;
       await db.query(query, values);
 
-      const updatedSupplier = await db.query(
+      const [updatedSupplier] = await db.query(
         'SELECT * FROM suppliers WHERE id = ?',
         [id]
       );
@@ -201,7 +211,7 @@ router.delete('/:id',
       const deleted_by = req.user.id;
 
       // Verificar que existe
-      const existing = await db.query(
+      const [existing] = await db.query(
         'SELECT id FROM suppliers WHERE id = ? AND deleted_at IS NULL',
         [id]
       );
@@ -211,13 +221,13 @@ router.delete('/:id',
       }
 
       // Verificar si tiene compras asociadas
-      const purchases = await db.query(
+      const [purchases] = await db.query(
         'SELECT COUNT(*) as count FROM purchases WHERE supplier_id = ?',
         [id]
       );
 
       if (purchases[0].count > 0) {
-        return sendErrorResponse(res, 409, 
+        return sendErrorResponse(res, 409,
           `No se puede eliminar el proveedor porque tiene ${purchases[0].count} compra(s) asociada(s)`
         );
       }

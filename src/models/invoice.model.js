@@ -231,8 +231,8 @@ class Invoice {
     try {
       await connection.beginTransaction();
 
-      // Generate invoice number
-      const invoiceNumber = await this.generateInvoiceNumber(connection);
+      // Use invoice_number from frontend if provided, otherwise generate one
+      const invoiceNumber = invoiceData.invoice_number || await this.generateInvoiceNumber(connection);
 
       // Calculate totals
       const totals = this.calculateTotals(items, invoiceData.discount_type, invoiceData.discount_value);
