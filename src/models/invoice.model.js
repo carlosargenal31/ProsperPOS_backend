@@ -5,6 +5,7 @@
 
 const db = require('../utils/database');
 const logger = require('../utils/logger');
+const { getHondurasDateTime } = require('../utils/helpers');
 
 class Invoice {
   /**
@@ -281,7 +282,7 @@ class Invoice {
           invoiceData.customer_id || null,
           invoiceData.customer_name,
           invoiceData.customer_rtn || null,
-          invoiceData.issue_date || new Date(),
+          invoiceData.issue_date || getHondurasDateTime(),
           invoiceData.warehouse_id || null,
           invoiceData.seller_id || null,
           invoiceData.seller_name || null,

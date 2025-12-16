@@ -111,6 +111,15 @@ class AccountStatementController {
         try {
           console.log('\n--- COTIZACIONES ---');
 
+          // Primero actualizar las cotizaciones vencidas (15 días o más desde la creación)
+          await db.query(`
+            UPDATE quotes
+            SET status = 'expired'
+            WHERE status = 'active'
+              AND DATE_ADD(DATE(quote_date), INTERVAL 15 DAY) <= CURDATE()
+              AND deleted_at IS NULL
+          `);
+
           let query = `
             SELECT
               q.id,
@@ -189,6 +198,15 @@ class AccountStatementController {
       if (!document_type || document_type === 'factura_espera') {
         try {
           console.log('\n--- FACTURAS EN ESPERA ---');
+
+          // Primero actualizar las facturas vencidas (más de 1 día desde la creación)
+          await db.query(`
+            UPDATE pending_invoices
+            SET status = 'expired'
+            WHERE status = 'pending'
+              AND DATE(created_at) < CURDATE()
+              AND deleted_at IS NULL
+          `);
 
           let query = `
             SELECT
@@ -343,6 +361,8 @@ class AccountStatementController {
               sr.id,
               'devolucion' as type,
               sr.correlative as document_number,
+              cn.credit_note_number,
+              cn.correlative as credit_note_correlative,
               sr.emission_date,
               sr.customer_id,
               sr.customer_name,
@@ -358,6 +378,7 @@ class AccountStatementController {
               'completed' as status,
               CONCAT(u.first_name, ' ', u.last_name) as created_by_name
             FROM sales_returns sr
+            LEFT JOIN credit_notes cn ON sr.id = cn.sales_return_id
             LEFT JOIN invoices i ON sr.invoice_id = i.id
             LEFT JOIN branches b ON i.warehouse_id = b.id
             LEFT JOIN users u ON sr.created_by = u.id
@@ -415,7 +436,10 @@ class AccountStatementController {
             SELECT
               sr.id,
               'nota_credito' as type,
-              sr.correlative as document_number,
+              COALESCE(cn.credit_note_number, cn.correlative, sr.correlative) as document_number,
+              cn.credit_note_number,
+              cn.correlative as credit_note_correlative,
+              sr.correlative,
               sr.emission_date,
               sr.customer_id,
               sr.customer_name,
@@ -431,6 +455,7 @@ class AccountStatementController {
               'completed' as status,
               CONCAT(u.first_name, ' ', u.last_name) as created_by_name
             FROM sales_returns sr
+            LEFT JOIN credit_notes cn ON sr.id = cn.sales_return_id
             LEFT JOIN invoices i ON sr.invoice_id = i.id
             LEFT JOIN branches b ON i.warehouse_id = b.id
             LEFT JOIN users u ON sr.created_by = u.id
@@ -706,12 +731,14 @@ class AccountStatementController {
         const result = await db.query(`
           SELECT
             sr.id,
-            sr.return_type as type,
+            ? as type,
             sr.correlative as document_number,
+            cn.credit_note_number,
+            cn.correlative as credit_note_correlative,
             sr.emission_date,
             sr.customer_id,
             sr.customer_name,
-            '' as customer_rtn,
+            i.customer_rtn,
             0 as seller_id,
             '' as seller_name,
             i.warehouse_id as branch_id,
@@ -720,17 +747,28 @@ class AccountStatementController {
             sr.subtotal,
             sr.discount,
             sr.tax,
-            'completed' as status
+            sr.invoice_number,
+            sr.notes,
+            'completed' as status,
+            CONCAT(u.first_name, ' ', u.last_name) as created_by_name
           FROM sales_returns sr
+          LEFT JOIN credit_notes cn ON sr.id = cn.sales_return_id
           LEFT JOIN invoices i ON sr.invoice_id = i.id
           LEFT JOIN branches b ON i.warehouse_id = b.id
+          LEFT JOIN users u ON sr.created_by = u.id
           WHERE sr.id = ?
-        `, [id]);
+        `, [type, id]);
 
         let returns = Array.isArray(result) && Array.isArray(result[0]) ? result[0] : result;
 
         if (returns && returns.length > 0) {
           document = returns[0];
+          // Si es nota de crédito, usar el correlativo de la nota, sino usar el de la devolución
+          if (type === 'nota_credito') {
+            document.correlative = document.credit_note_correlative || document.credit_note_number || document.document_number;
+          } else {
+            document.correlative = document.document_number;
+          }
 
           const itemsResult = await db.query(`
             SELECT

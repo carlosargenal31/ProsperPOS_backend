@@ -38,7 +38,7 @@ class PendingInvoicesController {
       const countSql = 'SELECT COUNT(*) as total FROM pending_invoices';
       const countResult = await db.query(countSql);
       const docCount = countResult[0].total + 1;
-      const documentNumber = `FACT EN ESPERA ${String(docCount).padStart(10, '0')}`;
+      const documentNumber = String(docCount).padStart(10, '0');
 
       // Insertar factura en espera
       const insertSql = `

@@ -133,41 +133,61 @@ class ReprintController {
           break;
 
         case 'FACT EN ESPERA':
+          // Primero actualizar las facturas vencidas (más de 1 día desde la creación)
+          await db.query(`
+            UPDATE pending_invoices
+            SET status = 'expired'
+            WHERE status = 'pending'
+              AND DATE(created_at) < CURDATE()
+              AND deleted_at IS NULL
+          `);
+
           sql = `
             SELECT
-              po.id,
-              po.order_number as document_number,
-              po.order_number as full_number,
-              po.created_at as issue_date,
-              NULL as expiry_date,
-              po.customer_name,
-              po.seller_name,
-              po.total,
+              pi.id,
+              pi.document_number as document_number,
+              pi.document_number as full_number,
+              pi.created_at as issue_date,
+              DATE(pi.created_at) as expiry_date,
+              pi.customer_name,
+              pi.seller_name,
+              CONCAT(u.first_name, ' ', u.last_name) as created_by_name,
+              pi.total,
+              pi.status,
               'FACT EN ESPERA' as document_type
-            FROM pending_orders po
-            WHERE po.deleted_at IS NULL
-              AND po.status = 'pending'
+            FROM pending_invoices pi
+            LEFT JOIN users u ON pi.created_by = u.id
+            WHERE 1=1
           `;
 
           if (searchQuery) {
-            sql += ` AND (po.order_number LIKE ? OR po.customer_name LIKE ?)`;
+            sql += ` AND (pi.document_number LIKE ? OR pi.customer_name LIKE ?)`;
             params.push(`%${searchQuery}%`, `%${searchQuery}%`);
           }
 
           if (dateFrom) {
-            sql += ` AND po.created_at >= ?`;
+            sql += ` AND DATE(pi.created_at) >= ?`;
             params.push(dateFrom);
           }
 
           if (dateTo) {
-            sql += ` AND po.created_at <= ?`;
+            sql += ` AND DATE(pi.created_at) <= ?`;
             params.push(dateTo);
           }
 
-          sql += ` ORDER BY po.created_at DESC LIMIT 100`;
+          sql += ` ORDER BY pi.created_at DESC LIMIT 100`;
           break;
 
         case 'COTIZACION':
+          // Primero actualizar las cotizaciones vencidas (15 días o más desde la creación)
+          await db.query(`
+            UPDATE quotes
+            SET status = 'expired'
+            WHERE status = 'active'
+              AND DATE_ADD(DATE(quote_date), INTERVAL 15 DAY) <= CURDATE()
+              AND deleted_at IS NULL
+          `);
+
           sql = `
             SELECT
               q.id,
@@ -211,13 +231,13 @@ class ReprintController {
               s.emission_date as issue_date,
               NULL as expiry_date,
               s.customer_name,
-              CONCAT(u.first_name, ' ', u.last_name) as created_by_name,
-              s.total_amount as total,
+              IFNULL(CONCAT(u.first_name, ' ', u.last_name), 'N/A') as created_by_name,
+              COALESCE(s.declared_value, 0) as total,
               'Completada' as status,
               'GUIA DE REMISION' as document_type
             FROM shipments s
             LEFT JOIN users u ON s.created_by = u.id
-            WHERE s.deleted_at IS NULL
+            WHERE 1=1
           `;
 
           if (searchQuery) {
@@ -235,6 +255,11 @@ class ReprintController {
             params.push(dateTo);
           }
 
+          if (branch) {
+            sql += ` AND s.origin_branch_id = ?`;
+            params.push(branch);
+          }
+
           sql += ` ORDER BY s.created_at DESC LIMIT 100`;
           break;
 
@@ -245,6 +270,8 @@ class ReprintController {
           });
       }
 
+      console.log('SQL Query:', sql);
+      console.log('Params:', params);
       documents = await db.query(sql, params);
 
       res.json({
@@ -252,6 +279,7 @@ class ReprintController {
         data: documents
       });
     } catch (error) {
+      console.log('Error en searchDocuments:', error.message);
       logger.error('Error in ReprintController.searchDocuments:', error);
       res.status(500).json({
         success: false,
@@ -439,13 +467,13 @@ class ReprintController {
   static async getPendingOrderDetails(id) {
     const sql = `
       SELECT
-        po.*,
-        po.customer_rtn,
-        po.order_number as correlative,
+        pi.*,
+        pi.customer_rtn,
+        pi.document_number as correlative,
         b.nombre as branch_name
-      FROM pending_orders po
-      LEFT JOIN branches b ON po.branch_id = b.id
-      WHERE po.id = ?
+      FROM pending_invoices pi
+      LEFT JOIN branches b ON pi.branch_id = b.id
+      WHERE pi.id = ?
     `;
 
     const results = await db.query(sql, [id]);
@@ -456,12 +484,12 @@ class ReprintController {
     // Obtener items
     const itemsSql = `
       SELECT
-        poi.*,
+        pii.*,
         p.code as product_code,
         p.name as product_name
-      FROM pending_order_items poi
-      LEFT JOIN products p ON poi.product_id = p.id
-      WHERE poi.pending_order_id = ?
+      FROM pending_invoice_items pii
+      LEFT JOIN products p ON pii.product_id = p.id
+      WHERE pii.pending_invoice_id = ?
     `;
 
     const items = await db.query(itemsSql, [id]);
@@ -508,11 +536,13 @@ class ReprintController {
     const sql = `
       SELECT
         s.*,
-        s.customer_rtn,
+        s.customer_document as customer_rtn,
         s.shipment_number as correlative,
-        b.nombre as branch_name
+        b.nombre as branch_name,
+        e.dni as driver_dni_employee
       FROM shipments s
-      LEFT JOIN branches b ON s.branch_id = b.id
+      LEFT JOIN branches b ON s.origin_branch_id = b.id
+      LEFT JOIN hr_employees e ON s.driver_name = CONCAT(e.nombre, ' ', e.apellido)
       WHERE s.id = ?
     `;
 
@@ -521,19 +551,58 @@ class ReprintController {
 
     const shipment = results[0];
 
+    // Usar DNI del empleado si existe, sino usar el que está guardado en shipments
+    if (shipment.driver_dni_employee) {
+      shipment.driver_id = shipment.driver_dni_employee;
+    }
+
     // Obtener items
     const itemsSql = `
       SELECT
         si.*,
-        p.code as product_code,
-        p.name as product_name
+        si.product_code,
+        si.product_name,
+        p.weight
       FROM shipment_items si
       LEFT JOIN products p ON si.product_id = p.id
       WHERE si.shipment_id = ?
     `;
 
     const items = await db.query(itemsSql, [id]);
+
+    // Si el item no tiene peso en shipment_items, usar el del producto
+    items.forEach(item => {
+      if (!item.weight || item.weight === 0) {
+        item.weight = item.weight || 0;
+      }
+    });
+
     shipment.items = items;
+
+    // Obtener documentos involucrados (si la tabla existe)
+    try {
+      const docsSql = `
+        SELECT * FROM shipment_documents
+        WHERE shipment_id = ?
+        ORDER BY id
+      `;
+      const documents = await db.query(docsSql, [id]);
+      shipment.documents = documents || [];
+      console.log('Documentos encontrados:', documents.length);
+    } catch (error) {
+      // Si la tabla no existe, simplemente no agregamos documentos
+      console.log('Error al obtener documentos (tabla podría no existir):', error.message);
+      shipment.documents = [];
+    }
+
+    console.log('Shipment final:', {
+      id: shipment.id,
+      companion1_name: shipment.companion1_name,
+      companion2_name: shipment.companion2_name,
+      receiver_alt_name: shipment.receiver_alt_name,
+      receiver_alt2_name: shipment.receiver_alt2_name,
+      documents_count: shipment.documents.length
+    });
 
     return shipment;
   }

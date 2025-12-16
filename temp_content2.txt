@@ -1,0 +1,300 @@
+La pantalla de inicio de sesión es el punto de acceso principal al sistema ProsperPOS. Presenta el logotipo de la aplicación en la parte superior, seguido del título "Iniciar Sesión" con su respectivo subtítulo explicativo. El formulario de acceso incluye dos campos principales: Email o Usuario donde se ingresa el correo electrónico o nombre de usuario, y Contraseña con visualización oculta mediante asteriscos. Debajo de estos campos se encuentra la opción "Recordarme" para mantener la sesión activa, junto al enlace "¿Olvidaste tu contraseña?" que permite la recuperación de credenciales mediante verificación SMTP en la base de datos. El botón naranja "Iniciar Sesión" completa el formulario y da acceso al panel administrativo del sistema.
+Pantalla de Clientes
+
+Ilustración ‎5.6.1.2 Lista de Clientes
+La pantalla principal de clientes muestra una tabla completa con todos los clientes registrados en el sistema. Esta tabla incluye columnas para Código (identificador único del cliente), Nombre (razón social o nombre del cliente), Estado (badge verde para Activo o rojo para Inactivo) y Acciones. En la parte superior de la pantalla se encuentran los botones para exportar la información en formato PDF y Excel (botón verde), así como los controles para recargar la página y minimizar el encabezado. A la derecha se ubica el botón naranja "Agregar Nuevo Cliente" que despliega el modal de registro. Los clientes registrados pueden ser seleccionados durante el proceso de facturación y son utilizados para generar reportes de ventas, y estados de cuenta.
+
+Ilustración ‎5.6.1.3 Agregar Cliente
+Al presionar el botón "Agregar Nuevo Cliente", se despliega un modal con el formulario de registro. Este incluye los campos Código (generado automáticamente), Nombre completo del cliente, Nombre Comercial y Código Tipo Precio para asignar lista de precios específica. También solicita el Documento de Identificación (RTN/DNI) de 14 dígitos, Teléfono de contacto, Email y Fecha de Inicio para registrar desde cuándo es cliente. El campo Dirección permite ingresar la ubicación completa del cliente, seguido de Descuento (%) para aplicar descuentos automáticos y Persona de Contacto. El toggle "Activo" permite definir si el cliente está habilitado en el sistema. Los botones Cancelar y Guardar completan la acción de registro.
+
+Ilustración ‎5.6.1.4 Visualizar Cliente
+La acción de visualización se activa mediante el icono de ojo en la columna de Acciones. Este modal muestra todos los datos del cliente en modo de solo lectura, sin permitir modificaciones. Se presenta la misma estructura del formulario de registro pero con los campos deshabilitados para edición. Esta función es útil para consultar rápidamente la información completa de un cliente sin riesgo de modificar accidentalmente sus datos. El modal incluye únicamente los botones para Cerrar (X) y el botón "Cerrar" en la parte inferior.
+
+Ilustración ‎5.6.1.5 Editar Cliente
+El modal de edición se accede mediante el icono de lápiz en las acciones de cada cliente. Presenta exactamente los mismos campos que el formulario de agregar cliente, pero precargados con la información actual del registro seleccionado. Todos los campos son editables, permitiendo actualizar cualquier dato del cliente como nombre, documento de identificación, contacto, dirección, descuentos aplicables o estado. El botón "Guardar Cambios" (color naranja) confirma las modificaciones realizadas, mientras que el botón Cancelar descarta los cambios y cierra el modal sin afectar la información original.
+
+Ilustración ‎5.6.1.6 Eliminar Cliente
+Al hacer clic en el icono de basurero, se muestra un modal de confirmación para eliminar el cliente. Este diálogo presenta un icono de advertencia en rojo junto al mensaje "Eliminar Cliente" y la pregunta de confirmación "¿Estás seguro de que deseas eliminar este cliente?". El modal ofrece dos opciones: el botón "Cancelar" (gris oscuro) que aborta la operación y cierra el modal, y el botón "Sí, Eliminar" (rojo) que ejecuta la eliminación definitiva del registro. Esta acción debe realizarse con precaución ya que la eliminación de un cliente puede afectar el historial de ventas y reportes asociados.
+Pantalla De Proveedores
+
+Ilustración ‎5.6.1.7 Lista de Proveedores
+La pantalla de administración de proveedores presenta una tabla detallada con todos los proveedores registrados. Las columnas incluyen ID (número secuencial), Nombre del proveedor, Tipo Proveedor (Nacional, Internacional), Doc. Identificación con el formato de RTN hondureño de 14 dígitos, Tipo Beneficiario mostrado en badge azul (Jurídica Domiciliada, Natural Residente, etc.), Estado (Activo/Inactivo) y Acciones con los iconos de visualizar, editar y eliminar. La barra superior contiene las opciones de exportación a PDF y Excel, actualización de datos y el botón principal "Agregar Proveedor" en color naranja. Los proveedores son fundamentales para el módulo de compras, permitiendo registrar órdenes de compra, controlar inventario entrante y gestionar cuentas por pagar.
+
+Ilustración ‎5.6.1.8 Agregar Proveedor
+El formulario de nuevo proveedor se despliega en un modal con los campos esenciales para el registro. Incluye Nombre del proveedor (razón social), Tipo de Proveedor con opciones como Nacional o Internacional (opcional), y Doc. Identificación para ingresar el RTN o número de identificación fiscal. El campo Tipo Beneficiario es un selector desplegable con opciones precargadas como Jurídica Domiciliada, Natural Residente, etc. El toggle "Usa Crédito" permite habilitar líneas de crédito con el proveedor, mientras que el toggle "Activo" define si está habilitado para operaciones. Los botones Cancelar y Guardar completan el proceso de registro. 
+
+Ilustración ‎5.6.1.9 Visualizar Proveedor
+La visualización de proveedores muestra todos los campos en modo de solo lectura. No permite ninguna modificación de datos y sirve únicamente para consultar rápidamente la información completa de un proveedor específico. Esta función es especialmente útil cuando múltiples usuarios necesitan consultar información sin riesgo de alterarla accidentalmente.
+
+Ilustración ‎5.6.1.10 Editar Proveedor
+
+La edición de proveedores mantiene la misma estructura del formulario de agregar, pero con los datos actuales del proveedor seleccionado. Permite modificar el nombre, tipo de proveedor, documento de identificación, tipo de beneficiario y los estados de uso de crédito y activo. Esta función es útil cuando cambian las condiciones comerciales con un proveedor, se actualiza su información fiscal o se necesita desactivar temporalmente un proveedor sin eliminarlo del sistema. El botón "Guardar Cambios" confirma las modificaciones mientras que Cancelar descarta los cambios.
+
+Ilustración ‎5.6.1.11 Eliminar Proveedor
+El modal de eliminación presenta el mensaje de confirmación "¿Estás seguro? ¿Deseas eliminar este proveedor?" con el icono de advertencia en rojo. Ofrece las opciones de Cancelar para abortar la operación o "Sí, Eliminar" para confirmar. Es importante considerar que eliminar un proveedor puede afectar el historial de compras, órdenes pendientes y reportes asociados, por lo que se recomienda verificar estas dependencias antes de proceder.
+
+Pantalla de Sucursales
+
+Ilustración ‎5.6.1.12 Lista de Sucursales
+La pantalla de sucursales administra las diferentes tiendas o puntos de venta de la empresa. La tabla muestra columnas para ID, Nombre de la sucursal, Ciudad donde se encuentra ubicada, Departamento, Gerente responsable, Teléfono de contacto, Estado (Activo/Inactivo) y Acciones. En la parte superior se encuentran los botones de exportación a PDF y Excel, actualización de página y el botón naranja "Agregar Nueva Sucursal". Las sucursales son esenciales para el control de inventario multi-tienda, asignación de personal, generación de reportes por ubicación y gestión de ventas descentralizadas. Cada sucursal puede tener su propio stock, personal y configuración de precios.
+
+Ilustración ‎5.6.1.13 Agregar Sucursal
+El modal de nueva sucursal incluye el campo Nombre para identificar la tienda o punto de venta, Ciudad con selector desplegable de ciudades registradas en el sistema, y Dirección para especificar la ubicación exacta completa. El campo Teléfono almacena el número de contacto principal de la sucursal, Correo Electrónico para comunicaciones oficiales, y Gerente con el nombre del responsable de la sucursal. El toggle Estado permite activar o desactivar la sucursal en el sistema. Los botones Cancelar y Guardar completan el registro.
+
+Ilustración ‎5.6.1.14 Visualizar Sucursal
+La acción de visualización se activa mediante el icono de ojo en la columna de Acciones. Este modal muestra todos los datos de la sucursal en modo de solo lectura, sin permitir modificaciones.
+
+Ilustración ‎5.6.1.15 Editar Sucursal
+La edición de sucursales permite modificar todos los campos del registro original. Resulta útil cuando se cambia de gerente, se actualiza información de contacto, se modifica la dirección física o cuando una sucursal necesita ser desactivada temporalmente sin eliminarla del sistema. Todos los datos históricos y transacciones vinculadas a la sucursal se mantienen intactos. El botón "Guardar Cambios" confirma las modificaciones realizadas.
+
+Ilustración ‎5.6.1.16 Eliminar Sucursal
+El modal de confirmación pregunta "¿Estás seguro? ¿Deseas eliminar esta sucursal?" con el icono de advertencia. La eliminación de una sucursal es una operación crítica que debe evaluarse cuidadosamente ya que puede afectar inventarios, ventas históricas, asignación de personal y reportes. Se recomienda verificar que no existan transacciones pendientes o inventario activo antes de proceder con la eliminación.
+
+Pantalla de Bodegas
+
+Ilustración ‎5.6.1.17 Lista de Bodegas
+La administración de bodegas controla los almacenes o centros de distribución de la empresa. La tabla presenta columnas de ID, Nombre de la bodega, Encargado responsable, Ubicación física completa, Estado y Acciones. Las bodegas son fundamentales para el control de inventario, gestión de entradas y salidas de mercancía, traslados entre ubicaciones y reportes de stock por almacén. Cada bodega puede estar asociada a una o varias sucursales, permitiendo un control preciso de la distribución de productos. La barra superior incluye exportación a PDF/Excel y el botón "Agregar Nueva Bodega".
+
+Ilustración ‎5.6.1.18 Agregar Bodega
+El formulario de nueva bodega solicita el Nombre identificativo del almacén, Encargado con el nombre del responsable (opcional) y Ubicación con la dirección completa del centro de distribución o almacén. El toggle Activa permite habilitar o deshabilitar la bodega para operaciones de inventario. Una bodega inactiva no puede recibir ni despachar mercancía, pero mantiene su información histórica para consultas y auditorías.
+
+Ilustración ‎5.6.1.19 Visualizar Bodega
+El modal de visualización de bodegas se accede mediante el icono de ojo. Muestra en modo de solo lectura el nombre de la bodega, encargado responsable, ubicación física del almacén y estado actual.
+
+Ilustración ‎5.6.1.20 Editar Bodega
+La edición permite actualizar el nombre de la bodega, cambiar el encargado responsable, modificar la ubicación física o cambiar el estado activo/inactivo. Esta función es útil cuando se reorganiza la estructura de almacenamiento, se cambia personal o se actualiza información de ubicación. Todas las transacciones y movimientos de inventario previos se mantienen vinculados a la bodega.
+
+Ilustración ‎5.6.1.21 Eliminar Bodega
+El modal de confirmación solicita verificar la eliminación con el mensaje "¿Estás seguro de que deseas eliminar esta bodega?". Es crucial verificar que la bodega no tenga inventario activo, transferencias pendientes o movimientos sin cerrar antes de eliminarla. La eliminación puede afectar reportes históricos y trazabilidad de productos.
+
+Pantalla de Vehículos
+
+Ilustración ‎5.6.1.22 Lista de Vehículos
+La gestión de vehículos registra la flota de transporte de la empresa para entregas y distribución. La tabla muestra ID, Placa de identificación, Marca del vehículo, Modelo específico, Color, Estado (Activo/Inactivo) y Acciones. Los vehículos registrados pueden asignarse a rutas de entrega, empleados conductores, y son útiles para control de gastos de combustible, mantenimiento y logística. Esta información es valiosa para reportes de distribución y control de activos de la empresa.
+
+Ilustración ‎5.6.1.23 Agregar Vehículo
+El formulario de nuevo vehículo incluye Placa con el número de matrícula oficial, Marca del fabricante (ej: Toyota, Honda, Hino), Modelo específico del vehículo (ej: Hilux 2020), y Color para identificación visual. El toggle Estado define si el vehículo está disponible para operaciones o fuera de servicio por mantenimiento o reparación.
+
+Ilustración ‎5.6.1.24 Visualizar Vehículo
+La visualización de vehículos muestra todos los detalles en modo de consulta únicamente. El modal presenta placa de identificación, marca, modelo, color y estado de disponibilidad.
+
+Ilustración ‎5.6.1.25 Editar Vehículo
+La edición permite actualizar cualquier información del vehículo como placa (en caso de renovación), marca y modelo si hubo error en el registro inicial, color si fue repintado, y especialmente el estado para marcarlo como inactivo durante períodos de mantenimiento o cuando sale de la flota.
+
+Ilustración ‎5.6.1.26 Eliminar Vehículo
+La confirmación de eliminación pregunta "¿Estás seguro? ¿Deseas eliminar este vehículo?". Antes de eliminar se debe verificar que no existan asignaciones activas de entregas, rutas pendientes o registros de mantenimiento sin cerrar vinculados al vehículo.
+
+Pantalla de Países 
+
+Ilustración ‎5.6.1.27 Lista de Países
+La administración de países gestiona los territorios disponibles en el sistema para direcciones y ubicaciones. La tabla muestra ID, Nombre del país, Código ISO estándar internacional, Departamentos asociados, Estado y Acciones. Este catálogo es base para la estructura geográfica jerárquica del sistema que continúa con departamentos y ciudades. Permite gestionar direcciones correctamente estructuradas para clientes, proveedores, sucursales y empleados.
+
+Ilustración ‎5.6.1.28 Agregar País
+El formulario incluye Nombre del país completo y Código ISO con el estándar internacional de dos o tres letras. El toggle Activo permite habilitar o deshabilitar países según las operaciones comerciales de la empresa. Un país inactivo no aparece en selectores pero mantiene sus registros históricos.
+
+Ilustración ‎5.6.1.29 Visualizar País
+El modal presenta en modo de solo lectura el nombre completo del país, código ISO estándar internacional, número de departamentos asociados y estado activo/inactivo.
+
+Ilustración ‎5.6.1.30 Editar País
+Permite modificar el nombre del país para correcciones ortográficas, actualizar el código ISO si fue ingresado incorrectamente, o cambiar el estado activo/inactivo según la expansión o reducción de operaciones geográficas.
+
+Ilustración ‎5.6.1.31 Eliminar País
+La confirmación solicita verificar con "¿Estás seguro de que deseas eliminar este país?". Es importante considerar que eliminar un país puede afectar todos los departamentos, ciudades y registros asociados como clientes, proveedores y sucursales ubicados en ese territorio.
+
+Pantalla de Departamentos (Ubicaciones)
+
+Ilustración ‎5.6.1.32 Lista de Departamentos
+La gestión de departamentos administra las divisiones territoriales de primer nivel dentro de cada país (estados, provincias, departamentos según la nomenclatura local). La tabla presenta ID, Nombre del departamento, País al que pertenece, Estado y Acciones. Los departamentos son parte de la estructura geográfica que permite organizar ciudades y generar reportes por región. Son útiles para análisis de ventas por zona, planificación logística y segmentación de mercado.
+
+Ilustración ‎5.6.1.33 Agregar Departamento
+El formulario solicita Nombre del departamento y País mediante selector desplegable con los países activos en el sistema. El toggle Activo permite habilitar o deshabilitar departamentos según necesidades operativas. Un departamento inactivo no aparece en selectores pero preserva información histórica.
+
+Ilustración ‎5.6.1.34 Visualizar Departamento
+
+La visualización muestra el nombre del departamento o estado, el país al que pertenece y el estado de disponibilidad. Los campos se presentan en modo de solo lectura con indicadores visuales claros.
+
+Ilustración ‎5.6.1.35 Editar Departamento
+Permite modificar el nombre del departamento para correcciones, cambiar el país asignado en caso de error de registro, o actualizar el estado activo/inactivo. Las ciudades y registros asociados al departamento se mantienen vinculados.
+
+
+Ilustración ‎5.6.1.36 Eliminar Departamento
+El modal confirma con "¿Estás seguro de que deseas eliminar este departamento?". La eliminación puede afectar todas las ciudades contenidas, así como clientes, proveedores, sucursales y empleados registrados en ese departamento.
+
+Pantalla de Ciudades/Municipios
+
+Ilustración ‎5.6.1.37 Lista de Ciudades
+La administración de ciudades completa la estructura geográfica del sistema. La tabla muestra ID, Nombre de la ciudad o municipio, Departamento al que pertenece, País, Estado y Acciones. Las ciudades son el nivel más específico de ubicación y se utilizan en direcciones de clientes, proveedores, sucursales, bodegas y empleados. Permiten generar reportes detallados por localidad y son fundamentales para planificación de rutas de entrega y análisis de mercado local.
+
+Ilustración ‎5.6.1.38 Agregar Ciudad
+El formulario incluye Nombre de la ciudad o municipio y Departamento mediante selector desplegable con los departamentos activos. El sistema automáticamente vincula la ciudad al país correspondiente del departamento seleccionado. El toggle Activa permite habilitar o deshabilitar ciudades en el sistema.
+
+Ilustración ‎5.6.1.39 Visualizar Ciudad
+
+El modal presenta el nombre de la ciudad, departamento al que pertenece (que define automáticamente el país) y estado. Todos los campos aparecen deshabilitados para edición.
+
+Ilustración ‎5.6.1.40 Editar Ciudad
+Permite modificar el nombre de la ciudad para correcciones ortográficas, cambiar el departamento asignado si fue registrado incorrectamente, o actualizar el estado. Los registros de clientes, proveedores y sucursales asociados se mantienen vinculados a la ciudad.
+
+Ilustración ‎5.6.1.41 Eliminar Ciudad
+La confirmación pregunta "¿Estás seguro de que deseas eliminar esta ciudad?". Es importante verificar que no existan direcciones activas de clientes, proveedores, sucursales o empleados asociados a la ciudad antes de eliminarla para mantener la integridad referencial del sistema.
+
+Pantalla Gestión de Recursos Humanos – Departamentos
+
+Ilustración ‎5.6.1.42 Lista de Departamentos RH
+La pantalla de departamentos de recursos humanos organiza las áreas funcionales de la empresa. La tabla muestra ID, Nombre del departamento, Descripción de sus funciones, Cargos asociados, Empleados asignados, Estado y Acciones. Los departamentos organizan la estructura empresarial en áreas como Administración, Ventas, Inventario, etc. Son fundamentales para reportes de nómina por área, control presupuestario y organización jerárquica de la empresa.
+
+Ilustración ‎5.6.1.43 Agregar Departamento RH
+El formulario solicita Nombre del departamento (ej: Recursos Humanos, Ventas, Administración) y Descripción con el detalle de las funciones y responsabilidades del área. El toggle Activo permite habilitar o deshabilitar departamentos según la estructura organizacional vigente.
+
+Ilustración ‎5.6.1.44 Visualizar Departamento RH
+
+Muestra en modo de consulta el nombre del departamento organizacional, descripción de funciones, y estado.
+
+Ilustración ‎5.6.1.45 Editar Departamento RH
+Permite modificar el nombre del departamento para reflejar cambios organizacionales, actualizar la descripción de funciones, o cambiar el estado. Los cargos y empleados asociados se mantienen vinculados al departamento.
+
+Ilustración ‎5.6.1.46 Eliminar Departamento RH
+El modal confirma con "¿Estás seguro de que deseas eliminar este departamento?". Antes de eliminar se debe verificar que no existan cargos activos ni empleados asignados al departamento para mantener la coherencia organizacional.
+
+Pantalla de Cargos/Puestos
+
+Ilustración ‎5.6.1.47 Lista de Cargos
+La administración de cargos define los puestos de trabajo disponibles en la empresa. La tabla presenta ID, Nombre del cargo, Departamento al que pertenece, Descripción de responsabilidades, Empleados asignados, Estado y Acciones. Los cargos son fundamentales para la estructura de recursos humanos, definición de roles, escalas salariales y permisos de sistema. Cada cargo puede tener múltiples empleados asignados y pertenece a un departamento específico.
+
+Ilustración ‎5.6.1.48 Agregar Cargo/Puesto
+El formulario incluye Nombre del cargo (ej: Gerente General, Vendedor, Contador), Departamento mediante selector desplegable, y Descripción detallada de las funciones y responsabilidades del puesto. El toggle Activo permite habilitar o deshabilitar cargos según necesidades de contratación.
+
+Ilustración ‎5.6.1.49 Visualizar Cargo/Puesto
+
+El modal presenta el nombre del puesto, departamento al que pertenece, descripción de funciones y responsabilidades, número de empleados en ese puesto y estado.
+
+Ilustración ‎5.6.1.50 Editar Cargo/Puesto
+Permite modificar el nombre del cargo para reflejar cambios en nomenclatura, cambiar el departamento asignado si el puesto se reorganiza, actualizar la descripción de funciones, o cambiar el estado. Los empleados asignados al cargo se mantienen vinculados.
+
+Ilustración ‎5.6.1.51 Eliminar Cargo/Puesto
+La confirmación pregunta "¿Estás seguro de que deseas eliminar este cargo?". Es importante verificar que no existan empleados activos asignados al cargo antes de eliminarlo. La eliminación puede afectar reportes de nómina y estructura organizacional.
+
+Pantalla de Empleados
+
+Ilustración ‎5.6.1.52 Lista de Empleados
+La gestión de empleados mantiene el registro completo del personal de la empresa. La tabla muestra Código de empleado, Nombre completo, DNI/Identidad, Email corporativo, Teléfono, Departamento asignado, Cargo que desempeña, Estado (Activo/Inactivo) y Acciones. Los empleados son usuarios internos del sistema que pueden tener acceso según sus roles y permisos. Esta información es fundamental para nómina, control de asistencia, asignación de tareas y reportes de recursos humanos.
+
+Ilustración ‎5.6.1.53 Agregar Empleado
+El formulario completo incluye Código de empleado (generado automáticamente o manual), Nombre y Apellido en campos separados, DNI/Identidad con el documento de identificación nacional, Email corporativo y Teléfono de contacto. También solicita Departamento mediante selector desplegable, Cargo/Puesto según los cargos disponibles en el departamento, Fecha de Ingreso para calcular antigüedad, y Salario base mensual. El toggle Activo define si el empleado está en la planilla activa o dado de baja. Los botones Cancelar y Guardar completan el registro.
+
+Ilustración ‎5.6.1.54 Editar Empleado
+La edición permite actualizar información personal como teléfono y email, reasignar departamento y cargo en caso de promociones o transferencias internas, modificar salario para ajustes y aumentos, actualizar la fecha de ingreso si fue ingresada incorrectamente, o cambiar el estado para dar de baja sin eliminar el historial laboral. El botón "Guardar Cambios" confirma las modificaciones.
+
+Ilustración ‎5.6.1.55 Visualizar Empleado
+Muestra todos los datos del empleado en modo de solo lectura, sin permitir modificaciones. Útil para consultas rápidas de información de personal, verificación de datos para reportes y auditorías, sin riesgo de alteración accidental de registros.
+
+Ilustración ‎5.6.1.56 Eliminar Empleado
+El modal confirma con "¿Estás seguro de que deseas eliminar este empleado?". Importante: eliminar un empleado puede afectar transacciones de ventas, registros de inventario, auditorías y reportes históricos. Se recomienda usar el estado "Inactivo" en lugar de eliminar para preservar la trazabilidad.
+
+Gestión de Usuarios
+
+Ilustración ‎5.6.1.57 Lista de Usuarios
+La administración de usuarios controla los accesos al sistema ProsperPOS. La tabla muestra foto de perfil, Usuario con nombre completo, Teléfono de contacto, Rol asignado (Super Administrador, Gerente, Vendedor, etc.) con badge de color identificativo, Estado (Activo/Inactivo) y Acciones. Los usuarios son las cuentas de acceso al sistema con permisos específicos según su rol. Cada usuario tiene credenciales únicas y puede estar vinculado a un empleado de la empresa.
+
+Ilustración ‎5.6.1.58 Nuevo Usuario
+El modal de registro incluye Nombre y Apellido en campos separados, Correo Electrónico que servirá como usuario de acceso, Teléfono de contacto, Rol mediante selector desplegable con opciones precargadas (Administrador, Gerente, Vendedor, Contador, etc.), Tienda para asignar la sucursal de trabajo si aplica, Contraseña con validación de seguridad, Confirmar Contraseña para verificar que coincidan, y mensaje informativo "La contraseña debe tener al menos 8 caracteres". Los botones Cancelar y Guardar completan el proceso.
+
+Ilustración ‎5.6.1.59 Detalles del Usuario
+El modal de visualización muestra la foto de perfil del usuario (iniciales en círculo si no tiene foto), nombre completo, email, teléfono, rol asignado, tienda asociada, último login registrado y fecha de creación de la cuenta. Incluye botones para Cerrar y Editar (naranja) que redirige al formulario de edición.
+
+Ilustración ‎5.6.1.60 Editar Usuario 
+Permite modificar nombre y apellido para correcciones, actualizar email corporativo, cambiar teléfono de contacto, reasignar rol para promociones o cambios de funciones, cambiar tienda asignada por transferencias, y actualizar estado activo/inactivo. No permite cambiar contraseña desde aquí (debe usarse la función de recuperación). El botón "Actualizar" guarda los cambios realizados.
+
+Ilustración ‎5.6.1.61 Eliminar Usuario
+El modal de confirmación pregunta "¿Eliminar Usuario? ¿Está seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer". La eliminación de un usuario es permanente y puede afectar auditorías, logs del sistema y trazabilidad de transacciones. Se recomienda usar el estado "Inactivo" para desactivar accesos sin perder historial.
+
+
+Roles y Permisos
+
+Ilustración ‎5.6.1.62 Lista de Roles
+La pantalla de roles y permisos define los niveles de acceso al sistema. La tabla muestra Rol (Administrador, Almacenista, Contador, Gerente, Super Administrador, Vendedor, Visor), Fecha de Creación de cada rol, Estado (Activo) y Acciones con iconos para visualizar permisos, copiar rol, editar y eliminar. Los roles determinan qué módulos y funciones puede acceder cada usuario, garantizando seguridad y control de información sensible. El botón "Agregar Rol" permite crear nuevos perfiles de acceso personalizados.
+
+
+Ajustes Financieros
+Cuentas Bancarias
+
+Ilustración ‎5.6.1.63 Lista de Cuentas Bancarias
+La administración de cuentas bancarias gestiona las cuentas financieras de la empresa. La pantalla muestra tarjetas visuales con el nombre del banco (Banco Atlántida, Davivienda, BAC Credomatic), titular de la cuenta "Cuenta de Ahorro", número de cuenta completo, y el nombre del titular. Cada tarjeta incluye iconos para visualizar detalles, editar y eliminar. El botón naranja "Agregar Nueva Cuenta" permite registrar cuentas adicionales. Las cuentas bancarias son fundamentales para conciliación de pagos, control de flujo de efectivo y reportes financieros.
+
+Ilustración ‎5.6.1.64 Agregar Cuenta Bancaria
+El formulario solicita Banco mediante selector desplegable, Tipo de Cuenta (Ahorro, Corriente, etc.) con selector, Moneda para definir la divisa de la cuenta, Número de Cuenta con el número completo de la cuenta bancaria, Titular con el nombre del propietario de la cuenta, Imagen del Banco (URL) para mostrar el logo de la institución financiera. El toggle Activa permite habilitar o deshabilitar cuentas según uso operativo.
+
+Ilustración ‎5.6.1.65 Editar Cuenta Bancaria
+
+Permite modificar información de la cuenta como cambiar el banco en caso de portabilidad, actualizar tipo de cuenta, cambiar moneda, corregir número de cuenta, actualizar titular si hubo cambio de razón social, actualizar URL del logo, o cambiar estado activo/inactivo para cuentas que se cierran o suspenden temporalmente.
+
+Ilustración ‎5.6.1.66 Eliminar Cuenta Bancaria
+El modal confirma con "Eliminar Cuenta Bancaria" y pregunta "¿Estás seguro de que deseas eliminar esta cuenta bancaria?". Es importante verificar que no existan transacciones pendientes de conciliación, pagos programados o movimientos sin registrar antes de eliminar la cuenta para mantener la integridad contable.
+
+Tasas de Impuesto
+
+Ilustración ‎5.6.1.67 Lista de Tasas de Impuesto
+La gestión de tasas de impuesto administra los diferentes porcentajes fiscales aplicables a productos y servicios. La tabla muestra Nombre del impuesto, Tasa (%) con el porcentaje exacto, Descripción explicativa, Productos con indicador de cantidad de productos asociados (badge azul), Estado (Activo) con badge verde, Creado mostrando fecha de registro, y Acciones. Los impuestos registrados incluyen ISV 15 (Impuesto sobre Ventas estándar de Honduras al 15%), ENAHTRO al 0.00%, ISV 18 al 18.00%, y Tasa 2 al 20.50% como ejemplo genérico. El botón "Agregar Nueva Tasa" permite crear impuestos adicionales.
+
+Ilustración ‎5.6.1.68 Agregar Tasa de Impuesto
+El formulario incluye Nombre descriptivo del impuesto (ej: ISV 15%), Tasa (%) con el porcentaje numérico exacto, Descripción detallada del impuesto y su aplicación legal. Incluye checkbox Activa para habilitar el impuesto y checkbox "Establecer como tasa por defecto" para aplicarlo automáticamente a productos nuevos. Esta configuración es fundamental para cumplimiento fiscal y cálculo correcto de precios con impuestos incluidos.
+
+Ilustración ‎5.6.1.69 Visualizar Tasa de Impuesto
+
+El modal presenta el nombre del impuesto, porcentaje exacto, descripción detallada de aplicación legal, número de productos con esta tasa asignada, estado y fecha de creación.
+
+Ilustración ‎5.6.1.70 Editar Tasa de Impuesto
+Permite modificar el nombre para actualizar nomenclatura, cambiar el porcentaje cuando hay reformas fiscales, actualizar descripción para clarificar aplicación, y gestionar los estados de activo y por defecto. Importante: cambiar una tasa de impuesto puede afectar precios de productos asociados, por lo que debe hacerse con precaución y comunicarse adecuadamente.
+
+Ilustración ‎5.6.1.71 Eliminar Tasa de Impuesto
+El modal confirma "Eliminar Tasa de Impuesto" y pregunta "¿Estás seguro de que deseas eliminar esta tasa de impuesto?". Es crítico verificar que no existan productos activos usando esta tasa antes de eliminarla para evitar errores en facturación y reportes fiscales.
+
+Monedas
+
+Ilustración ‎5.6.1.72 Lista de Monedas
+La administración de monedas gestiona las divisas utilizadas en el sistema. La tabla muestra ID, Símbolo de la moneda, Nombre singular, Factor Cambio para conversión, Tipo (Local/Extranjera) con badge identificativo, Estado y Acciones. El sistema muestra Lempira (L) como moneda local por defecto con factor 0.00000000, y Dólares (US$) como moneda extranjera con factor 26.28000000 (tipo de cambio actual). Las monedas permiten manejar precios en diferentes divisas, conversión automática y reportes multi-moneda.
+
+Ilustración ‎5.6.1.73 Agregar Moneda
+El formulario solicita Símbolo de la moneda (ej: L, $, €), Nombre Plural (ej: LEMPIRAS, DOLARES), Nombre Singular (ej: LEMPIRA, DOLAR), Factor de Cambio con el tipo de cambio respecto a la moneda base, Operación con selector para Dividir o Multiplicar en conversión, Moneda Extranjera (checkbox), checkbox Activa para habilitar la moneda, y checkbox "Establecer como moneda por defecto" para usarla en transacciones principales.
+
+Ilustración ‎5.6.1.74 Visualizar Moneda
+
+Muestra en consulta el símbolo de la divisa, nombre en plural y singular, factor de cambio actual, operación de conversión (Dividir/Multiplicar), si es extranjera, estado y si es predeterminada.
+
+Ilustración ‎5.6.1.75 Editar Moneda
+Permite modificar símbolo si hay cambio de nomenclatura, actualizar nombres singular y plural, cambiar factor de cambio según fluctuaciones del tipo de cambio (debe actualizarse periódicamente para reflejar valores reales de mercado), cambiar operación de conversión, y gestionar estados de activa y por defecto.
+
+Ilustración ‎5.6.1.76 Eliminar Moneda
+El modal confirma "Eliminar Moneda" y pregunta "¿Estás seguro de que deseas eliminar esta moneda?". Eliminar una moneda puede afectar productos con precios en esa divisa, transacciones históricas y reportes financieros. Se recomienda desactivar en lugar de eliminar.
+
+Tipos de Beneficiarios
+
+Ilustración ‎5.6.1.77 Lista de Tipos de Beneficiarios
+La gestión de tipos de beneficiarios clasifica las categorías fiscales de clientes y proveedores según normativa tributaria hondureña. La tabla muestra ID, Nombre del tipo (Jurídica Domiciliada, Jurídica No Domiciliada, Natural Residente, Natural No Residente), Estado y Acciones. Estos tipos son requeridos por el SAR para retenciones fiscales, declaraciones y cumplimiento de obligaciones tributarias diferenciadas según el tipo de contribuyente.
+
+Ilustración ‎5.6.1.78 Agregar Tipo de Beneficiario
+El formulario simple solicita únicamente Nombre del tipo de beneficiario siguiendo nomenclatura fiscal oficial hondureña. El toggle Activo permite habilitar o deshabilitar tipos según regulaciones vigentes. Los tipos de beneficiarios son fundamentales para aplicación correcta de retenciones de ISR, cálculo de impuestos diferenciados y generación de reportes fiscales requeridos por autoridades.
+
+Ilustración ‎5.6.1.79 Visualizar Tipo de Beneficiario
+El modal presenta el nombre del tipo fiscal según clasificación tributaria hondureña (Jurídica Domiciliada, Natural Residente, etc.) y el estado activo/inactivo.
+
+Ilustración ‎5.6.1.80 Editar Tipo de Beneficiario
+Permite modificar el nombre para actualizar nomenclatura según cambios en regulación fiscal o corregir errores de captura, y cambiar el estado activo/inactivo cuando un tipo de beneficiario deja de aplicar según actualizaciones normativas.
+
+Ilustración ‎5.6.1.81 Eliminar Tipo de Beneficiario
+El modal confirma "Eliminar Tipo de Beneficiario" y pregunta "¿Estás seguro de que deseas eliminar este tipo de beneficiario?". Es fundamental verificar que no existan clientes o proveedores activos clasificados con este tipo antes de eliminarlo para mantener consistencia en reportes fiscales y declaraciones tributarias.
+Ventas por Vendedor
+
+Ilustración ‎5.6.1.82 Pantalla Principal de Ventas por Vendedor
+La pantalla de Ventas por Vendedor genera reportes detallados del desempeño individual de cada vendedor. En la parte superior se encuentran los filtros de consulta: Fecha Desde y Fecha Hasta con selectores de calendario para definir el período de análisis, Vendedor con selector desplegable mostrando "Todos" o vendedores específicos, y Sucursal para filtrar por ubicación en operaciones multi-tienda. El botón azul "Generar Reporte" procesa la información según los filtros establecidos. La sección de Resultados presenta una tabla con columnas para: Vendedor mostrando el nombre completo, Neto con el monto total de ventas brutas, Total+ISV sumando ventas con impuestos incluidos, Devuelto indicando monto de devoluciones procesadas, Cobrado mostrando efectivo realmente recaudado, y Cant.Facturas con el número total de transacciones. Los TOTALES se muestran en la fila inferior consolidando todos los vendedores. Este reporte es fundamental para evaluación de desempeño, cálculo de comisiones, identificación de vendedores top y análisis de productividad del equipo de ventas.
+
+
+Ilustración ‎5.6.1.83 Modal de Impresión del Reporte
+Al presionar el botón de imprimir, se despliega un modal de "Imprimir Documento" mostrando la vista previa del reporte con el encabezado "Ceramicas Terrenas y Piuleios Universal" incluyendo dirección completa, teléfono de contacto y título "Ventas Por Vendedor". El documento presenta una tabla detallada con columnas: Desde (fecha inicial del período), Hasta (fecha final), Vendedor con los nombres: Carlos Angelial, Carlos Argental y Ana López. Las columnas de montos muestran: Neto, Total+ISV, Devuelto, Cobrado y Cant.Facturas con sus respectivos valores numéricos y el gran total al final. El modal incluye dos opciones de descarga: el botón verde "GUARDAR EXCEL" para exportar en formato de hoja de cálculo permitiendo análisis adicional y manipulación de datos, y el botón azul "Imprimir" para generar el documento físico o PDF. Esta funcionalidad permite documentar el desempeño de ventas, compartir reportes con gerencia, archivar registros mensuales y proporcionar comprobantes para liquidación de comisiones.
+Panel Administrativo (Dashboard) 
+
+Ilustración ‎5.6.1.84 Vista Principal del Dashboard
+El panel administrativo presenta un dashboard completo con información en tiempo real del negocio. En la parte superior muestra un saludo personalizado con el nombre del usuario, y el rango de fechas del reporte actual. Cuatro tarjetas destacadas muestran las métricas clave del negocio con montos totales, badges de colores indicando tipo de métrica y porcentajes de comparación con períodos anteriores. Las métricas incluyen ventas totales, devoluciones de ventas, compras totales y devoluciones de compras. Como métricas secundarias una fila de cuatro indicadores adicionales mostrando ganancias, facturas pendientes, gastos totales y devoluciones de pagos. Cada métrica incluye el monto, un icono representativo y el porcentaje de variación comparado con el período anterior junto con un enlace para ver detalles completos.
+
+Ilustración ‎5.6.1.85 Gráfica de Ventas y Compras e Informacion General
+Gráfico de barras comparativo con filtros temporales (día, semana, mes, trimestre, semestre, año) que permite visualizar las tendencias de compras y ventas. El gráfico muestra barras en dos tonos de naranja diferenciando entre compras totales y ventas totales, con eje temporal configurable y leyenda clara. Sección Información General: Tres tarjetas informativas con iconos representativos (proveedores, clientes, pedidos) mostrando contadores del total de registros en cada categoría. Resumen de Clientes: Gráfico de dona circular mostrando la distribución de clientes entre prospectos y recurrentes, con badges de porcentaje de crecimiento y filtro temporal para visualizar por período. Incluye leyenda con colores distintivos para cada categoría.

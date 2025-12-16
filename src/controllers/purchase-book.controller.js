@@ -57,7 +57,7 @@ class PurchaseBookController {
   }
 
   /**
-   * Exportar libro de compras
+   * Exportar libro de compras a Excel
    * @route GET /api/purchase-book/export
    */
   static async exportPurchaseBook(req, res) {
@@ -77,6 +77,28 @@ class PurchaseBookController {
     } catch (error) {
       logger.error('Error in PurchaseBookController.exportPurchaseBook:', error);
       return sendErrorResponse(res, 500, 'Error al exportar el libro de compras', error.message);
+    }
+  }
+
+  /**
+   * Exportar libro de compras a PDF
+   * @route GET /api/purchase-book/export-pdf
+   */
+  static async exportPurchaseBookPDF(req, res) {
+    try {
+      const filters = {
+        date_from: req.query.date_from,
+        date_to: req.query.date_to,
+        warehouse_id: req.query.warehouse_id,
+        supplier_id: req.query.supplier_id,
+        payment_status: req.query.payment_status,
+        show_only_returns: req.query.show_only_returns === 'true'
+      };
+
+      await PurchaseBookService.exportPurchaseBookPDF(filters, res);
+    } catch (error) {
+      logger.error('Error in PurchaseBookController.exportPurchaseBookPDF:', error);
+      return sendErrorResponse(res, 500, 'Error al exportar el libro de compras a PDF', error.message);
     }
   }
 }

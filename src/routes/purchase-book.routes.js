@@ -36,4 +36,13 @@ router.get('/summary', PurchaseBookController.getPurchaseBookSummary);
  */
 router.get('/export', PurchaseBookController.exportPurchaseBook);
 
+/**
+ * @route   GET /api/v1/purchase-book/export-pdf
+ * @desc    Exportar libro de compras a PDF
+ * @access  Private
+ * @query   date_from, date_to, warehouse_id, supplier_id,
+ *          payment_status, show_only_returns
+ */
+router.get('/export-pdf', PurchaseBookController.exportPurchaseBookPDF);
+
 module.exports = router;

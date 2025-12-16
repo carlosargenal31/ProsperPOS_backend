@@ -1,0 +1,1342 @@
+CENTRO UNIVERSITARIO TECNOLÓGICO
+CEUTEC
+
+
+FACULTAD DE INGENIERÍA
+
+
+PROYECTO DE GRADUACIÓN
+
+SISTEMA DE FACTURACIÓN INTEGRADO CON PLATAFORMA DE COMERCIO ELECTRÓNICO A CERAMICAS TERRAZOS Y PULIDOS UNIVERSAL
+
+SUSTENTADO POR:
+CARLOS MAURICIO ARGEÑAL BONILLA, 42141044
+
+
+PREVIA INVESTIDURA AL TÍTULO DE LICENCIATURA EN INGENIERÍA EN INFORMÁTICA
+
+LA CEIBA 								 HONDURAS, C.A.
+
+MES, 2025 
+
+CENTRO UNIVERSITARIO TECNOLÓGICO
+CEUTEC
+INGENIERÍA EN INFORMÁTICA
+
+AUTORIDADES UNIVERSITARIAS
+RECTOR
+ING. ROSALPINA RODRÍGUEZ GUEVARA
+
+SECRETARIO GENERAL
+ROGER MARTÍNEZ MIRALDA
+
+VICERRECTOR ACADÉMICA NACIONAL
+JAVIER ABRAHAM SALGADO LEZAMA
+
+DIRECTORA DE CEUTEC LA CEIBA
+ASTRID ELENA FÉREZ IRIARTE
+
+LA CEIBA                     						 HONDURAS, C.A.
+MES, 2025
+ SISTEMA DE FACTURACIÓN INTEGRADO CON PLATAFORMA DE COMERCIO ELECTRÓNICO A CERAMICAS TERRAZOS Y PULIDOS UNIVERSAL
+
+
+TRABAJO PRESENTADO EN EL CUMPLIMIENTO DE LOS REQUISITOS EXIGIDOS PARA OPTAR AL TÍTULO DE:
+
+INGENIERÍA EN INFORMÁTICA
+
+ASESOR:
+XXXXXXXXXXXXXXX
+
+TERNA EXAMINADORA:
+NOMBRE COMPLETO INTEGRANTE DE TERNA
+NOMBRE COMPLETO INTEGRANTE DE TERNA
+NOMBRE COMPLETO INTEGRANTE DE TERNA
+
+LA CEIBA    		 					HONDURAS, C.A. 
+
+MES, 2025
+
+DERECHOS DE AUTOR
+
+
+
+
+
+
+
+
+
+
+
+© Copyright 2025
+CARLOS MAURICIO ARGEÑAL BONILLA
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Todos los derechos son reservados
+
+
+AUTORIZACIÓN DEL AUTOR(ES) PARA LA CONSULTA, REPRODUCCIÓN
+PARCIAL O TOTAL Y PUBLICACIÓN ELECTRÓNICA DEL TEXTO COMPLETO
+DE INFORMES DE PRÁCTICA PROFESIONAL Y PROYECTOS DE GRADUACIÓN
+DE PREGRADO DE CEUTEC
+Señores  
+CENTRO DE RECURSOS PARA  
+EL APRENDIZAJE Y LA INVESTIGACION (CRAI)  
+CENTRO UNIVERSITARIO TECNOLÓGICO (CEUTEC) 
+La Ceiba 
+Yo, CARLOS MAURICIO ARGEÑAL BONILLA, de La Ceiba, autor del trabajo de pregrado titulado: SISTEMA DE FACTURACIÓN INTEGRADO CON PLATAFORMA DE COMERCIO ELECTRÓNICO A CERAMICAS Y TERRAZOS UNIVERSAL, presentado y aprobado en mes de mes de la terna del año de la terna, como requisito previo para optar al título de pregrado en LICENCIATURA EN INGENIERÍA INFORMÁTICA y reconociendo que la presentación del presente documento forma parte de los requerimientos establecidos del programa de pregrado de la Universidad Tecnológica Centroamericana (UNITEC) y del Centro Universitario Tecnológico (CEUTEC), por este medio autorizo a las Bibliotecas de los Centros de Recursos para el Aprendizaje y la Investigación (CRAI) de la UNITEC/CEUTEC, para que con fines académicos, puedan libremente registrar, copiar o utilizar la información contenida en él, con fines educativos, investigativos o sociales de la siguiente manera:  
+Los usuarios puedan consultar el contenido de este trabajo en las salas de estudio de la biblioteca y/o la página Web de la Universidad.  
+Permita la consulta, la reproducción, a los usuarios interesados en el contenido de este trabajo, para todos los usos que tengan finalidad académica, ya sea en formato CD o digital desde Internet, Intranet, etc., y en general en cualquier otro formato conocido o por conocer.  
+De conformidad con lo establecido en los artículos 9.2, 18, 19, 35 y 62 de la Ley de Derechos de Autor y de los Derechos Conexos; los derechos morales pertenecen al autor y son personalísimos, irrenunciables, imprescriptibles e inalienables, asimismo, por tratarse de una obra colectiva, los autores ceden de forma ilimitada y exclusiva a la UNITEC/CEUTEC la titularidad de los derechos patrimoniales. Es entendido que cualquier copia o reproducción del presente documento con fines de lucro no está permitida sin previa autorización por escrito de parte de UNITEC/CEUTEC.  En fe de lo cual, se suscribe el presente documento en la ciudad de La Ceiba a la fecha de entrega días del mes de mes de entrega de año de entrega. 
+
+
+
+CARLOS MAURICIO ARGEÑAL BONILLA
+42141044
+
+DEDICATORIA 
+Dedico este proyecto a mis padres, quienes, con amor incondicional, esfuerzo y sacrificio, me enseñaron el valor de la disciplina, la honestidad y el trabajo duro. Y a todos mis seres queridos y familia, que con su apoyo, comprensión y palabras de ánimo han formado parte esencial de este camino.
+	 	 	 	 	 	Carlos Mauricio Argeñal Bonilla 
+
+AGRADECIMIENTOS  
+Agradezco, en primer lugar, a Dios, por ser mi guía, mi refugio y mi fortaleza en cada etapa de mi vida. Su amor y dirección me han dado la fe necesaria para perseverar y culminar este sueño. A la Universidad CEUTEC de UNITEC y a la Facultad de Ingeniería, por brindarme las herramientas académicas, el espacio de aprendizaje y la formación profesional que me han permitido crecer y alcanzar esta meta. A mis docentes y asesores, por su dedicación, paciencia y por compartir sus conocimientos con excelencia y compromiso. Finalmente, a mis compañeros de carrera y a todas aquellas personas que, de una u otra manera, aportaron su tiempo, ideas y apoyo para la realización de este trabajo.
+	 	 	 	 	 	Carlos Mauricio Argeñal Bonilla 
+
+RESUMEN EJECUTIVO
+
+
+
+FIGURAS
+Figura 4.1. Node.js	14
+Figura 4.2. Express.js	14
+Figura 4.3. Vue.js	15
+Figura 4.4. MySQL	15
+Figura 4.5. Stripe	16
+Figura 4.6. PayPal	16
+Figura 4.7. BAC CREDOMATIC	16
+Figura 4.8. Docker	17
+Figura 4.9. Google Cloud	17
+Figura 4.10. Google Maps API	17
+Figura 4.11. Firebase Cloud Messaging	18
+Figura 5.1. Diagrama de Gantt	27
+Figura 5.2. Representación Visual por Semanas	27
+Figura 7.1. Entrevista Semiestructurada	149
+Figura 7.2. Entrevista Grupal	151
+Figura 7.3. Proceso de Venta Típica Cliente Ejemplo #1	153
+Figura 7.4. Proceso de Venta Típica Cliente Ejemplo #2	153
+Figura 7.5. Entrada de Mercadería Nueva	155
+Figura 7.6. Proceso de Generación de Reportes	156
+Figura 7.7. Encuesta a clientes frecuentes. Resultados de Pregunta #1.	158
+Figura 7.8. Encuesta a clientes frecuentes. Resultados de Pregunta #2.	158
+Figura 7.9. Encuesta a clientes frecuentes. Resultados de Pregunta #3.	159
+Figura 7.10. Encuesta a clientes frecuentes. Resultados de Pregunta #4.	160
+Figura 7.11. Encuesta a clientes frecuentes. Resultados de Pregunta #5.	160
+Figura 7.12. Encuesta a clientes frecuentes. Resultados de Pregunta #6.	161
+Figura 7.13. Encuesta a clientes frecuentes. Resultados de Pregunta #7.	162
+Figura 7.14. Encuesta a clientes frecuentes. Cliente Ejemplo #1	162
+Figura 7.15. Encuesta a clientes frecuentes. Cliente Ejemplo #2	163
+Figura 7.16. Encuesta a clientes frecuentes. Cliente Ejemplo #3	163
+Figura 7.17. Llenado de Lista de Verificación Técnica	165
+
+Tablas
+Tabla 5.‎5.5.1. Hitos Principales y Entregables	27
+Tabla 5.‎5.5.2. Gestión de Riesgos y Plan de Contingencia	28
+Tabla ‎6.4.1 Matriz de Riesgo	118
+Tabla ‎6.12.1 Registro de intentos de inicio de sesión (exitosos y fallidos)	128
+Tabla ‎6.12.2 Departamentos organizacionales de la empresa	128
+Tabla ‎6.12.3 Marcas de productos	129
+Tabla ‎6.12.4 Tipos de beneficiarios (clientes, proveedores, empleados)	130
+Tabla ‎6.12.5 Detalles de productos en cotizaciones	131
+Tabla ‎6.12.6 Detalles de productos comprados	132
+Tabla ‎6.12.7 Configuración general de facturación	132
+Tabla ‎6.12.8 Detalles de productos en cada envío	135
+Tabla ‎6.12.9 Productos aplicables a cada cupón	136
+Tabla ‎6.12.10 Cuentas bancarias de la empresa	136
+Tabla ‎6.12.11 Sucursales de la empresa	137
+
+
+ILUSTRACIONES
+Ilustración ‎5.6.1.1 Pantalla de Inicio de Sesión	29
+Ilustración ‎5.6.1.2 Lista de Clientes	30
+Ilustración ‎5.6.1.3 Agregar Cliente	31
+Ilustración ‎5.6.1.4 Visualizar Cliente	32
+Ilustración ‎5.6.1.5 Editar Cliente	33
+Ilustración ‎5.6.1.6 Eliminar Cliente	34
+Ilustración ‎5.6.1.7 Lista de Proveedores	35
+Ilustración ‎5.6.1.8 Agregar Proveedor	36
+Ilustración ‎5.6.1.9 Visualizar Proveedor	37
+Ilustración ‎5.6.1.10 Editar Proveedor	37
+Ilustración ‎5.6.1.11 Eliminar Proveedor	38
+Ilustración ‎5.6.1.12 Lista de Sucursales	39
+Ilustración ‎5.6.1.13 Agregar Sucursal	40
+Ilustración ‎5.6.1.14 Visualizar Sucursal	41
+Ilustración ‎5.6.1.15 Editar Sucursal	41
+Ilustración ‎5.6.1.16 Eliminar Sucursal	42
+Ilustración ‎5.6.1.17 Lista de Bodegas	43
+Ilustración ‎5.6.1.18 Agregar Bodega	44
+Ilustración ‎5.6.1.19 Visualizar Bodega	45
+Ilustración ‎5.6.1.20 Editar Bodega	45
+Ilustración ‎5.6.1.21 Eliminar Bodega	46
+Ilustración ‎5.6.1.22 Lista de Vehículos	47
+Ilustración ‎5.6.1.23 Agregar Vehículo	48
+Ilustración ‎5.6.1.24 Visualizar Vehículo	48
+Ilustración ‎5.6.1.25 Editar Vehículo	49
+Ilustración ‎5.6.1.26 Eliminar Vehículo	50
+Ilustración ‎5.6.1.27 Lista de Países	51
+Ilustración ‎5.6.1.28 Agregar País	52
+Ilustración ‎5.6.1.29 Visualizar País	52
+Ilustración ‎5.6.1.30 Editar País	53
+Ilustración ‎5.6.1.31 Eliminar País	54
+Ilustración ‎5.6.1.32 Lista de Departamentos	55
+Ilustración ‎5.6.1.33 Agregar Departamento	56
+Ilustración ‎5.6.1.34 Visualizar Departamento	56
+Ilustración ‎5.6.1.35 Editar Departamento	57
+Ilustración ‎5.6.1.36 Eliminar Departamento	58
+Ilustración ‎5.6.1.37 Lista de Ciudades	59
+Ilustración ‎5.6.1.38 Agregar Ciudad	60
+Ilustración ‎5.6.1.39 Visualizar Ciudad	60
+Ilustración ‎5.6.1.40 Editar Ciudad	61
+Ilustración ‎5.6.1.41 Eliminar Ciudad	62
+Ilustración ‎5.6.1.42 Lista de Departamentos RH	63
+Ilustración ‎5.6.1.43 Agregar Departamento RH	64
+Ilustración ‎5.6.1.44 Visualizar Departamento RH	64
+Ilustración ‎5.6.1.45 Editar Departamento RH	65
+Ilustración ‎5.6.1.46 Eliminar Departamento RH	66
+Ilustración ‎5.6.1.47 Lista de Cargos	67
+Ilustración ‎5.6.1.48 Agregar Cargo/Puesto	68
+Ilustración ‎5.6.1.49 Visualizar Cargo/Puesto	68
+Ilustración ‎5.6.1.50 Editar Cargo/Puesto	69
+Ilustración ‎5.6.1.51 Eliminar Cargo/Puesto	70
+Ilustración ‎5.6.1.52 Lista de Empleados	71
+Ilustración ‎5.6.1.53 Agregar Empleado	72
+Ilustración ‎5.6.1.54 Editar Empleado	73
+Ilustración ‎5.6.1.55 Visualizar Empleado	73
+Ilustración ‎5.6.1.56 Eliminar Empleado	74
+Ilustración ‎5.6.1.57 Lista de Usuarios	75
+Ilustración ‎5.6.1.58 Nuevo Usuario	76
+Ilustración ‎5.6.1.59 Detalles del Usuario	77
+Ilustración ‎5.6.1.60 Editar Usuario	77
+Ilustración ‎5.6.1.61 Eliminar Usuario	78
+Ilustración ‎5.6.1.62 Lista de Roles	79
+Ilustración ‎5.6.1.63 Lista de Cuentas Bancarias	80
+Ilustración ‎5.6.1.64 Agregar Cuenta Bancaria	81
+Ilustración ‎5.6.1.65 Editar Cuenta Bancaria	81
+Ilustración ‎5.6.1.66 Eliminar Cuenta Bancaria	82
+Ilustración ‎5.6.1.67 Lista de Tasas de Impuesto	83
+Ilustración ‎5.6.1.68 Agregar Tasa de Impuesto	84
+Ilustración ‎5.6.1.69 Visualizar Tasa de Impuesto	84
+Ilustración ‎5.6.1.70 Editar Tasa de Impuesto	85
+Ilustración ‎5.6.1.71 Eliminar Tasa de Impuesto	86
+Ilustración ‎5.6.1.72 Lista de Monedas	87
+Ilustración ‎5.6.1.73 Agregar Moneda	88
+Ilustración ‎5.6.1.74 Visualizar Moneda	88
+Ilustración ‎5.6.1.75 Editar Moneda	89
+Ilustración ‎5.6.1.76 Eliminar Moneda	90
+Ilustración ‎5.6.1.77 Lista de Tipos de Beneficiarios	91
+Ilustración ‎5.6.1.78 Agregar Tipo de Beneficiario	92
+Ilustración ‎5.6.1.79 Visualizar Tipo de Beneficiario	92
+Ilustración ‎5.6.1.80 Editar Tipo de Beneficiario	93
+Ilustración ‎5.6.1.81 Eliminar Tipo de Beneficiario	94
+Ilustración ‎5.6.1.82 Pantalla Principal de Ventas por Vendedor	94
+Ilustración ‎5.6.1.83 Modal de Impresión del Reporte	95
+Ilustración ‎5.6.1.84 Vista Principal del Dashboard	96
+Ilustración ‎5.6.1.85 Gráfica de Ventas y Compras e Informacion General	97
+Ilustración ‎5.6.1.86 Productos Más Vendidos y Con Bajo Stock	98
+Ilustración ‎5.6.1.87 Ventas Recientes	99
+Ilustración ‎5.6.1.88 Estadísticas De Ventas y Transacciones Recientes	99
+Ilustración ‎5.6.1.89 Mejores Clientes y Mejores Categorias	100
+Ilustración ‎5.6.1.90 Pantalla Principal de Facturación	101
+
+GLOSARIO
+API (Application Programming Interface): Conjunto de protocolos, rutinas y herramientas que permiten la comunicación entre diferentes componentes de software. En el contexto del sistema, las APIs facilitan la integración entre módulos de facturación, inventario y comercio electrónico.
+Arquitectura Monolítica: Enfoque de desarrollo donde todos los componentes de una aplicación están integrados en una sola unidad desplegable. Apropiada para MiPymes por su simplicidad operacional y menores requerimientos de infraestructura.
+Arquitectura de Microservicios: Estilo arquitectónico que estructura una aplicación como una colección de servicios pequeños e independientes que se comunican a través de APIs. Ofrece mayor escalabilidad pero introduce complejidad adicional.
+Base de Datos Relacional: Sistema de gestión de bases de datos que organiza la información en tablas relacionadas mediante claves primarias y foráneas, garantizando integridad referencial y consistencia de datos.
+Cloud Computing: Modelo de entrega de servicios de computación a través de internet, proporcionando recursos escalables como servidores, almacenamiento y aplicaciones bajo demanda.
+Comercio Electrónico (E-commerce): Actividad de compra y venta de productos o servicios a través de internet, incluyendo todas las transacciones comerciales realizadas electrónicamente.
+ERP (Enterprise Resource Planning): Sistema integrado de gestión empresarial que centraliza y automatiza procesos de negocio incluyendo finanzas, inventario, ventas y recursos humanos.
+Facturación Electrónica: Proceso de emisión, transmisión y recepción de facturas en formato digital, cumpliendo con regulaciones fiscales específicas de cada país.
+Framework: Estructura de soporte conceptual y tecnológica que facilita el desarrollo de software proporcionando funcionalidades comunes reutilizables.
+Interfaz de Usuario (UI): Medio por el cual el usuario interactúa con un sistema informático, incluyendo elementos visuales como botones, menús y formularios.
+Inventario: Registro detallado de bienes y productos disponibles para venta, incluyendo cantidades, ubicaciones y valores monetarios.
+JSON (JavaScript Object Notation): Formato ligero de intercambio de datos que es fácil de leer y escribir para humanos y máquinas.
+MiPymes: Micro, pequeñas y medianas empresas que constituyen el sector empresarial con limitaciones específicas de personal, volumen de ventas y activos.
+MVC (Model-View-Controller): Patrón arquitectónico que separa la lógica de negocio (Modelo), la presentación (Vista) y el control de flujo (Controlador) para mejorar la mantenibilidad del código.
+Node.js: Entorno de ejecución de JavaScript del lado del servidor, construido sobre el motor V8 de Chrome, que permite desarrollar aplicaciones web escalables.
+Omnicanalidad: Estrategia que integra múltiples canales de venta para proporcionar una experiencia unificada al cliente, independientemente del punto de contacto utilizado.
+OMS (Order Management System): Sistema que centraliza y automatiza el procesamiento de pedidos desde su creación hasta la entrega final al cliente.
+Pasarela de Pago: Servicio que procesa transacciones con tarjetas de crédito y otros métodos de pago para comercio electrónico, asegurando la transmisión segura de información financiera.
+PCI DSS (Payment Card Industry Data Security Standard): Conjunto de estándares de seguridad diseñados para garantizar que todas las empresas que procesan información de tarjetas de crédito mantengan un entorno seguro.
+REST (Representational State Transfer): Estilo arquitectónico para servicios web que utiliza métodos HTTP estándar y es stateless, facilitando la escalabilidad y simplicidad.
+ROI (Return on Investment): Métrica que evalúa la eficiencia de una inversión calculando la relación entre el beneficio obtenido y el costo de la inversión.
+SPA (Single Page Application): Aplicación web que interactúa dinámicamente con el usuario reescribiendo la página actual en lugar de cargar páginas completas desde el servidor.
+SSL/TLS (Secure Sockets Layer/Transport Layer Security): Protocolos criptográficos que proporcionan comunicaciones seguras a través de redes informáticas.
+Sincronización en Tiempo Real: Proceso que actualiza datos simultáneamente across múltiples sistemas o canales, asegurando consistencia inmediata de información.
+Transformación Digital: Proceso integral de adopción de tecnologías digitales para mejorar procesos empresariales, cultura organizacional y experiencias del cliente.
+UX (User Experience): Experiencia global que tiene un usuario al interactuar con un producto o servicio, incluyendo aspectos de usabilidad, accesibilidad y satisfacción.
+Vue.js: Framework progresivo de JavaScript para construir interfaces de usuario, especialmente efectivo para desarrollo de aplicaciones de página única.
+Webhook: Método de comunicación entre aplicaciones que permite enviar datos automáticamente cuando ocurren eventos específicos, facilitando la integración en tiempo real.
+
+
+INTRODUCCIóN
+
+PLANTEAMIENTO DEL PROBLEMA
+Antecedentes
+A nivel global, las micro, pequeñas y medianas empresas (MiPymes) representan más del 90 % del total de empresas y generan entre el 60 % y 70 % del empleo, convirtiéndose en un pilar esencial para la economía . Sin embargo, gran parte de ellas enfrenta un rezago tecnológico significativo, lo que limita su capacidad para competir en un mercado cada vez más digitalizado.
+A nivel regional, la tendencia hacia la digitalización, impulsada por la implementación de la factura y el comercio electrónicos, ha demostrado mejoras sustanciales en eficiencia, reducción de costos y aumento de competitividad, en especial en microempresas que anteriormente operaban con procesos manuales .
+En el contexto hondureño, las MiPymes generan aproximadamente el 70 % del empleo y contribuyen de forma notable al Producto Interno Bruto (PIB) nacional. A pesar de su importancia, presentan debilidades estructurales en su gestión administrativa y tecnológica  Entre sus principales retos se encuentran la ausencia de sistemas integrados de facturación y control de inventarios, lo que provoca errores frecuentes, pérdida de información, retrasos en procesos y dificultades para cumplir con los requerimientos fiscales.
+En ciudades como La Ceiba, muchas empresas familiares mantienen prácticas operativas heredadas que carecen de integración tecnológica, lo que las hace vulnerables ante la competencia de negocios que ya ofrecen canales de venta en línea y procesos automatizados.
+Cerámicas y Terrazos Universal constituye un ejemplo representativo de microempresa hondureña que, pese a contar con un catálogo variado de productos, presenta limitaciones derivadas de la gestión manual de ventas y facturación. La falta de herramientas digitales para el control centralizado de inventarios y la comercialización en línea ha reducido su capacidad de respuesta y su alcance comercial.
+
+Definición del Problema
+Cerámicas y Terrazos Universal, ubicada en La Ceiba, Honduras, enfrenta deficiencias operativas debido a que su facturación y control de inventario se realizan manualmente y sin integración con una plataforma de comercio electrónico, lo que genera errores, retrasos en la atención al cliente, dificultades para emitir reportes contables y una ausencia de presencia digital que limita su alcance y competitividad en el mercado actual.
+Justificación
+La digitalización empresarial es un requisito esencial para la permanencia y el fortalecimiento competitivo de las MiPymes, ya que permite optimizar procesos internos, reducir errores, ampliar el alcance de mercado y mejorar la experiencia del cliente  En el caso de Cerámicas y Terrazos Universal, la implementación de un sistema integrado de facturación y comercio electrónico ofrecerá beneficios significativos, al permitir la emisión de comprobantes fiscales conforme a la normativa vigente, el registro en tiempo real de inventarios y la centralización de datos administrativos  Asimismo, la incorporación de un canal de ventas en línea disponible las 24 horas incrementará la cobertura de mercado y atraerá a clientes que actualmente no tienen acceso físico al establecimiento. Esta implementación de sistema también contribuirá a la reducción de costos operativos y a una gestión más eficiente de recursos, elementos clave para fortalecer su posición en un entorno comercial cada vez más competitivo . En este sentido, el proyecto no solo responde a una necesidad operativa inmediata, sino que constituye una estrategia de modernización empresarial orientada al crecimiento sostenible y a la consolidación en el mercado a mediano y largo plazo.
+
+
+OBJETIVOS
+Objetivo General
+Desarrollar e implementar en un período de seis meses un sistema integrado de facturación y comercio electrónico para Cerámicas y Terrazos Universal, que permita registrar ventas, emitir facturas y reportes, controlar inventario y ofrecer productos en línea, fortaleciendo la presencia digital de la empresa.
+ Objetivos Específicos
+Desarrollar un módulo de facturación electrónica que permita emitir comprobantes fiscales cumpliendo con la normativa tributaria vigente en Honduras.
+Desarrollar un sistema centralizado de control de inventario que registre en tiempo real las entradas, salidas y existencias de productos.
+Diseñar una plataforma de comercio electrónico que permita a los clientes realizar pedidos en línea de manera segura y eficiente.
+
+MARCO TEORICO
+Base Teórica
+Transformación digital y MiPymes
+La transformación digital en las MiPymes se ha convertido en un aspecto destacado y fundamental para su competitividad, especialmente en el caso de las economías en desarrollo. Esta tendencia queda corroborada por los resultados de  la tercera Encuesta de Adopción Digital 2023, en la cual el 89% de las Pymes asegura que, durante 2023, espera proceder con su digitalización, con un interés cada vez mayor en el uso de nuevas tecnologías que aumenten su productividad. La citada encuesta también refleja que el 43% de las Pymes emplea herramientas de colaboración digital, el 48% afirma que la implementación de nuevas tecnologías incrementa las ventas, y el 44% sostiene que la transformación digital genera un ahorro considerable. De este modo, los datos obtenidos son una clara muestra de que la transformación digital es más que una simple tendencia; es un proceso que tiene importantes consecuencias en la competitividad y la resiliencia de las MiPymes de la región. El índice de políticas para Pymes de la  destaca que aquellas empresas que adoptan estrategias digitales y acceden a financiamiento verde-digital muestran un mejor desempeño y resiliencia. Según  "la pandemia de COVID-19 aceleró la adopción de pagos digitales y la digitalización en la región, en un proceso que se estaba dando lentamente, y que con la pandemia se dio un gran salto" (p. 12).
+Factura electrónica en Latinoamérica
+Un aspecto clave del cambio es la factura digital. Latinoamérica ha sido innovadora en esto: usar facturas digitales en lugares como México y Uruguay ha hecho que se recaude más dinero, entre un 3% y 14%, porque hay menos gente que no paga impuestos y es más fácil controlar los impuestos . Según el  en todo el mundo, unos 90 países han implantado o están implantando la facturación electrónica, entre ellos 17 de América Latina y el Caribe. Sus ámbitos de aplicación se han ampliado, como la nómina electrónica, que agiliza la deducción de las cotizaciones a la seguridad social, o los bienes en tránsito. En Honduras, el Servicio de Administración de Rentas  ya tiene las reglas para usar las facturas digitales.
+Comercio electrónico en países en desarrollo
+El comercio electrónico en los países en desarrollo también ha experimentado un crecimiento acelerado. Asimismo, el Global Findex del  señala que en 2021 el 57% de los adultos en economías en desarrollo realizó o recibió un pago digital, lo cual evidencia un cambio cultural hacia la adopción de medios electrónicos. En América Latina, la expansión de la tecnología financiera ha sido fundamental para facilitar el acceso a pagos digitales y créditos, impactando de manera directa en el crecimiento de las microempresas .
+Tipos de Comercio Electrónico e Historia
+A lo largo de la historia, el comercio ha recorrido un fascinante camino desde el trueque en sociedades antiguas, una forma de intercambio directo que enfrentaba limitaciones como la coincidencia de necesidades hasta la adopción de monedas en Lidia alrededor del siglo VII a.C., la introducción del papel moneda y los sistemas bancarios, y la llegada de las transacciones digitales en el siglo XX para dar paso finalmente al comercio electrónico en el siglo XXI; esta evolución no solo refleja cambios tecnológicos sino también culturales en nuestra forma de intercambiar valor  .
+ En la actualidad, el e-commerce se ha diversificado en múltiples modelos de negocio, incluyendo los tradicionales como Business to Consumer (B2C), Business-to-Business (B2B), Consumer to Consumer (C2C) y Consumer to Business (C2B), así como también aquellos enfocados en relaciones con el sector público como Business to Administration (B2A) y Consumer to Administration (C2A) todos descritos en estudios recientes sobre tendencias de 2025, además de modelos emergentes como D2C (Direct to Consumer), que elimina intermediarios, Q-commerce, centrado en entregas ultrarrápidas, y social commerce, que aprovecha las redes sociales para ventas integradas y espontáneas. Esta trayectoria histórica y esta nueva pluralidad de modalidades evidencian que el comercio ha pasado de intercambios locales y físicos a ser un ecosistema global, instantáneo, eficiente y altamente especializado, capaz de responder a las exigencias de consumo y conectividad del siglo XXI. 
+Gestión de inventarios y ERP en microempresas
+Los sistemas ERP proporcionan visibilidad en tiempo real de los niveles de inventario, las ventas y el estado de los pedidos. Este acceso inmediato a la información permite a las empresas tomar decisiones informadas, responder rápidamente a los cambios en la demanda y mantener niveles óptimos de inventario. La integración con la nube ha mejorado esta capacidad, ya que las empresas pueden acceder a los datos de manera centralizada y remota, lo que agiliza las operaciones y mejora la visibilidad sobre los productos guardados y la cadena de suministro 
+Experiencia de usuario (UX), pagos en línea y seguridad
+La forma en que el usuario vive el sitio (UX) es clave para que compre en sitios web. Las investigaciones del  revelan que el 70% de los usuarios de e-commerce abandonan su compra después de agregar artículos al carrito, y que el diseño y flujo del checkout es frecuentemente la única causa de que los usuarios abandonen durante el proceso de checkout. Los problemas mayores identificados incluyen el 50% de sitios que no hacen prominente la opción de "checkout como invitado", el 65% que tienen requisitos de contraseña excesivamente complejos, y el 74% que no marcan claramente cuáles campos son obligatorios y cuáles opcionales. Estos obstáculos en el proceso de compra hacen que muchos no terminen la transacción. Las investigaciones muestran que el sitio promedio de e-commerce puede obtener hasta un 35% de aumento en la tasa de conversión simplemente haciendo cambios de diseño en su proceso de checkout. Por esto, es fundamental que las páginas sean más fáciles de entender para todos los usuarios, y que se sigan las reglas de seguridad internacionales para cuidar los datos bancarios de los clientes y que se sientan seguros al pagar online.
+Patrón Modelo-Vista-Controlador (MVC)
+La arquitectura Modelo-Vista-Controlador constituye uno de los pilares fundamentales más sólidos para el desarrollo de aplicaciones web escalables y de alta eficiencia. Según la investigación publicada por , este patrón arquitectónico permite una separación clara entre la lógica de presentación y los procesos de negocio, facilitando considerablemente las tareas de mantenimiento y evolución del sistema. En el contexto de plataformas integradas que combinan facturación electrónica y comercio digital, esta división arquitectónica resulta esencial para gestionar la complejidad inherente a los múltiples módulos funcionales que requieren interoperabilidad y coordinación de procesos empresariales en tiempo real.
+El modelo representa la capa de datos y lógica de negocio, encargándose de la gestión de inventarios, procesamiento de facturas, cálculos fiscales y validaciones comerciales. La vista se responsabiliza de la presentación de información tanto para usuarios finales en la tienda en línea como para administradores en el panel de facturación. El controlador actúa como intermediario, procesando las solicitudes del usuario y coordinando las respuestas apropiadas entre modelo y vista 
+ confirman que MVC sigue siendo relevante en 2025, especialmente para el desarrollo de backend y arquitectura limpia. Esta persistencia se debe a que proporciona una base sólida para construir aplicaciones, ya sea APIs REST, aplicaciones web tradicionales o proyectos híbridos como el sistema de facturación integrado propuesto.
+Arquitectura de Microservicios versus Arquitectura Monolítica
+Para sistemas que integran facturación y comercio electrónico, la elección arquitectónica impacta directamente en la escalabilidad, mantenimiento y capacidad de evolución del sistema. Según  una arquitectura monolítica ofrece ventajas significativas para MiPymes por su simplicidad de despliegue y menor complejidad operacional inicial.
+ establece que el compromiso principal entre estas arquitecturas es simplicidad versus flexibilidad. Para equipos pequeños o productos en etapa temprana, los monolitos son frecuentemente más rápidos de construir, más fáciles de probar y más simples de gestionar. Los microservicios solo proporcionan beneficios cuando el sistema es lo suficientemente grande para justificar la complejidad adicional.
+En el contexto específico de este proyecto,  señala que las aplicaciones monolíticas pueden presentar dificultades para mantener el ritmo de industrias en rápido movimiento, ya que pueden ser inflexibles y difíciles de escalar. Sin embargo, para empresas como Cerámicas y Terrazos Universal, un enfoque monolítico bien estructurado con límites modulares claros permite futuras migraciones hacia microservicios conforme crezcan las necesidades del negocio.
+ introduce el concepto de "monolito modular" como una alternativa seria a los microservicios en 2025, combinando la simplicidad de los monolitos con las buenas prácticas de la arquitectura de microservicios. Esta aplicación se despliega como un sistema único, pero está claramente dividida en módulos independientes con responsabilidades bien definidas.
+APIs RESTful y Comunicación entre Sistemas
+La comunicación entre diferentes módulos del sistema integrado se fundamenta en principios REST (Representational State Transfer).  establece que una implementación de API web RESTful emplea principios arquitectónicos REST para lograr una interfaz sin estado y débilmente acoplada entre cliente y servicio.
+Las APIs RESTful facilitan la integración con servicios externos como pasarelas de pago, servicios de envío y sistemas contables, elementos cruciales para un sistema de facturación integral.  confirman que REST proporciona una arquitectura ligera y sin estado para servicios web, permitiendo comunicación fluida entre sistemas distribuidos.
+La estructura de recursos REST debe reflejar las entidades principales del negocio: productos, clientes, facturas, pedidos e inventario.  enfatiza que cuando los recursos están bien nombrados, una API es intuitiva y fácil de usar, mientras que si está mal diseñada, esa misma API puede ser desafiante de usar y entender.
+ confirma que las APIs REST son uno de los tipos más comunes de interfaces web disponibles hoy en día, permitiendo que varios clientes, incluyendo aplicaciones de navegador, se comuniquen con servicios a través de la API REST, por lo que es muy importante diseñar las APIs REST adecuadamente.
+Integración de Sistemas de Facturación y Comercio Electrónico
+Sincronización de Inventarios en Tiempo Real
+La sincronización de inventarios en tiempo real constituye un elemento crítico para sistemas integrados de facturación y comercio electrónico. Según , la integración de capacidades permite que las actualizaciones de inventario se procesen simultáneamente a través del sitio web, Amazon y socios minoristas. Esta sincronización multicanal previene el pecado cardinal del comercio electrónico: vender productos que no están disponibles.
+ confirma que la sincronización de datos en tiempo real garantiza que cada plataforma (sitio web, CRM, ERP, etc.) refleje la información más actualizada. Los clientes se benefician al ver la disponibilidad de productos en tiempo real, haciendo que su experiencia de compra sea más fluida y confiable. Sin integración adecuada, las empresas corren el riesgo de sobreventa y agotamiento de existencias.
+Para sistemas como el propuesto para Cerámicas y Terrazos Universal, esta sincronización debe manejar el flujo bidireccional de datos entre módulos de inventario y comercio electrónico.  señala que las plataformas automatizadas sincronizan los costos de inventario y ventas con sistemas contables, manteniendo registros financieros e inventario precisos sin intervención manual.
+Flujos de Datos entre Módulos
+Los flujos de datos efectivos entre módulos de facturación, inventario y comercio electrónico requieren arquitecturas que soporten operaciones en tiempo real.  establece que cuando un cliente realiza un pedido, el sistema debe actualizar automáticamente el inventario, crear etiquetas de envío, ajustar las finanzas y actualizar perfiles de clientes a través de todos los canales de venta.
+ describe el flujo típico: cuando un cliente realiza un pedido, el sistema de gestión de pedidos (OMS) captura los detalles y verifica automáticamente la disponibilidad de inventario. Luego inicia el proceso de cumplimiento, incluyendo picking, empaque y envío. El OMS automatiza los niveles de inventario en tiempo real y genera etiquetas de envío.
+La integración requiere que los datos fluyan de manera coherente entre diferentes sistemas empresariales.  confirma que los niveles de inventario se sincronizan entre los dos sistemas para garantizar que los niveles de stock sean consistentes. Cuando se realizan nuevos pedidos en la plataforma de comercio electrónico, el ERP genera automáticamente órdenes de compra.
+Gestión de Estados de Pedidos
+La gestión efectiva de estados de pedidos es fundamental para mantener la integridad de datos y la experiencia del cliente.  define que un OMS rastrea los niveles de inventario por canal, automatiza el proceso de cumplimiento de pedidos, maneja la logística inversa, gestiona información de clientes y fusiona datos de pedidos y financieros.
+ identifica que muchas soluciones tradicionales de gestión de pedidos carecen de capacidades de automatización para entrada de pedidos, cumplimiento y servicio al cliente, lo que resulta en procesos que consumen tiempo y son propensos a errores humanos. El enrutamiento de pedidos impulsado por IA puede analizar factores como niveles de stock, ubicaciones geográficas y ventanas de entrega para determinar la estrategia de cumplimiento más eficiente.
+ enfatiza que la integración de APIs fomenta un ecosistema unificado al conectar el Sistema de Gestión de Pedidos con otros sistemas empresariales cruciales como CRMs, software de contabilidad o plataformas de marketing. Esto permite un flujo de datos sin interrupciones, mejorando la eficiencia operacional general.
+Para el sistema propuesto, los estados de pedidos deben incluir: pedido recibido, verificación de inventario, procesamiento de pago, preparación para envío, enviado, entregado y, en caso necesario, devolución procesada. Cada transición de estado debe actualizarse automáticamente en todos los módulos conectados, manteniendo consistencia de datos y trazabilidad completa.
+
+
+
+
+Base Legal (Honduras)
+Reglamento del Régimen de Facturación y Reformas (Acuerdos 481-2017, 609-2017, 725-2018 y 817-2018)
+Desde el año 2017, el país de Honduras se había establecido y ha sido creciendo con el pacto No. 481-2017 , que fue el que daba regulaciones para la expedición de las papelerías de impuestos, la facturación digital, el registro de las imprentas y los reglamentos de control tributario, y después dio tres cambios principales que fueron el Acuerdo No. 609-2017 , No. 725-2018  y el No. 817-2018  en los cuales se realizaron cambios en las definiciones, el formato de los documentos, los derechos de los obligados tributarios y el uso de la numeración fiscal. 
+Por el momento, el texto unido es el que contiene todos los cambios que han sucedido en un solo papel actualizado y por lo tanto mejor para su búsqueda 
+En otro orden de cosas, el pacto No. 231-2020, de la, fue el que salió en el año 2020 y que permitió por un tiempo (en ese año) la impresión de las papelerías de impuestos a determinados obligados tributarios con problemas extraños.
+Ley sobre Firmas Electrónicas
+Ley sobre Firmas Electrónicas (Decreto No. 149-2013)  es la fundamental para validar la integridad y autenticidad de documentos electrónicos, incluyendo facturas. Esta normativa establece:
+La validez jurídica de la firma electrónica, equiparándola a la manuscrita si cumple los requisitos legales.
+La definición de conceptos clave como firma electrónica avanzada y certificado digital.
+Normas de neutralidad tecnológica, responsabilidad de entidades certificadoras y manejo de certificaciones electrónicas.
+A pesar de su antigüedad, sigue vigente y es pieza esencial en el marco legal de facturación electrónica en Honduras.
+4.3 Herramientas Utilizadas y Tecnologías
+El desarrollo del sistema de facturación electrónica integrado con comercio electrónico requiere una combinación de herramientas de programación, bases de datos, servicios en la nube y metodologías de desarrollo ágil, todas alineadas con las mejores prácticas actuales en ingeniería de software.
+
+
+Lenguajes y Frameworks
+
+Figura 4.1. Node.js
+Node.js: Plataforma de desarrollo basada en JavaScript para el backend, reconocida por su eficiencia en aplicaciones escalables y de tiempo real. 
+
+Figura 4.2. Express.js
+Express.js: Framework ligero para Node.js que facilita la creación de APIs RESTful, optimizando la comunicación entre módulos del sistema. 
+
+Figura 4.3. Vue.js
+Vue.js : Framework progresivo de JavaScript utilizado en el frontend, ideal para aplicaciones SPA (Single Page Application) y comercio electrónico por su modularidad y rapidez de carga. 
+Bases de Datos
+
+Figura 4.4. MySQL
+MySQL: Sistema de gestión de bases de datos relacional ampliamente utilizado en entornos empresariales por su robustez, soporte a transacciones y seguridad en la gestión de inventarios y facturación. 
+Servicios en la Nube e Infraestructura
+
+Figura 4.8. Docker
+Docker: Tecnología de contenedores que permite aislar aplicaciones, facilitando la portabilidad y despliegue en distintos entornos. 
+
+Figura 4.9. Google Cloud
+Servicios Cloud (Google Cloud): Ofrece escalabilidad, almacenamiento seguro y herramientas de monitoreo que garantizan la disponibilidad del sistema. 
+APIs y Servicios Externos
+
+Figura 4.10. Google Maps API
+Google Maps API: Para la geolocalización y búsqueda de direcciones de clientes, optimizando procesos de entrega y logística. 
+
+Figura 4.11. Firebase Cloud Messaging
+Notificaciones (Firebase Cloud Messaging): Integradas para la comunicación con usuarios sobre confirmaciones de pedidos y facturas emitidas. 
+
+METODOLOGÍA
+Métodos
+Para el desarrollo del sistema de facturación integrado con plataforma de comercio electrónico para Cerámicas y Terrazos Universal, se adoptó un enfoque metodológico mixto que combina elementos cualitativos y cuantitativos:
+Definición de Enfoque Metodológico
+Un enfoque metodológico se define como "la perspectiva general que adopta el investigador para abordar el problema de investigación, determinando la estrategia de indagación y los métodos específicos de recolección y análisis de datos" 
+Método Cualitativo
+El enfoque cualitativo se caracteriza por ser "un procedimiento metodológico que utiliza palabras, textos, discursos, dibujos, gráficos e imágenes para comprender la vida social del sujeto a través de los significados desarrollados por éste" . Este enfoque utiliza la recolección de datos sin medición numérica predominante, busca comprender el contexto y los significados profundos, se fundamenta en un proceso inductivo y flexible, permite adaptabilidad en el diseño de investigación y se orienta hacia la descripción profunda del fenómeno. Se implementó para comprender las necesidades específicas del negocio, los procesos actuales de facturación y las expectativas de los usuarios mediante cuatro técnicas principales que se detallan en la sección 5.3.1.
+Método Cuantitativo
+El enfoque cuantitativo "se caracteriza por la medición de fenómenos utilizando la recolección de datos para probar hipótesis y teorías a través de análisis estadísticos. Su proceso de realización es deductivo, secuencial y busca tener mayor objetividad" . Se caracteriza por la medición de variables y análisis estadístico riguroso, proceso deductivo y secuencial estructurado, objetividad en la recolección y análisis de datos, generalización y validación de resultados, y uso de técnicas estadísticas para la interpretación. Se aplicó para medir la efectividad del sistema desarrollado y validar mejoras en eficiencia operacional mediante técnicas específicas de medición y análisis que se detallan en la sección 5.3.1.
+Justificación del Enfoque Mixto
+Según , "la investigación mixta se refiere a la combinación de métodos cuantitativos y cualitativos en un solo estudio para entender un problema de investigación complejo". Esta integración metodológica permite complementariedad, completitud, confirmación, expansión y triangulación de los resultados obtenidos. Para este proyecto se adoptó un diseño mixto secuencial explicativo, donde "primero se recopilan y analizan datos cuantitativos. Sobre la base de ellos, se organiza luego la recopilación y análisis de los datos cualitativos para obtener una comprensión más profunda del fenómeno" 
+Población y Muestra
+Población
+La población objetivo del estudio comprende:
+Población primaria: Cerámicas y Terrazos Universal (1 empresa) 
+Administrador/propietario (1 persona)
+Vendedores (2 personas)
+Personal de bodega (2 personas)
+Motorista (1 persona)
+Población secundaria: Clientes actuales y potenciales 
+Base de clientes registrados: aproximadamente 150 clientes
+Clientes potenciales del mercado digital local
+Muestra
+Dado el alcance específico del proyecto, se trabajó con:
+Muestra no probabilística intencional para el desarrollo del sistema: 
+Personal directamente involucrado en el sistema (3 personas): 
+Administrador: uso completo del sistema (facturación, inventario, reportes)
+Vendedores (2): módulo de ventas y consulta de inventario
+Personal indirectamente relacionado (3 personas): 
+Personal de bodega (2): actualización de inventario físico
+Motorista (1): consulta de pedidos para entrega
+Clientes para testing: 
+30 clientes frecuentes para pruebas de usabilidad de la plataforma de e-commerce
+10 personas para pruebas piloto del sistema de facturación electrónica
+Criterios de selección de la muestra de clientes:
+Frecuencia de compra: al menos 3 transacciones en los últimos 6 meses
+Disponibilidad para participar en pruebas de usuario
+Familiaridad básica con tecnología digital
+Técnicas e Instrumentos Aplicados
+Técnicas de Recolección de Datos
+a) Entrevista Semiestructurada
+Las entrevistas semiestructuradas se definen como "conversaciones dirigidas que combinan preguntas estructuradas con la flexibilidad de explorar temas emergentes, permitiendo profundizar en aspectos específicos mientras se mantiene un enfoque sistémico" . El objetivo principal fue identificar necesidades específicas y procesos actuales, dirigiéndose al gerente y empleados de Cerámicas y Terrazos Universal con una duración de 45-60 minutos por entrevista. Se realizaron con el gerente de ventas Daniel Bonilla (50 minutos) y empleados (30 minutos), revelando dolor points específicos como la desintegración entre facturación e inventario, y requerimientos funcionales como cálculos automáticos y acceso móvil. Los temas clave abordados incluyeron procesos de facturación, control de inventario, atención al cliente y expectativas tecnológicas. Ver anexos 1 y 2.
+b) Observación Participante
+La observación participante se define como "una técnica de recolección de datos donde el investigador se involucra activamente en el contexto estudiado, observando y participando en las actividades cotidianas para comprender los fenómenos desde la perspectiva de los participantes" . El objetivo fue mapear procesos operativos existentes durante 40 horas distribuidas en 2 semanas. Esta técnica se realizó del 29 julio al 9 agosto de 2025, documentando procesos manuales existentes en Cerámicas y Terrazos Universal e identificando que el tiempo promedio por venta es de 8 minutos con errores frecuentes de cálculo. Los aspectos observados incluyeron flujo de ventas, manejo de inventario, emisión de facturas y atención al cliente. Ver anexo 3.
+c) Medición de Usabilidad
+La medición de usabilidad se define como "el proceso de evaluación cuantitativa de la facilidad de uso de un producto o sistema, midiendo la efectividad, eficiencia y satisfacción del usuario en el logro de objetivos específicos" . El objetivo fue validar usabilidad y funcionalidad del sistema con 30 clientes seleccionados mediante la metodología de tareas dirigidas con protocolo de pensamiento en voz alta. Se realizó mediante encuestas a 30 clientes frecuentes que revelaron que el 87% está interesado en ver productos en línea y 60% haría pedidos por internet, cuantificando la demanda de comercio electrónico. Las pruebas utilizaron métricas estandarizadas como System Usability Scale (SUS) y Task Success Rate para evaluar la efectividad de la interfaz. Ver anexo 4.
+e) Evaluación Heurística
+La evaluación heurística se define como "un método de inspección de usabilidad donde evaluadores examinan la interfaz de usuario y juzgan su cumplimiento con principios de usabilidad reconocidos" . Esta técnica se aplicó para analizar competidores digitales en el sector de materiales de construcción, identificando mejores prácticas de comercio electrónico B2C mediante la evaluación sistemática de interfaces existentes en el mercado. El análisis permitió establecer estándares de usabilidad y funcionalidad que sirvieron como referencia para el diseño del sistema propuesto. Ver anexo 5.
+Fuentes de Información
+Definición de Fuentes
+Fuentes Primarias: Son aquellas que proporcionan información directa y de primera mano sobre el tema de investigación, sin intermediarios ni interpretaciones previas. "Las fuentes primarias son aquellas que proporcionan datos e información original y directa sobre un tema específico". 
+Fuentes Secundarias: Son aquellas que interpretan, analizan o comentan información de fuentes primarias. "Las fuentes secundarias son aquellas que proporcionan datos e información indirecta, es decir, que se basan en información ya existente y tienden a expresar un punto de vista". 
+Fuentes Primarias Utilizadas
+La investigación de campo constituyó el fundamento principal de este proyecto, iniciando con entrevistas directas realizadas tanto al gerente como a los empleados de Cerámicas y Terrazos Universal, lo que permitió comprender a profundidad la operación actual del negocio, sus desafíos y necesidades específicas. Complementariamente, se llevó a cabo una observación de los procesos operativos, documentando cada etapa del flujo de trabajo desde la recepción de pedidos hasta la entrega final de productos. Para capturar la perspectiva del cliente, se aplicaron encuestas enfocadas en identificar sus necesidades y expectativas respecto a una plataforma digital de ventas.
+Durante la fase de desarrollo, se realizaron pruebas de usuario del sistema con participantes representativos del mercado objetivo, obteniendo retroalimentación valiosa sobre la experiencia de uso y funcionalidades críticas. Estas pruebas fueron complementadas con sesiones de feedback continuo con stakeholders clave, asegurando que el producto final alineara con las expectativas y requerimientos del negocio.
+Los datos operacionales proporcionaron información cuantitativa esencial para el diseño del sistema. Se analizaron registros de ventas correspondientes a los últimos doce meses, permitiendo identificar patrones de demanda, productos más vendidos y comportamientos estacionales. Los inventarios actuales de productos y materiales fueron documentados exhaustivamente para diseñar un módulo de gestión de stock efectivo. Asimismo, se recopilaron y analizaron los documentos fiscales utilizados actualmente por la empresa, junto con la documentación interna de procesos administrativos, estableciendo así la base para la automatización y digitalización de estas operaciones.
+Fuentes Secundarias Utilizadas
+El marco legal y normativo representó una fuente secundaria fundamental para garantizar el cumplimiento regulatorio del sistema. Se consultó detalladamente el Reglamento del Régimen de Facturación de Honduras, específicamente los Acuerdos 481-2017, 609-2017, 725-2018 y 817-2018, que establecen los requisitos para la emisión de facturas electrónicas y documentos tributarios. La Ley sobre Firmas Electrónicas contenida en el Decreto No. 149-2013 proporcionó el fundamento legal para la validez de transacciones digitales en el país. Adicionalmente, se incorporaron las normativas internacionales de seguridad PCI DSS para el manejo de información de tarjetas de crédito, así como los estándares de accesibilidad web WCAG 2.2 para asegurar que la plataforma sea utilizable por personas con diferentes capacidades.
+La literatura académica y técnica consultada incluyó investigaciones recientes sobre transformación digital en MiPymes latinoamericanas, que proporcionaron contexto sobre los desafíos específicos que enfrentan empresas de este segmento en la región. Se analizaron diversos estudios de caso sobre implementación de sistemas ERP en microempresas, extrayendo lecciones aprendidas y mejores prácticas aplicables al proyecto. Los análisis de tendencias en comercio electrónico B2C ayudaron a identificar funcionalidades esperadas por los usuarios modernos y patrones de comportamiento de compra online. Las best practices en arquitectura de sistemas web guiaron las decisiones de diseño técnico, asegurando escalabilidad, mantenibilidad y rendimiento óptimo.
+La documentación técnica oficial de las tecnologías empleadas fue consultada exhaustivamente. Esto incluyó la documentación de Node.js, Express.js, Vue.js y MySQL, que constituyen el stack tecnológico principal del sistema. Las guías de implementación de APIs de pago como Stripe, PayPal y BAC Credomatic fueron esenciales para integrar pasarelas de pago seguras y funcionales. Los manuales de servicios cloud de Google Cloud Platform orientaron las decisiones de infraestructura y despliegue. La documentación de herramientas de desarrollo y testing garantizó la aplicación de metodologías apropiadas durante todo el ciclo de vida del software.
+Finalmente, los reportes de industria proporcionaron contexto macroeconómico y sectorial relevante. Los informes del Banco Interamericano de Desarrollo sobre digitalización en Centroamérica ofrecieron datos sobre el estado actual de adopción tecnológica en la región y barreras comunes. Los estudios de la OCDE sobre políticas para MiPymes en América Latina contextualizaron el entorno regulatorio y de apoyo empresarial. Los reportes específicos de adopción de comercio electrónico en Honduras proporcionaron estadísticas locales sobre penetración de internet, hábitos de compra online y preferencias de pago. Los análisis de mercado del sector construcción y materiales permitieron comprender la dinámica competitiva y las oportunidades de diferenciación en el segmento específico donde opera Cerámicas y Terrazos Universal. 
+Cronología de Trabajo
+Diagrama de Gantt - Desarrollo del Sistema de Facturación Integrado
+Proyecto: Sistema de Facturación Integrado con Plataforma de Comercio Electrónico
+Empresa: Cerámicas y Terrazos Universal
+Director De Proyecto: Carlos Mauricio Argeñal Bonilla
+Fecha De Inicio: 21 de julio, 2025
+Fecha De Finalización: 12 de diciembre, 2025
+Duración Total: 21 semanas (5 meses) 
+Figura 5.12. Diagrama de Gantt
+Representación Visual por Semanas
+
+Figura 132. Representación Visual por Semanas
+Hitos Principales y Entregables
+Tabla 5.‎5.5.1. Hitos Principales y Entregables
+Nota: Los hitos están estructurados de manera secuencial para garantizar un desarrollo incremental y controlado del sistema.
+Gestión de Riesgos y Plan de Contingencia
+Tabla 5.‎5.5.2. Gestión de Riesgos y Plan de Contingencia
+Nota: La evaluación de riesgos se basa en la matriz probabilidad-impacto estándar del PMI.
+Diseño GUI
+Una interfaz gráfica de usuario (GUI) es la presentación de la interacción, a nivel visual, entre un dispositivo y su usuario. Se trata de un elemento imprescindible dentro del mundo del diseño y del desarrollo que incluye botones, menús, ventanas y otros elementos visuales que permiten a los usuarios interactuar con sistemas informáticos de manera intuitiva. 
+Diseño de Pantallas
+Pantalla de Inicio de Sesión
+
+Ilustración ‎5.6.1.1 Pantalla de Inicio de Sesión
+La pantalla de inicio de sesión es el punto de acceso principal al sistema ProsperPOS. Presenta el logotipo de la aplicación en la parte superior, seguido del título "Iniciar Sesión" con su respectivo subtítulo explicativo. El formulario de acceso incluye dos campos principales: Email o Usuario donde se ingresa el correo electrónico o nombre de usuario, y Contraseña con visualización oculta mediante asteriscos. Debajo de estos campos se encuentra la opción "Recordarme" para mantener la sesión activa, junto al enlace "¿Olvidaste tu contraseña?" que permite la recuperación de credenciales mediante verificación SMTP en la base de datos. El botón naranja "Iniciar Sesión" completa el formulario y da acceso al panel administrativo del sistema.
+Pantalla de Clientes
+
+Ilustración ‎5.6.1.2 Lista de Clientes
+La pantalla principal de clientes muestra una tabla completa con todos los clientes registrados en el sistema. Esta tabla incluye columnas para Código (identificador único del cliente), Nombre (razón social o nombre del cliente), Estado (badge verde para Activo o rojo para Inactivo) y Acciones. En la parte superior de la pantalla se encuentran los botones para exportar la información en formato PDF y Excel (botón verde), así como los controles para recargar la página y minimizar el encabezado. A la derecha se ubica el botón naranja "Agregar Nuevo Cliente" que despliega el modal de registro. Los clientes registrados pueden ser seleccionados durante el proceso de facturación y son utilizados para generar reportes de ventas, y estados de cuenta.
+
+Ilustración ‎5.6.1.3 Agregar Cliente
+Al presionar el botón "Agregar Nuevo Cliente", se despliega un modal con el formulario de registro. Este incluye los campos Código (generado automáticamente), Nombre completo del cliente, Nombre Comercial y Código Tipo Precio para asignar lista de precios específica. También solicita el Documento de Identificación (RTN/DNI) de 14 dígitos, Teléfono de contacto, Email y Fecha de Inicio para registrar desde cuándo es cliente. El campo Dirección permite ingresar la ubicación completa del cliente, seguido de Descuento (%) para aplicar descuentos automáticos y Persona de Contacto. El toggle "Activo" permite definir si el cliente está habilitado en el sistema. Los botones Cancelar y Guardar completan la acción de registro.
+
+Ilustración ‎5.6.1.4 Visualizar Cliente
+La acción de visualización se activa mediante el icono de ojo en la columna de Acciones. Este modal muestra todos los datos del cliente en modo de solo lectura, sin permitir modificaciones. Se presenta la misma estructura del formulario de registro pero con los campos deshabilitados para edición. Esta función es útil para consultar rápidamente la información completa de un cliente sin riesgo de modificar accidentalmente sus datos. El modal incluye únicamente los botones para Cerrar (X) y el botón "Cerrar" en la parte inferior.
+
+Ilustración ‎5.6.1.5 Editar Cliente
+El modal de edición se accede mediante el icono de lápiz en las acciones de cada cliente. Presenta exactamente los mismos campos que el formulario de agregar cliente, pero precargados con la información actual del registro seleccionado. Todos los campos son editables, permitiendo actualizar cualquier dato del cliente como nombre, documento de identificación, contacto, dirección, descuentos aplicables o estado. El botón "Guardar Cambios" (color naranja) confirma las modificaciones realizadas, mientras que el botón Cancelar descarta los cambios y cierra el modal sin afectar la información original.
+
+Ilustración ‎5.6.1.6 Eliminar Cliente
+Al hacer clic en el icono de basurero, se muestra un modal de confirmación para eliminar el cliente. Este diálogo presenta un icono de advertencia en rojo junto al mensaje "Eliminar Cliente" y la pregunta de confirmación "¿Estás seguro de que deseas eliminar este cliente?". El modal ofrece dos opciones: el botón "Cancelar" (gris oscuro) que aborta la operación y cierra el modal, y el botón "Sí, Eliminar" (rojo) que ejecuta la eliminación definitiva del registro. Esta acción debe realizarse con precaución ya que la eliminación de un cliente puede afectar el historial de ventas y reportes asociados.
+Pantalla De Proveedores
+
+Ilustración ‎5.6.1.7 Lista de Proveedores
+La pantalla de administración de proveedores presenta una tabla detallada con todos los proveedores registrados. Las columnas incluyen ID (número secuencial), Nombre del proveedor, Tipo Proveedor (Nacional, Internacional), Doc. Identificación con el formato de RTN hondureño de 14 dígitos, Tipo Beneficiario mostrado en badge azul (Jurídica Domiciliada, Natural Residente, etc.), Estado (Activo/Inactivo) y Acciones con los iconos de visualizar, editar y eliminar. La barra superior contiene las opciones de exportación a PDF y Excel, actualización de datos y el botón principal "Agregar Proveedor" en color naranja. Los proveedores son fundamentales para el módulo de compras, permitiendo registrar órdenes de compra, controlar inventario entrante y gestionar cuentas por pagar.
+
+Ilustración ‎5.6.1.8 Agregar Proveedor
+El formulario de nuevo proveedor se despliega en un modal con los campos esenciales para el registro. Incluye Nombre del proveedor (razón social), Tipo de Proveedor con opciones como Nacional o Internacional (opcional), y Doc. Identificación para ingresar el RTN o número de identificación fiscal. El campo Tipo Beneficiario es un selector desplegable con opciones precargadas como Jurídica Domiciliada, Natural Residente, etc. El toggle "Usa Crédito" permite habilitar líneas de crédito con el proveedor, mientras que el toggle "Activo" define si está habilitado para operaciones. Los botones Cancelar y Guardar completan el proceso de registro. 
+
+Ilustración ‎5.6.1.9 Visualizar Proveedor
+La visualización de proveedores muestra todos los campos en modo de solo lectura. No permite ninguna modificación de datos y sirve únicamente para consultar rápidamente la información completa de un proveedor específico. Esta función es especialmente útil cuando múltiples usuarios necesitan consultar información sin riesgo de alterarla accidentalmente.
+
+Ilustración ‎5.6.1.10 Editar Proveedor
+
+La edición de proveedores mantiene la misma estructura del formulario de agregar, pero con los datos actuales del proveedor seleccionado. Permite modificar el nombre, tipo de proveedor, documento de identificación, tipo de beneficiario y los estados de uso de crédito y activo. Esta función es útil cuando cambian las condiciones comerciales con un proveedor, se actualiza su información fiscal o se necesita desactivar temporalmente un proveedor sin eliminarlo del sistema. El botón "Guardar Cambios" confirma las modificaciones mientras que Cancelar descarta los cambios.
+
+Ilustración ‎5.6.1.11 Eliminar Proveedor
+El modal de eliminación presenta el mensaje de confirmación "¿Estás seguro? ¿Deseas eliminar este proveedor?" con el icono de advertencia en rojo. Ofrece las opciones de Cancelar para abortar la operación o "Sí, Eliminar" para confirmar. Es importante considerar que eliminar un proveedor puede afectar el historial de compras, órdenes pendientes y reportes asociados, por lo que se recomienda verificar estas dependencias antes de proceder.
+
+Pantalla de Sucursales
+
+Ilustración ‎5.6.1.12 Lista de Sucursales
+La pantalla de sucursales administra las diferentes tiendas o puntos de venta de la empresa. La tabla muestra columnas para ID, Nombre de la sucursal, Ciudad donde se encuentra ubicada, Departamento, Gerente responsable, Teléfono de contacto, Estado (Activo/Inactivo) y Acciones. En la parte superior se encuentran los botones de exportación a PDF y Excel, actualización de página y el botón naranja "Agregar Nueva Sucursal". Las sucursales son esenciales para el control de inventario multi-tienda, asignación de personal, generación de reportes por ubicación y gestión de ventas descentralizadas. Cada sucursal puede tener su propio stock, personal y configuración de precios.
+
+Ilustración ‎5.6.1.13 Agregar Sucursal
+El modal de nueva sucursal incluye el campo Nombre para identificar la tienda o punto de venta, Ciudad con selector desplegable de ciudades registradas en el sistema, y Dirección para especificar la ubicación exacta completa. El campo Teléfono almacena el número de contacto principal de la sucursal, Correo Electrónico para comunicaciones oficiales, y Gerente con el nombre del responsable de la sucursal. El toggle Estado permite activar o desactivar la sucursal en el sistema. Los botones Cancelar y Guardar completan el registro.
+
+Ilustración ‎5.6.1.14 Visualizar Sucursal
+La acción de visualización se activa mediante el icono de ojo en la columna de Acciones. Este modal muestra todos los datos de la sucursal en modo de solo lectura, sin permitir modificaciones.
+
+Ilustración ‎5.6.1.15 Editar Sucursal
+La edición de sucursales permite modificar todos los campos del registro original. Resulta útil cuando se cambia de gerente, se actualiza información de contacto, se modifica la dirección física o cuando una sucursal necesita ser desactivada temporalmente sin eliminarla del sistema. Todos los datos históricos y transacciones vinculadas a la sucursal se mantienen intactos. El botón "Guardar Cambios" confirma las modificaciones realizadas.
+
+Ilustración ‎5.6.1.16 Eliminar Sucursal
+El modal de confirmación pregunta "¿Estás seguro? ¿Deseas eliminar esta sucursal?" con el icono de advertencia. La eliminación de una sucursal es una operación crítica que debe evaluarse cuidadosamente ya que puede afectar inventarios, ventas históricas, asignación de personal y reportes. Se recomienda verificar que no existan transacciones pendientes o inventario activo antes de proceder con la eliminación.
+
+Pantalla de Bodegas
+
+Ilustración ‎5.6.1.17 Lista de Bodegas
+La administración de bodegas controla los almacenes o centros de distribución de la empresa. La tabla presenta columnas de ID, Nombre de la bodega, Encargado responsable, Ubicación física completa, Estado y Acciones. Las bodegas son fundamentales para el control de inventario, gestión de entradas y salidas de mercancía, traslados entre ubicaciones y reportes de stock por almacén. Cada bodega puede estar asociada a una o varias sucursales, permitiendo un control preciso de la distribución de productos. La barra superior incluye exportación a PDF/Excel y el botón "Agregar Nueva Bodega".
+
+Ilustración ‎5.6.1.18 Agregar Bodega
+El formulario de nueva bodega solicita el Nombre identificativo del almacén, Encargado con el nombre del responsable (opcional) y Ubicación con la dirección completa del centro de distribución o almacén. El toggle Activa permite habilitar o deshabilitar la bodega para operaciones de inventario. Una bodega inactiva no puede recibir ni despachar mercancía, pero mantiene su información histórica para consultas y auditorías.
+
+Ilustración ‎5.6.1.19 Visualizar Bodega
+El modal de visualización de bodegas se accede mediante el icono de ojo. Muestra en modo de solo lectura el nombre de la bodega, encargado responsable, ubicación física del almacén y estado actual.
+
+Ilustración ‎5.6.1.20 Editar Bodega
+La edición permite actualizar el nombre de la bodega, cambiar el encargado responsable, modificar la ubicación física o cambiar el estado activo/inactivo. Esta función es útil cuando se reorganiza la estructura de almacenamiento, se cambia personal o se actualiza información de ubicación. Todas las transacciones y movimientos de inventario previos se mantienen vinculados a la bodega.
+
+Ilustración ‎5.6.1.21 Eliminar Bodega
+El modal de confirmación solicita verificar la eliminación con el mensaje "¿Estás seguro de que deseas eliminar esta bodega?". Es crucial verificar que la bodega no tenga inventario activo, transferencias pendientes o movimientos sin cerrar antes de eliminarla. La eliminación puede afectar reportes históricos y trazabilidad de productos.
+
+Pantalla de Vehículos
+
+Ilustración ‎5.6.1.22 Lista de Vehículos
+La gestión de vehículos registra la flota de transporte de la empresa para entregas y distribución. La tabla muestra ID, Placa de identificación, Marca del vehículo, Modelo específico, Color, Estado (Activo/Inactivo) y Acciones. Los vehículos registrados pueden asignarse a rutas de entrega, empleados conductores, y son útiles para control de gastos de combustible, mantenimiento y logística. Esta información es valiosa para reportes de distribución y control de activos de la empresa.
+
+Ilustración ‎5.6.1.23 Agregar Vehículo
+El formulario de nuevo vehículo incluye Placa con el número de matrícula oficial, Marca del fabricante (ej: Toyota, Honda, Hino), Modelo específico del vehículo (ej: Hilux 2020), y Color para identificación visual. El toggle Estado define si el vehículo está disponible para operaciones o fuera de servicio por mantenimiento o reparación.
+
+Ilustración ‎5.6.1.24 Visualizar Vehículo
+La visualización de vehículos muestra todos los detalles en modo de consulta únicamente. El modal presenta placa de identificación, marca, modelo, color y estado de disponibilidad.
+
+Ilustración ‎5.6.1.25 Editar Vehículo
+La edición permite actualizar cualquier información del vehículo como placa (en caso de renovación), marca y modelo si hubo error en el registro inicial, color si fue repintado, y especialmente el estado para marcarlo como inactivo durante períodos de mantenimiento o cuando sale de la flota.
+
+Ilustración ‎5.6.1.26 Eliminar Vehículo
+La confirmación de eliminación pregunta "¿Estás seguro? ¿Deseas eliminar este vehículo?". Antes de eliminar se debe verificar que no existan asignaciones activas de entregas, rutas pendientes o registros de mantenimiento sin cerrar vinculados al vehículo.
+
+Pantalla de Países 
+
+Ilustración ‎5.6.1.27 Lista de Países
+La administración de países gestiona los territorios disponibles en el sistema para direcciones y ubicaciones. La tabla muestra ID, Nombre del país, Código ISO estándar internacional, Departamentos asociados, Estado y Acciones. Este catálogo es base para la estructura geográfica jerárquica del sistema que continúa con departamentos y ciudades. Permite gestionar direcciones correctamente estructuradas para clientes, proveedores, sucursales y empleados.
+
+Ilustración ‎5.6.1.28 Agregar País
+El formulario incluye Nombre del país completo y Código ISO con el estándar internacional de dos o tres letras. El toggle Activo permite habilitar o deshabilitar países según las operaciones comerciales de la empresa. Un país inactivo no aparece en selectores pero mantiene sus registros históricos.
+
+Ilustración ‎5.6.1.29 Visualizar País
+El modal presenta en modo de solo lectura el nombre completo del país, código ISO estándar internacional, número de departamentos asociados y estado activo/inactivo.
+
+Ilustración ‎5.6.1.30 Editar País
+Permite modificar el nombre del país para correcciones ortográficas, actualizar el código ISO si fue ingresado incorrectamente, o cambiar el estado activo/inactivo según la expansión o reducción de operaciones geográficas.
+
+Ilustración ‎5.6.1.31 Eliminar País
+La confirmación solicita verificar con "¿Estás seguro de que deseas eliminar este país?". Es importante considerar que eliminar un país puede afectar todos los departamentos, ciudades y registros asociados como clientes, proveedores y sucursales ubicados en ese territorio.
+
+Pantalla de Departamentos (Ubicaciones)
+
+Ilustración ‎5.6.1.32 Lista de Departamentos
+La gestión de departamentos administra las divisiones territoriales de primer nivel dentro de cada país (estados, provincias, departamentos según la nomenclatura local). La tabla presenta ID, Nombre del departamento, País al que pertenece, Estado y Acciones. Los departamentos son parte de la estructura geográfica que permite organizar ciudades y generar reportes por región. Son útiles para análisis de ventas por zona, planificación logística y segmentación de mercado.
+
+Ilustración ‎5.6.1.33 Agregar Departamento
+El formulario solicita Nombre del departamento y País mediante selector desplegable con los países activos en el sistema. El toggle Activo permite habilitar o deshabilitar departamentos según necesidades operativas. Un departamento inactivo no aparece en selectores pero preserva información histórica.
+
+Ilustración ‎5.6.1.34 Visualizar Departamento
+
+La visualización muestra el nombre del departamento o estado, el país al que pertenece y el estado de disponibilidad. Los campos se presentan en modo de solo lectura con indicadores visuales claros.
+
+Ilustración ‎5.6.1.35 Editar Departamento
+Permite modificar el nombre del departamento para correcciones, cambiar el país asignado en caso de error de registro, o actualizar el estado activo/inactivo. Las ciudades y registros asociados al departamento se mantienen vinculados.
+
+
+Ilustración ‎5.6.1.36 Eliminar Departamento
+El modal confirma con "¿Estás seguro de que deseas eliminar este departamento?". La eliminación puede afectar todas las ciudades contenidas, así como clientes, proveedores, sucursales y empleados registrados en ese departamento.
+
+Pantalla de Ciudades/Municipios
+
+Ilustración ‎5.6.1.37 Lista de Ciudades
+La administración de ciudades completa la estructura geográfica del sistema. La tabla muestra ID, Nombre de la ciudad o municipio, Departamento al que pertenece, País, Estado y Acciones. Las ciudades son el nivel más específico de ubicación y se utilizan en direcciones de clientes, proveedores, sucursales, bodegas y empleados. Permiten generar reportes detallados por localidad y son fundamentales para planificación de rutas de entrega y análisis de mercado local.
+
+Ilustración ‎5.6.1.38 Agregar Ciudad
+El formulario incluye Nombre de la ciudad o municipio y Departamento mediante selector desplegable con los departamentos activos. El sistema automáticamente vincula la ciudad al país correspondiente del departamento seleccionado. El toggle Activa permite habilitar o deshabilitar ciudades en el sistema.
+
+Ilustración ‎5.6.1.39 Visualizar Ciudad
+
+El modal presenta el nombre de la ciudad, departamento al que pertenece (que define automáticamente el país) y estado. Todos los campos aparecen deshabilitados para edición.
+
+Ilustración ‎5.6.1.40 Editar Ciudad
+Permite modificar el nombre de la ciudad para correcciones ortográficas, cambiar el departamento asignado si fue registrado incorrectamente, o actualizar el estado. Los registros de clientes, proveedores y sucursales asociados se mantienen vinculados a la ciudad.
+
+Ilustración ‎5.6.1.41 Eliminar Ciudad
+La confirmación pregunta "¿Estás seguro de que deseas eliminar esta ciudad?". Es importante verificar que no existan direcciones activas de clientes, proveedores, sucursales o empleados asociados a la ciudad antes de eliminarla para mantener la integridad referencial del sistema.
+
+Pantalla Gestión de Recursos Humanos – Departamentos
+
+Ilustración ‎5.6.1.42 Lista de Departamentos RH
+La pantalla de departamentos de recursos humanos organiza las áreas funcionales de la empresa. La tabla muestra ID, Nombre del departamento, Descripción de sus funciones, Cargos asociados, Empleados asignados, Estado y Acciones. Los departamentos organizan la estructura empresarial en áreas como Administración, Ventas, Inventario, etc. Son fundamentales para reportes de nómina por área, control presupuestario y organización jerárquica de la empresa.
+
+Ilustración ‎5.6.1.43 Agregar Departamento RH
+El formulario solicita Nombre del departamento (ej: Recursos Humanos, Ventas, Administración) y Descripción con el detalle de las funciones y responsabilidades del área. El toggle Activo permite habilitar o deshabilitar departamentos según la estructura organizacional vigente.
+
+Ilustración ‎5.6.1.44 Visualizar Departamento RH
+
+Muestra en modo de consulta el nombre del departamento organizacional, descripción de funciones, y estado.
+
+Ilustración ‎5.6.1.45 Editar Departamento RH
+Permite modificar el nombre del departamento para reflejar cambios organizacionales, actualizar la descripción de funciones, o cambiar el estado. Los cargos y empleados asociados se mantienen vinculados al departamento.
+
+Ilustración ‎5.6.1.46 Eliminar Departamento RH
+El modal confirma con "¿Estás seguro de que deseas eliminar este departamento?". Antes de eliminar se debe verificar que no existan cargos activos ni empleados asignados al departamento para mantener la coherencia organizacional.
+
+Pantalla de Cargos/Puestos
+
+Ilustración ‎5.6.1.47 Lista de Cargos
+La administración de cargos define los puestos de trabajo disponibles en la empresa. La tabla presenta ID, Nombre del cargo, Departamento al que pertenece, Descripción de responsabilidades, Empleados asignados, Estado y Acciones. Los cargos son fundamentales para la estructura de recursos humanos, definición de roles, escalas salariales y permisos de sistema. Cada cargo puede tener múltiples empleados asignados y pertenece a un departamento específico.
+
+Ilustración ‎5.6.1.48 Agregar Cargo/Puesto
+El formulario incluye Nombre del cargo (ej: Gerente General, Vendedor, Contador), Departamento mediante selector desplegable, y Descripción detallada de las funciones y responsabilidades del puesto. El toggle Activo permite habilitar o deshabilitar cargos según necesidades de contratación.
+
+Ilustración ‎5.6.1.49 Visualizar Cargo/Puesto
+
+El modal presenta el nombre del puesto, departamento al que pertenece, descripción de funciones y responsabilidades, número de empleados en ese puesto y estado.
+
+Ilustración ‎5.6.1.50 Editar Cargo/Puesto
+Permite modificar el nombre del cargo para reflejar cambios en nomenclatura, cambiar el departamento asignado si el puesto se reorganiza, actualizar la descripción de funciones, o cambiar el estado. Los empleados asignados al cargo se mantienen vinculados.
+
+Ilustración ‎5.6.1.51 Eliminar Cargo/Puesto
+La confirmación pregunta "¿Estás seguro de que deseas eliminar este cargo?". Es importante verificar que no existan empleados activos asignados al cargo antes de eliminarlo. La eliminación puede afectar reportes de nómina y estructura organizacional.
+
+Pantalla de Empleados
+
+Ilustración ‎5.6.1.52 Lista de Empleados
+La gestión de empleados mantiene el registro completo del personal de la empresa. La tabla muestra Código de empleado, Nombre completo, DNI/Identidad, Email corporativo, Teléfono, Departamento asignado, Cargo que desempeña, Estado (Activo/Inactivo) y Acciones. Los empleados son usuarios internos del sistema que pueden tener acceso según sus roles y permisos. Esta información es fundamental para nómina, control de asistencia, asignación de tareas y reportes de recursos humanos.
+
+Ilustración ‎5.6.1.53 Agregar Empleado
+El formulario completo incluye Código de empleado (generado automáticamente o manual), Nombre y Apellido en campos separados, DNI/Identidad con el documento de identificación nacional, Email corporativo y Teléfono de contacto. También solicita Departamento mediante selector desplegable, Cargo/Puesto según los cargos disponibles en el departamento, Fecha de Ingreso para calcular antigüedad, y Salario base mensual. El toggle Activo define si el empleado está en la planilla activa o dado de baja. Los botones Cancelar y Guardar completan el registro.
+
+Ilustración ‎5.6.1.54 Editar Empleado
+La edición permite actualizar información personal como teléfono y email, reasignar departamento y cargo en caso de promociones o transferencias internas, modificar salario para ajustes y aumentos, actualizar la fecha de ingreso si fue ingresada incorrectamente, o cambiar el estado para dar de baja sin eliminar el historial laboral. El botón "Guardar Cambios" confirma las modificaciones.
+
+Ilustración ‎5.6.1.55 Visualizar Empleado
+Muestra todos los datos del empleado en modo de solo lectura, sin permitir modificaciones. Útil para consultas rápidas de información de personal, verificación de datos para reportes y auditorías, sin riesgo de alteración accidental de registros.
+
+Ilustración ‎5.6.1.56 Eliminar Empleado
+El modal confirma con "¿Estás seguro de que deseas eliminar este empleado?". Importante: eliminar un empleado puede afectar transacciones de ventas, registros de inventario, auditorías y reportes históricos. Se recomienda usar el estado "Inactivo" en lugar de eliminar para preservar la trazabilidad.
+
+Gestión de Usuarios
+
+Ilustración ‎5.6.1.57 Lista de Usuarios
+La administración de usuarios controla los accesos al sistema ProsperPOS. La tabla muestra foto de perfil, Usuario con nombre completo, Teléfono de contacto, Rol asignado (Super Administrador, Gerente, Vendedor, etc.) con badge de color identificativo, Estado (Activo/Inactivo) y Acciones. Los usuarios son las cuentas de acceso al sistema con permisos específicos según su rol. Cada usuario tiene credenciales únicas y puede estar vinculado a un empleado de la empresa.
+
+Ilustración ‎5.6.1.58 Nuevo Usuario
+El modal de registro incluye Nombre y Apellido en campos separados, Correo Electrónico que servirá como usuario de acceso, Teléfono de contacto, Rol mediante selector desplegable con opciones precargadas (Administrador, Gerente, Vendedor, Contador, etc.), Tienda para asignar la sucursal de trabajo si aplica, Contraseña con validación de seguridad, Confirmar Contraseña para verificar que coincidan, y mensaje informativo "La contraseña debe tener al menos 8 caracteres". Los botones Cancelar y Guardar completan el proceso.
+
+Ilustración ‎5.6.1.59 Detalles del Usuario
+El modal de visualización muestra la foto de perfil del usuario (iniciales en círculo si no tiene foto), nombre completo, email, teléfono, rol asignado, tienda asociada, último login registrado y fecha de creación de la cuenta. Incluye botones para Cerrar y Editar (naranja) que redirige al formulario de edición.
+
+Ilustración ‎5.6.1.60 Editar Usuario 
+Permite modificar nombre y apellido para correcciones, actualizar email corporativo, cambiar teléfono de contacto, reasignar rol para promociones o cambios de funciones, cambiar tienda asignada por transferencias, y actualizar estado activo/inactivo. No permite cambiar contraseña desde aquí (debe usarse la función de recuperación). El botón "Actualizar" guarda los cambios realizados.
+
+Ilustración ‎5.6.1.61 Eliminar Usuario
+El modal de confirmación pregunta "¿Eliminar Usuario? ¿Está seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer". La eliminación de un usuario es permanente y puede afectar auditorías, logs del sistema y trazabilidad de transacciones. Se recomienda usar el estado "Inactivo" para desactivar accesos sin perder historial.
+
+
+Roles y Permisos
+
+Ilustración ‎5.6.1.62 Lista de Roles
+La pantalla de roles y permisos define los niveles de acceso al sistema. La tabla muestra Rol (Administrador, Almacenista, Contador, Gerente, Super Administrador, Vendedor, Visor), Fecha de Creación de cada rol, Estado (Activo) y Acciones con iconos para visualizar permisos, copiar rol, editar y eliminar. Los roles determinan qué módulos y funciones puede acceder cada usuario, garantizando seguridad y control de información sensible. El botón "Agregar Rol" permite crear nuevos perfiles de acceso personalizados.
+
+
+Ajustes Financieros
+Cuentas Bancarias
+
+Ilustración ‎5.6.1.63 Lista de Cuentas Bancarias
+La administración de cuentas bancarias gestiona las cuentas financieras de la empresa. La pantalla muestra tarjetas visuales con el nombre del banco (Banco Atlántida, Davivienda, BAC Credomatic), titular de la cuenta "Cuenta de Ahorro", número de cuenta completo, y el nombre del titular. Cada tarjeta incluye iconos para visualizar detalles, editar y eliminar. El botón naranja "Agregar Nueva Cuenta" permite registrar cuentas adicionales. Las cuentas bancarias son fundamentales para conciliación de pagos, control de flujo de efectivo y reportes financieros.
+
+Ilustración ‎5.6.1.64 Agregar Cuenta Bancaria
+El formulario solicita Banco mediante selector desplegable, Tipo de Cuenta (Ahorro, Corriente, etc.) con selector, Moneda para definir la divisa de la cuenta, Número de Cuenta con el número completo de la cuenta bancaria, Titular con el nombre del propietario de la cuenta, Imagen del Banco (URL) para mostrar el logo de la institución financiera. El toggle Activa permite habilitar o deshabilitar cuentas según uso operativo.
+
+Ilustración ‎5.6.1.65 Editar Cuenta Bancaria
+
+Permite modificar información de la cuenta como cambiar el banco en caso de portabilidad, actualizar tipo de cuenta, cambiar moneda, corregir número de cuenta, actualizar titular si hubo cambio de razón social, actualizar URL del logo, o cambiar estado activo/inactivo para cuentas que se cierran o suspenden temporalmente.
+
+Ilustración ‎5.6.1.66 Eliminar Cuenta Bancaria
+El modal confirma con "Eliminar Cuenta Bancaria" y pregunta "¿Estás seguro de que deseas eliminar esta cuenta bancaria?". Es importante verificar que no existan transacciones pendientes de conciliación, pagos programados o movimientos sin registrar antes de eliminar la cuenta para mantener la integridad contable.
+
+Tasas de Impuesto
+
+Ilustración ‎5.6.1.67 Lista de Tasas de Impuesto
+La gestión de tasas de impuesto administra los diferentes porcentajes fiscales aplicables a productos y servicios. La tabla muestra Nombre del impuesto, Tasa (%) con el porcentaje exacto, Descripción explicativa, Productos con indicador de cantidad de productos asociados (badge azul), Estado (Activo) con badge verde, Creado mostrando fecha de registro, y Acciones. Los impuestos registrados incluyen ISV 15 (Impuesto sobre Ventas estándar de Honduras al 15%), ENAHTRO al 0.00%, ISV 18 al 18.00%, y Tasa 2 al 20.50% como ejemplo genérico. El botón "Agregar Nueva Tasa" permite crear impuestos adicionales.
+
+Ilustración ‎5.6.1.68 Agregar Tasa de Impuesto
+El formulario incluye Nombre descriptivo del impuesto (ej: ISV 15%), Tasa (%) con el porcentaje numérico exacto, Descripción detallada del impuesto y su aplicación legal. Incluye checkbox Activa para habilitar el impuesto y checkbox "Establecer como tasa por defecto" para aplicarlo automáticamente a productos nuevos. Esta configuración es fundamental para cumplimiento fiscal y cálculo correcto de precios con impuestos incluidos.
+
+Ilustración ‎5.6.1.69 Visualizar Tasa de Impuesto
+
+El modal presenta el nombre del impuesto, porcentaje exacto, descripción detallada de aplicación legal, número de productos con esta tasa asignada, estado y fecha de creación.
+
+Ilustración ‎5.6.1.70 Editar Tasa de Impuesto
+Permite modificar el nombre para actualizar nomenclatura, cambiar el porcentaje cuando hay reformas fiscales, actualizar descripción para clarificar aplicación, y gestionar los estados de activo y por defecto. Importante: cambiar una tasa de impuesto puede afectar precios de productos asociados, por lo que debe hacerse con precaución y comunicarse adecuadamente.
+
+Ilustración ‎5.6.1.71 Eliminar Tasa de Impuesto
+El modal confirma "Eliminar Tasa de Impuesto" y pregunta "¿Estás seguro de que deseas eliminar esta tasa de impuesto?". Es crítico verificar que no existan productos activos usando esta tasa antes de eliminarla para evitar errores en facturación y reportes fiscales.
+
+Monedas
+
+Ilustración ‎5.6.1.72 Lista de Monedas
+La administración de monedas gestiona las divisas utilizadas en el sistema. La tabla muestra ID, Símbolo de la moneda, Nombre singular, Factor Cambio para conversión, Tipo (Local/Extranjera) con badge identificativo, Estado y Acciones. El sistema muestra Lempira (L) como moneda local por defecto con factor 0.00000000, y Dólares (US$) como moneda extranjera con factor 26.28000000 (tipo de cambio actual). Las monedas permiten manejar precios en diferentes divisas, conversión automática y reportes multi-moneda.
+
+Ilustración ‎5.6.1.73 Agregar Moneda
+El formulario solicita Símbolo de la moneda (ej: L, $, €), Nombre Plural (ej: LEMPIRAS, DOLARES), Nombre Singular (ej: LEMPIRA, DOLAR), Factor de Cambio con el tipo de cambio respecto a la moneda base, Operación con selector para Dividir o Multiplicar en conversión, Moneda Extranjera (checkbox), checkbox Activa para habilitar la moneda, y checkbox "Establecer como moneda por defecto" para usarla en transacciones principales.
+
+Ilustración ‎5.6.1.74 Visualizar Moneda
+
+Muestra en consulta el símbolo de la divisa, nombre en plural y singular, factor de cambio actual, operación de conversión (Dividir/Multiplicar), si es extranjera, estado y si es predeterminada.
+
+Ilustración ‎5.6.1.75 Editar Moneda
+Permite modificar símbolo si hay cambio de nomenclatura, actualizar nombres singular y plural, cambiar factor de cambio según fluctuaciones del tipo de cambio (debe actualizarse periódicamente para reflejar valores reales de mercado), cambiar operación de conversión, y gestionar estados de activa y por defecto.
+
+Ilustración ‎5.6.1.76 Eliminar Moneda
+El modal confirma "Eliminar Moneda" y pregunta "¿Estás seguro de que deseas eliminar esta moneda?". Eliminar una moneda puede afectar productos con precios en esa divisa, transacciones históricas y reportes financieros. Se recomienda desactivar en lugar de eliminar.
+
+Tipos de Beneficiarios
+
+Ilustración ‎5.6.1.77 Lista de Tipos de Beneficiarios
+La gestión de tipos de beneficiarios clasifica las categorías fiscales de clientes y proveedores según normativa tributaria hondureña. La tabla muestra ID, Nombre del tipo (Jurídica Domiciliada, Jurídica No Domiciliada, Natural Residente, Natural No Residente), Estado y Acciones. Estos tipos son requeridos por el SAR para retenciones fiscales, declaraciones y cumplimiento de obligaciones tributarias diferenciadas según el tipo de contribuyente.
+
+Ilustración ‎5.6.1.78 Agregar Tipo de Beneficiario
+El formulario simple solicita únicamente Nombre del tipo de beneficiario siguiendo nomenclatura fiscal oficial hondureña. El toggle Activo permite habilitar o deshabilitar tipos según regulaciones vigentes. Los tipos de beneficiarios son fundamentales para aplicación correcta de retenciones de ISR, cálculo de impuestos diferenciados y generación de reportes fiscales requeridos por autoridades.
+
+Ilustración ‎5.6.1.79 Visualizar Tipo de Beneficiario
+El modal presenta el nombre del tipo fiscal según clasificación tributaria hondureña (Jurídica Domiciliada, Natural Residente, etc.) y el estado activo/inactivo.
+
+Ilustración ‎5.6.1.80 Editar Tipo de Beneficiario
+Permite modificar el nombre para actualizar nomenclatura según cambios en regulación fiscal o corregir errores de captura, y cambiar el estado activo/inactivo cuando un tipo de beneficiario deja de aplicar según actualizaciones normativas.
+
+Ilustración ‎5.6.1.81 Eliminar Tipo de Beneficiario
+El modal confirma "Eliminar Tipo de Beneficiario" y pregunta "¿Estás seguro de que deseas eliminar este tipo de beneficiario?". Es fundamental verificar que no existan clientes o proveedores activos clasificados con este tipo antes de eliminarlo para mantener consistencia en reportes fiscales y declaraciones tributarias.
+Ventas por Vendedor
+
+Ilustración ‎5.6.1.82 Pantalla Principal de Ventas por Vendedor
+La pantalla de Ventas por Vendedor genera reportes detallados del desempeño individual de cada vendedor. En la parte superior se encuentran los filtros de consulta: Fecha Desde y Fecha Hasta con selectores de calendario para definir el período de análisis, Vendedor con selector desplegable mostrando "Todos" o vendedores específicos, y Sucursal para filtrar por ubicación en operaciones multi-tienda. El botón azul "Generar Reporte" procesa la información según los filtros establecidos. La sección de Resultados presenta una tabla con columnas para: Vendedor mostrando el nombre completo, Neto con el monto total de ventas brutas, Total+ISV sumando ventas con impuestos incluidos, Devuelto indicando monto de devoluciones procesadas, Cobrado mostrando efectivo realmente recaudado, y Cant.Facturas con el número total de transacciones. Los TOTALES se muestran en la fila inferior consolidando todos los vendedores. Este reporte es fundamental para evaluación de desempeño, cálculo de comisiones, identificación de vendedores top y análisis de productividad del equipo de ventas.
+
+
+Ilustración ‎5.6.1.83 Modal de Impresión del Reporte
+Al presionar el botón de imprimir, se despliega un modal de "Imprimir Documento" mostrando la vista previa del reporte con el encabezado "Ceramicas Terrenas y Piuleios Universal" incluyendo dirección completa, teléfono de contacto y título "Ventas Por Vendedor". El documento presenta una tabla detallada con columnas: Desde (fecha inicial del período), Hasta (fecha final), Vendedor con los nombres: Carlos Angelial, Carlos Argental y Ana López. Las columnas de montos muestran: Neto, Total+ISV, Devuelto, Cobrado y Cant.Facturas con sus respectivos valores numéricos y el gran total al final. El modal incluye dos opciones de descarga: el botón verde "GUARDAR EXCEL" para exportar en formato de hoja de cálculo permitiendo análisis adicional y manipulación de datos, y el botón azul "Imprimir" para generar el documento físico o PDF. Esta funcionalidad permite documentar el desempeño de ventas, compartir reportes con gerencia, archivar registros mensuales y proporcionar comprobantes para liquidación de comisiones.
+Panel Administrativo (Dashboard) 
+
+Ilustración ‎5.6.1.84 Vista Principal del Dashboard
+El panel administrativo presenta un dashboard completo con información en tiempo real del negocio. En la parte superior muestra un saludo personalizado con el nombre del usuario, y el rango de fechas del reporte actual. Cuatro tarjetas destacadas muestran las métricas clave del negocio con montos totales, badges de colores indicando tipo de métrica y porcentajes de comparación con períodos anteriores. Las métricas incluyen ventas totales, devoluciones de ventas, compras totales y devoluciones de compras. Como métricas secundarias una fila de cuatro indicadores adicionales mostrando ganancias, facturas pendientes, gastos totales y devoluciones de pagos. Cada métrica incluye el monto, un icono representativo y el porcentaje de variación comparado con el período anterior junto con un enlace para ver detalles completos.
+
+Ilustración ‎5.6.1.85 Gráfica de Ventas y Compras e Informacion General
+Gráfico de barras comparativo con filtros temporales (día, semana, mes, trimestre, semestre, año) que permite visualizar las tendencias de compras y ventas. El gráfico muestra barras en dos tonos de naranja diferenciando entre compras totales y ventas totales, con eje temporal configurable y leyenda clara. Sección Información General: Tres tarjetas informativas con iconos representativos (proveedores, clientes, pedidos) mostrando contadores del total de registros en cada categoría. Resumen de Clientes: Gráfico de dona circular mostrando la distribución de clientes entre prospectos y recurrentes, con badges de porcentaje de crecimiento y filtro temporal para visualizar por período. Incluye leyenda con colores distintivos para cada categoría.
+
+
+Ilustración ‎5.6.1.86 Productos Más Vendidos y Con Bajo Stock
+Lista con miniatura de imagen del producto, nombre, precio unitario y cantidad de ventas con indicador visual. Incluye filtro para ordenar y enlace para ver listado completo. Productos Con Bajo Stock: Panel de alertas mostrando productos con inventario reducido, incluyendo imagen del producto, nombre, código identificador y cantidad disponible en stock con badge indicativo del nivel. Enlace para ver todos los productos con alerta.
+
+
+Ilustración ‎5.6.1.87 Ventas Recientes
+Listado de transacciones recientes mostrando producto vendido, categoría, precio, estado del pedido con badge de color según estatus y fecha de la transacción. Incluye filtro temporal (Semanal) para ajustar el período visualizado.
+
+
+Ilustración ‎5.6.1.88 Estadísticas De Ventas y Transacciones Recientes
+
+Gráfico de barras comparativo de ingresos versus gastos con filtro por año, mostrando la tendencia mensual con barras verticales en colores verde (ingresos) y rojo (gastos). Incluye totales y porcentajes de variación. Transacciones Recientes: Panel con pestañas para filtrar por tipo de transacción (Venta, Compra, Cotización, Gastos, Facturas) mostrando fecha, cliente, estado con badge de color y total de la transacción. Enlace para ver historial completo.
+
+Ilustración ‎5.6.1.89 Mejores Clientes y Mejores Categorias
+Ranking de clientes con mayor volumen de compras, mostrando nombre, ubicación geográfica, número de pedidos realizados y monto total acumulado. Lista ordenada de mayor a menor valor. Mejores Categorías: Gráfico circular (dona) mostrando la distribución de ventas por categoría de productos con leyenda de colores, número de ventas por categoría y estadísticas adicionales del número total de categorías y productos en el sistema. Incluye filtro temporal.
+
+POS Facturación
+
+Ilustración ‎5.6.1.90 Pantalla Principal de Facturación
+La pantalla de facturación POS presenta un formulario completo para procesamiento de ventas. En la parte superior muestra la fecha actual y cuenta con dos modos de operación: FACTURA (facturación fiscal) y COTIZACIÓN (presupuesto sin compromiso), seleccionables mediante pestañas. 
+Sección de Encabezado del Documento: Incluye campos consecutivos para número de resolución fiscal, consecutivo de resolución y el número correlativo del documento. Selector de tipo de documento con opciones desplegables.
+Información de Actores Comerciales: Tres selectores principales con botones de búsqueda (icono de lupa azul):
+Cliente: Selector con código y nombre del cliente, botón verde (+) para agregar nuevo cliente desde el formulario
+Bodega: Selector de almacén o bodega de origen de la mercancía
+Vendedor: Selector del empleado responsable de la venta
+Estudio de Viabilidad
+5.6.1 Viabilidad Operativa
+Capacidad de Adopción del Personal
+El personal de Cerámicas y Terrazos Universal cuenta con las competencias básicas necesarias para la implementación del sistema:
+Administrador/Propietario: Maneja operaciones comerciales y tiene experiencia con sistemas básicos de computación
+Personal de ventas (2 personas): Familiarizados con procesos de facturación manual y atención al cliente
+Personal de bodega (2 personas): Conocen los productos y procesos de inventario físico
+Motorista (1 persona): Requiere capacitación mínima para consulta de pedidos
+Resistencia al Cambio
+Factores favorables:
+Reconocimiento de limitaciones del sistema manual actual
+Motivación por mejoras en eficiencia y reducción de errores
+Apoyo directo de la administración
+Estrategias de mitigación:
+Capacitación gradual con enfoque práctico
+Período de transición con soporte dual (manual/digital)
+Sesiones de feedback continuo para ajustes
+Impacto en Procesos Actuales
+La implementación optimizará procesos sin eliminar completamente prácticas conocidas:
+Mantenimiento de flujos familiares con automatización
+Reducción de tareas repetitivas manual
+Mejora en precisión de inventarios y facturación
+
+5.6.2 Viabilidad Técnica
+Infraestructura Existente
+Recursos disponibles:
+Conexión a internet estable (fibra óptica)
+Equipos de cómputo básicos (1 computadora)
+Requerimientos adicionales necesarios:
+Actualización de navegadores web
+Instalación de lectores de código de barras
+Configuración de impresora
+Tecnologías Seleccionadas
+Las tecnologías elegidas presentan alta viabilidad técnica:
+Backend (Node.js + Express.js):
+Amplia documentación y comunidad de soporte
+Compatibilidad con sistemas existentes
+Escalabilidad apropiada para el tamaño de la empresa
+Frontend (Vue.js):
+Curva de aprendizaje moderada para mantenimiento
+Interfaces responsive para múltiples dispositivos
+Rendimiento optimizado para conexiones locales
+Base de Datos (MySQL):
+Robustez probada en entornos comerciales
+Herramientas de backup y recuperación
+Soporte técnico disponible localmente
+Capacidades de Integración
+APIs REST estándar para conexiones con servicios externos
+Compatibilidad con normativas fiscales hondureñas
+Integración con pasarelas de pago regionales (BAC Credomatic)
+5.6.3 Viabilidad Económica
+Costos del Proyecto
+Inversión Inicial:
+Desarrollo del sistema: L. 0.00 (proyecto académico)
+Hardware: Utilizará equipos existentes de la empresa
+Software: Herramientas gratuitas y de código abierto
+Costos Operativos Mensuales:
+Hosting básico en la nube: L. 1,000.00
+Mantenimiento del sistema: L. 0.00 (incluido en pruebas)
+Beneficios Esperados
+Ahorro en Procesos Manuales:
+Reducción de tiempo en facturación manual
+Menos errores en control de inventario
+Eliminación de papelería física para facturas
+Nuevas Oportunidades de Venta:
+Clientes que prefieren comprar en línea
+Ventas fuera del horario comercial
+Alcance a clientes de otras zonas de La Ceiba
+Mejoras Operativas:
+Mejor control de stock en tiempo real
+Facturación más rápida y precisa
+Reportes automáticos para toma de decisiones
+Evaluación de Factibilidad
+El proyecto es económicamente viable porque:
+No requiere inversión inicial significativa
+Los costos operativos son mínimos para una MiPyme
+Los beneficios se obtienen desde el primer mes de uso
+El riesgo financiero es prácticamente nulo
+La empresa puede implementar el sistema sin comprometer su flujo de efectivo y evaluar su efectividad antes de considerar inversiones adicionales en el futuro.
+
+Análisis de Requerimientos
+5.7.1 Características de los Usuarios Finales
+Usuario Administrador
+Perfil:
+Edad: 45-55 años
+Experiencia tecnológica: Intermedia
+Responsabilidades: Gestión completa del negocio, supervisión de ventas, control financiero
+Necesidades específicas:
+Dashboard ejecutivo con métricas clave
+Reportes financieros y de inventario
+Control de usuarios y permisos
+Acceso desde múltiples dispositivos
+
+Personal de Ventas
+Perfil:
+Edad: 20-40 años
+Experiencia tecnológica: Básica a intermedia
+Responsabilidades: Atención al cliente, procesamiento de pedidos, consulta de inventario
+Necesidades específicas:
+Interfaz intuitiva para registro rápido de ventas
+Búsqueda eficiente de productos
+Generación automática de facturas
+Consulta de estado de pedidos
+
+Personal de Bodega
+Perfil:
+Edad: 21-50 años
+Experiencia tecnológica: Básica
+Responsabilidades: Control físico de inventario, recepción de mercancías
+Necesidades específicas:
+Formularios simples para actualización de stock
+Lectores de código de barras
+Alertas de stock mínimo
+Reportes de movimientos de inventario
+Clientes Finales
+Perfil:
+Edad: 21-60 años
+Experiencia tecnológica: Variable (básica a avanzada)
+Comportamiento: Compras planificadas, comparación de precios
+Necesidades específicas:
+Catálogo visual de productos
+Carrito de compras persistente
+Múltiples métodos de pago
+Seguimiento de pedidos en tiempo real
+
+Requerimientos de Datos
+Entidades Principales
+Productos:
+Código único, nombre, descripción, categoría
+Precio de compra y venta, margen de ganancia
+Dimensiones, peso, material, color
+Imágenes, especificaciones técnicas
+Stock actual, stock mínimo, ubicación en bodega
+Clientes:
+Información personal: nombre, teléfono, email, dirección
+Información fiscal: RTN, razón social
+Historial de compras, preferencias
+Método de pago preferido, límite de crédito
+Facturas/Pedidos:
+Número secuencial, fecha, cliente
+Detalle de productos: cantidad, precio unitario, subtotal
+Impuestos aplicables, descuentos, total
+Estado del pedido, método de pago, datos de entrega
+Inventario:
+Movimientos: entradas, salidas, ajustes
+Proveedores, órdenes de compra
+Costos promedio, valorización de inventario
+Reportes de rotación y obsolescencia
+
+Integridad y Seguridad de Datos
+Backup automático: Respaldos diarios incrementales, semanales completos
+Encriptación: Datos sensibles encriptados en reposo y tránsito
+Auditoría: Log completo de transacciones y accesos
+Validación: Reglas de negocio para mantener consistencia
+Requerimientos de Hardware y Software
+Hardware Mínimo Requerido
+Servidor/Computadora Principal:
+Procesador: Intel i5 8ª generación o AMD Ryzen 5
+RAM: 8 GB DDR4
+Almacenamiento: 500 GB SSD
+Red: Ethernet Gigabit
+Estaciones de Trabajo (3 unidades):
+Procesador: Intel i3 7ª generación o equivalente
+RAM: 4 GB DDR4
+Almacenamiento: 256 GB SSD
+Pantalla: Mínimo 1920x1080
+Periféricos:
+Impresora fiscal homologada por SAR Honduras
+Lectores de código de barras (2 unidades)
+Router con soporte para 10+ dispositivos simultáneos
+Software Base
+Sistema Operativo:
+Estaciones: Windows 10/11 o Ubuntu Desktop
+Navegadores Web:
+Google Chrome 120+ (recomendado)
+Mozilla Firefox 115+ (alternativo)
+Microsoft Edge 115+ (alternativo)
+Software de Respaldo:
+Sistema automático de backup local
+Sincronización con almacenamiento en nube
+Requerimientos Tecnológicos
+Arquitectura del Sistema
+Backend:
+Runtime: Node.js 20 LTS
+Framework: Express.js 4.18+
+Base de datos: MySQL 8.0+
+API: RESTful con documentación OpenAPI/Swagger
+Frontend:
+Framework: Vue.js 3.4+
+Build tool: Vite 5.0+
+CSS Framework: Tailwind CSS 3.4+
+Componentes: Vue 3 Composition API
+Integraciones Externas
+Pasarelas de Pago:
+Stripe API v3 para tarjetas internacionales
+PayPal REST API v2 para pagos digitales
+BAC Credomatic para mercado local
+Servicios de Notificación:
+Firebase Cloud Messaging para notificaciones push
+SMTP para notificaciones por email
+SMS gateway para confirmaciones críticas
+Requerimientos de Seguridad
+Autenticación:
+JWT para sesiones de API
+Autenticación de dos factores opcional
+Políticas de contraseñas robustas
+Autorización:
+Control de acceso basado en roles (RBAC)
+Permisos granulares por módulo
+Sesiones con timeout automático
+Protección de Datos:
+Encriptación AES-256 para datos sensibles
+Comunicación HTTPS/TLS 1.3
+
+RESULTADOS Y ANÁLISIS
+Resultados de Instrumentos de Recolección de Datos
+La entrevista realizada al gerente Daniel Bonilla (ver anexo 1) reveló que la empresa opera desde hace 22 años con 6 empleados, procesando entre 150 y 300 facturas mensuales dependiendo de la temporada de construcción. El sistema de facturación actual, implementado hace año y medio, presenta limitaciones significativas al no integrarse con el inventario, requiriendo doble trabajo y verificación manual constante. El control de inventario se maneja mediante hojas físicas de papel, donde los vendedores deben anotar manualmente las ventas después de facturar en el sistema, generando constantemente desfases entre el sistema de facturas y el stock real en bodega.
+La sesión con el personal operativo (ver anexo 2) identificó que el mayor desafío para ventas es la realización de cálculos manuales de impuestos y descuentos, con temor constante a cometer errores. El personal de bodega manifestó la falta de información en tiempo real sobre ventas, generando situaciones donde clientes buscan productos que según registros existen, pero físicamente no están disponibles. Todo el personal demostró familiaridad básica con tecnología y disposición para aprender sistemas nuevos si son intuitivos.
+Durante las 40 horas de observación distribuidas en dos semanas (ver anexo 3) se documentó que el tiempo promedio por venta es de 8 minutos, detectándose errores de cálculo de impuestos, inconsistencias entre inventario registrado y físico, y omisiones en la actualización manual de hojas de inventario. El proceso de entrada de mercadería nueva requiere 70 minutos, observándose conteo manual duplicado por desconfianza e información no disponible inmediatamente para vendedores. La preparación del reporte mensual para SAR consume 5.25 horas, identificándose facturas con errores de cálculo, facturas duplicadas e información inconsistente entre diferentes fuentes.
+
+La encuesta digital aplicada a 30 clientes frecuentes (ver anexo 4) reveló que el 50% tiene entre 31 y 45 años, el 60% realiza compras mensuales, y solo el 46.7% califica el proceso actual como bueno o excelente. Los principales puntos de insatisfacción son lentitud en el proceso de facturación (46.7%), falta de productos mostrados o disponibles (26.7%), y errores en las facturas (16.7%). Un contundente 86.7% desea ver productos en línea antes de visitar la tienda, mientras que el 86.7% está interesado en hacer pedidos por internet para recoger en tienda. Para compras en línea, el 93.9% prefiere tarjeta de crédito o débito, 50% transferencia bancaria, y 40% efectivo. Estos resultados validan la necesidad de integrar múltiples métodos de pago priorizando las pasarelas electrónicas.
+La lista de verificación técnica (ver anexo 5) documentó que la empresa cuenta con 1 computadora de escritorio con Windows 10, 5 smartphones Android, impresoras térmicas y de documentos, y router WiFi con conexión de 10 Mbps. La infraestructura eléctrica es estable con planta eléctrica de respaldo. El administrador y vendedores tienen nivel intermedio de competencias tecnológicas, mientras que el personal de bodega y motorista tienen nivel básico.
+Análisis Integral del Sistema Desarrollado
+El sistema fue desarrollado utilizando arquitectura monolítica modular con separación clara entre componentes. La capa de presentación fue desarrollada con Vue.js 3.4 utilizando Composition API y Tailwind CSS, implementando diseño responsive. La capa de lógica de negocio se construyó con Node.js 20 LTS y Express.js implementando patrón MVC. La capa de datos utiliza MySQL 8.0 garantizando integridad referencial mediante claves y procedimientos almacenados. Se implementaron múltiples capas de seguridad incluyendo autenticación basada en JWT, control de acceso basado en roles, y tokenización de información de tarjetas. El sistema incluye registro completo de transacciones con timestamps y backup automático diario con retención de 30 días. El sistema fue diseñado considerando crecimiento futuro mediante índices optimizados, paginación de resultados, cacheo de catálogo, arquitectura modular que permite agregar nuevos módulos, capacidad de escalamiento horizontal, y dashboard administrativo con métricas en tiempo real.
+Matriz de Riesgos
+Durante el desarrollo del proyecto se identificaron diversos riesgos que podrían afectar el éxito de la implementación. La siguiente matriz presenta los riesgos principales, su evaluación y las estrategias de mitigación implementadas:
+Tabla ‎6.4.1 Matriz de Riesgo
+Nota: Nivel de Riesgo: Alto (Probabilidad Alta o Impacto Alto), Medio (Probabilidad Media e Impacto Medio), Bajo (Probabilidad Baja o Impacto Bajo)
+La matriz identifica que los riesgos de nivel alto requieren atención prioritaria y monitoreo constante, particularmente la resistencia al cambio del personal y los cambios normativos fiscales. Los riesgos de nivel medio deben ser monitoreados periódicamente, mientras que los de nivel bajo requieren seguimiento básico. Todas las estrategias de mitigación fueron implementadas durante el desarrollo del proyecto y continúan aplicándose durante la fase de operación.
+Diagrama Entidad-Relación (ER)
+
+Este diagrama representa la estructura de base de datos del sistema mediante once entidades principales. Cliente (verde) almacena información con RTN único, nombre, propietario, teléfono, email, dirección, ciudad, tipo de cliente y estado, relacionándose uno a muchos con Factura y Pedido. Factura (amarillo) registra comprobantes fiscales con numeroFactura, fecha, subtotal, ISV, descuento, total, método de pago, estado y observaciones, vinculándose con DetalleFactura que contiene cantidad, precio unitario, subtotal y descuento por cada producto vendido. Producto (azul) centraliza código, nombre, descripción, categoría, precios de compra y venta, stock actual, stock mínimo, ubicación, imagen y disponibilidad web. Usuario (rojo) gestiona accesos con nombres, usuario, contraseña, email y estado, relacionándose con Rol que define permisos mediante nombre y descripción. MovimientoInventario (azul) audita todos los cambios con tipo de movimiento, cantidad, stock anterior, stock nuevo y fecha. Para e-commerce, Pedido (verde) registra número, fecha, subtotales, ISV, costo envío, total, métodos y estados de pago, conectándose con DetallePedido y Envio que incluye dirección completa, teléfono, referencia, estado, fecha estimada y fecha de entrega. Categoría (morado) clasifica productos mediante nombre, descripción y estado.
+
+Diagrama De Contexto Nivel 0
+
+Este diagrama representa la interacción del sistema ProsperPOS con siete entidades externas numeradas. Control de Productos (1) envía registros de inventario, actualizaciones de stock y consultas de productos, recibiendo confirmaciones y alertas de stock bajo. Facturación (2) ingresa asignaciones de ventas y datos de factura, obteniendo comprobantes fiscales generados. E-commerce (3) transmite pedidos online recibiendo confirmaciones de compra. Proveedores (4) reciben órdenes de compra y envían datos de equipos al sistema. Usuarios (5) registran sus credenciales y datos de proveedor, recibiendo autenticación y gestión de permisos. Clientes (6) ingresan información de pedidos y consultas, obteniendo respuestas y confirmaciones. Reportes (7) recibe información generada por el sistema para análisis. El diagrama muestra flujos bidireccionales con ProsperPOS como núcleo central que procesa todas las interacciones.
+
+Diagrama De Contexto Nivel 1
+
+Este diagrama representa el flujo detallado del proceso Control de Producto dividido en seis subprocesos que interactúan con D1: Tabla de Productos. La Entrada de Producto permite importar archivo Excel o ingreso manual de datos, registrando en D1 y confirmando el guardado. La Consulta de Producto recibe búsquedas, consulta D1 y retorna productos encontrados. Mostrar Información de Producto lee datos completos desde D1 incluyendo código, nombre, precio y stock. Editar Producto recibe modificaciones de datos y actualizaciones de stock, validando y actualizando D1. Validar Inventario verifica el stock consultando D1, genera alertas de productos bajo mínimo y retorna stock actualizado. El flujo muestra cómo cada subproceso (numerados 1.2, 1.3, 1.4, 1.5, 1.6) se conecta secuencialmente, con D1 como almacenamiento central de información de productos, permitiendo operaciones de lectura, escritura y actualización desde Control de Producto.
+
+Diagrama De Casos De Uso – Administrador
+
+Este diagrama representa las funcionalidades exclusivas del actor Administrador interactuando con el Sistema. Gestionar Usuarios incluye las subfuncionalidades Crear Usuario, Asignar Rol, Modificar Usuario y Desactivar Usuario conectadas verticalmente. Gestionar Roles contiene Crear rol y Asignar Permisos. Gestionar Productos agrupa Ingreso de datos, Modificar Producto, Eliminar Producto y Gestionar Categorías. Configurar Sistema incluye Configurar ISV (%15) y Configurar Numeración SAR. Generar Reportes desglosa Reporte Ventas, Reporte Inventario y Reporte Fiscal SAR. Ver Dashboard y Anular Factura aparecen como casos de uso independientes. El diagrama muestra una organización vertical de funcionalidades agrupadas por áreas, todas conectadas mediante líneas al actor Administrador, quien tiene acceso completo a las ocho funcionalidades principales del sistema.
+Diagrama De Casos De Uso – Vendedor
+
+Este diagrama representa las funcionalidades del actor Vendedor divididas en cuatro grupos principales dentro del Sistema. Iniciar sesión incluye Validar Credenciales como subfuncionalidad. Consultar Precios aparece como caso independiente. Buscar cliente contiene Registrar Cliente Nuevo como subproceso. La funcionalidad central agrupa Buscar Producto (con Consultar stock como subproceso), Crear factura (que incluye secuencialmente Agregar Productos y Aplicar descuento), y se complementa con Crear cotizaciones y Crear comprobantes de entrega en paralelo. Consultar Facturas integra Filtrar por Fecha, Filtrar por Cliente y Reimprimir Factura verticalmente. Ver Alertas Stock e Imprimir factura aparecen como funcionalidades independientes. El diagrama muestra una organización que refleja el flujo de trabajo del vendedor desde el inicio de sesión hasta la generación de documentos.
+Diagrama De Casos De Uso - Personal De Bodega
+
+Este diagrama representa las funcionalidades del actor Personal de Bodega organizadas en grupos funcionales dentro del Sistema. Iniciar Sesión aparece como caso independiente. Registrar Entrada de Mercadería incluye secuencialmente Ingreso de producto, Actualizar stock y Registrar en movimiento. Realizar Ajuste de Inventario contiene Registrar Motivo del Ajuste y Registrar Devolucion, con Reingresar al stock como subproceso adicional. Consultar Inventario agrupa Ver stock por Categoría y Ver Alertas Stock Abajo. Generar Reporte de Inventario incluye Reporte Movimientos como subfuncionalidad. Preparar Pedidos Entrega contiene Imprimir Lista de Productos y Confirmación Entrega. Registrar Salida de Productos incluye Validar stock disponible. El diagrama muestra una estructura vertical que organiza las operaciones de bodega desde la recepción hasta el despacho de productos, con énfasis en control de stock y trazabilidad de movimientos.
+Diccionario de Datos
+Seguridad y Autenticación
+login_attempts
+Tabla ‎6.12.1 Registro de intentos de inicio de sesión (exitosos y fallidos)
+
+Recursos Humanos
+hr_departments
+Tabla ‎6.12.2 Departamentos organizacionales de la empresa
+
+Productos e Inventario
+brands
+Tabla ‎6.12.3 Marcas de productos
+
+Clientes y Proveedores
+beneficiary_types
+Tabla ‎6.12.4 Tipos de beneficiarios (clientes, proveedores, empleados)
+
+Ventas
+quote_items
+Tabla ‎6.12.5 Detalles de productos en cotizaciones
+
+Compras
+purchase_items
+Tabla ‎6.12.6 Detalles de productos comprados
+
+Facturación
+billing_settings
+Tabla ‎6.12.7 Configuración general de facturación
+
+Envíos
+shipment_items
+Tabla ‎6.12.8 Detalles de productos en cada envío
+
+Promociones y Ofertas
+coupon_products
+Tabla ‎6.12.9 Productos aplicables a cada cupón
+Pagos y Finanzas
+bank_accounts
+Tabla ‎6.12.10 Cuentas bancarias de la empresa
+
+Configuración General
+branches
+Tabla ‎6.12.11 Sucursales de la empresa
+
+
+Conclusiones
+Objetivo Específico 1: Módulo de Facturación Electrónica
+El desarrollo del módulo de facturación electrónica permitió construir un sistema capaz de emitir comprobantes fiscales cumpliendo con los lineamientos establecidos por el SAR, integrando validaciones automáticas, cálculos precisos y una estructura de datos completa que centraliza la información requerida por la normativa. La automatización del proceso redujo significativamente el tiempo de facturación y eliminó errores comunes asociados al manejo manual, lo cual mejora la eficiencia interna y la atención al cliente. Además, el diseño del módulo permitió que la información se almacene de forma ordenada y segura, facilitando la generación de reportes fiscales y financieros y la trazabilidad de cada transacción. Este avance representa un paso importante para la modernización operativa de la empresa, ya que incorpora buenas prácticas tecnológicas, unifica criterios de registro y establece bases sólidas para futuras integraciones legales o administrativas.
+Objetivo Específico 2: Sistema de Control de Inventario
+El sistema de control de inventario demostró ser una herramienta esencial para resolver los problemas originados por el manejo manual de existencias, ya que permitió registrar en tiempo real los movimientos de productos y mejorar la precisión del stock disponible. La integración con el módulo de facturación garantiza que cada venta actualice el inventario automáticamente, eliminando desfases que antes generaban errores y decisiones equivocadas. Las pruebas evidenciaron una reducción considerable en el tiempo necesario para ingresar mercancía, además de proporcionar indicadores útiles como valor total del inventario, productos críticos y rotación por categoría. Esta plataforma centralizada fortaleció la capacidad operativa de la empresa al ofrecer visibilidad clara y ordenada del inventario, reduciendo pérdidas, mejorando procesos de compra y permitiendo una administración más eficiente de los recursos disponibles.
+Objetivo Específico 3: Plataforma de Comercio Electrónico
+La plataforma desarrollada permitió crear un espacio digital donde los clientes pueden visualizar el catálogo completo de productos y realizar solicitudes de pedidos o cotizaciones de manera rápida y estructurada directamente en línea. Este enfoque facilita que el cliente envíe sus requerimientos al vendedor, quien podrá revisar existencias, aplicar precios y responder con una cotización formal, manteniendo el control comercial dentro del proceso interno de la empresa. La integración con el inventario asegura que la información enviada al cliente esté siempre actualizada, evitando ofrecer productos sin disponibilidad. Además, el diseño intuitivo, la presentación clara de los productos y la posibilidad de solicitar una cotización desde cualquier dispositivo fortalecen la accesibilidad del servicio y amplían el alcance comercial de la empresa, permitiendo atender más clientes sin depender exclusivamente de la interacción presencial o telefónica.
+
+RECOMENDACIONES
+Objetivo Específico 1: Módulo de Facturación Electrónica
+Se recomienda fortalecer el módulo incorporando funciones avanzadas como el envío automático de facturas al cliente por correo electrónico, la integración con firma electrónica para mejorar la validez legal de los comprobantes y la generación de archivos XML compatibles con los formatos utilizados por el SAR. También sería conveniente implementar alertas para errores fiscales frecuentes, plantillas configurables para diferentes tipos de documentos y un módulo de auditoría interna que registre cambios o modificaciones realizadas por los usuarios. Estas mejoras permitirán consolidar el sistema como una herramienta más completa, segura y preparada para futuras actualizaciones normativas.
+Objetivo Específico 2: Sistema de Control de Inventario
+Se recomienda ampliar las funcionalidades del sistema mediante la incorporación de un módulo de pronóstico de demanda basado en el historial de ventas, lo que permitirá anticipar necesidades de reposición y evitar quiebres de stock. También se sugiere integrar el sistema con proveedores para generar órdenes de compra automáticas cuando un producto alcance su nivel mínimo, así como habilitar un proceso de inventario físico periódico para comparar existencias reales con los registros del sistema. Finalmente, se recomienda desarrollar reportes más avanzados que permitan identificar tendencias de consumo y márgenes de rentabilidad para optimizar las decisiones de compra.
+Objetivo Específico 3: Plataforma de Comercio Electrónico
+Se recomienda incorporar un módulo de seguimiento de solicitudes donde cada cliente pueda ver el estado de su pedido o cotización, incluyendo actualizaciones del vendedor en tiempo real. También sería útil habilitar notificaciones por correo o mensaje cuando la cotización sea enviada o modificada, fortaleciendo la comunicación y reduciendo tiempos de respuesta. Además, se sugiere implementar un historial de solicitudes previas, la posibilidad de adjuntar detalles adicionales y un espacio de comentarios entre cliente y vendedor para aclaraciones rápidas. Finalmente, se recomienda dejar preparada la plataforma para habilitar compras en línea en el futuro, de manera que, cuando la empresa lo decida, pueda activar esta función sin necesidad de realizar cambios estructurales mayores, garantizando una transición ordenada y controlada hacia un modelo de venta digital completa.
+
+
+Anexos
+INSTRUMENTOS DE RECOPILACIÓN DE DATOS
+SISTEMA DE FACTURACIÓN INTEGRADO CON PLATAFORMA DE COMERCIO ELECTRÓNICO
+CERÁMICAS Y TERRAZOS UNIVERSAL
+INSTRUMENTO #1: ENTREVISTA SEMIESTRUCTURADA - GERENTE DE VENTAS
+Fecha: 25 de julio, 2025
+Entrevistado: Daniel Bonilla (Gerente de Ventas)
+Duración: 50 minutos
+Objetivo: Identificar necesidades específicas y procesos actuales de facturación y ventas
+Datos Generales de La Empresa
+1. ¿Cuántos años tiene operando Cerámicas y Terrazos Universal? R: "Tenemos 22 años operando en La Ceiba. Iniciamos como un negocio familiar pequeño y hemos crecido gradualmente."
+2. ¿Cuántos empleados trabajan actualmente? R: "Somos 6 personas en total: yo como vendedor, y mi hermano también de vendedor, mi papa de administrador, 2 personas en bodega y 1 motorista para entregas."
+3. ¿Cuál es el volumen promedio de ventas mensuales? R: "Aproximadamente 150-200 facturas mensuales, con picos en época de construcción que pueden llegar a 300."
+PROCESOS ACTUALES DE FACTURACIÓN
+4. ¿Cómo manejan actualmente el proceso de facturación? R: "Estuvimos muchos años trabajando completamente manual con facturas impresas y cálculos a mano. Hace aproximadamente año y medio implementamos un sistema básico web de facturación, pero la verdad es que no es muy efectivo. Sigue siendo lento, no se integra con el inventario, y constantemente tenemos que estar verificando todo manualmente."
+5. ¿Qué problemas han identificado con el sistema actual? R: "El sistema que tenemos ahora es mejor que el manual, pero aún presenta muchas limitaciones. No se actualiza el inventario automáticamente, tenemos que hacer doble trabajo entre el sistema y nuestros controles físicos. Los reportes son complicados de generar y el proceso de realizar una venta sigue siendo algo lento."
+6. ¿Cumplen actualmente con las normativas fiscales hondureñas? R: "Sí, pero con mucha dificultad. Tenemos que contratar contador externo cada mes solo para organizar las facturas y hacer los reportes para SAR."
+CONTROL DE INVENTARIO
+7. ¿Cómo controlan el inventario actualmente? R: "Este es uno de nuestros mayores problemas. Seguimos manejando todo en hojas de papel físicas. Los vendedores facturan en el sistema, pero después tienen que recordar anotar manualmente en hojas lo que vendieron. Es un desastre porque constantemente hay desfases entre lo que dice el sistema de facturas y lo que realmente tenemos en bodega."
+8. ¿Han tenido problemas de desabastecimiento o sobrestock? R: "Constantemente. A veces vendemos productos que ya no tenemos porque la información no está actualizada. Otras veces compramos de más porque no sabemos exactamente qué tenemos."
+EXPECTATIVAS DEL SISTEMA DIGITAL
+9. ¿Qué esperan del nuevo sistema de facturación? R: "Necesitamos un sistema completamente integrado que una facturación, inventario y comercio electrónico en una sola plataforma. El sistema actual nos ha enseñado que las soluciones parciales no funcionan. Queremos eliminar el doble trabajo, tener información en tiempo real, generar reportes automáticamente, y poder ofrecer una experiencia moderna a nuestros clientes."
+10. ¿Están interesados en vender por internet? R: "Absolutamente. De hecho, esa fue una de las razones por las que decidimos cambiar el sistema actual. Muchos clientes, especialmente los de las islas, nos preguntan si pueden ver productos en línea o hacer pedidos digitales. Con la experiencia que tuvimos con el sistema anterior, sabemos que necesitamos algo que integre todo desde el inicio, no soluciones separadas que después no se comunican entre sí."
+11. ¿Qué dispositivos usan actualmente? R: "Tenemos 1 computadora de escritorio y todos usamos nuestros celulares. Los vendedores están acostumbrados a usar celular para todo."
+
+Figura 141. Entrevista Semiestructurada
+INSTRUMENTO #2: ENTREVISTA GRUPAL - EMPLEADOS
+Fecha: 26 de julio, 2025
+Participantes: Daniel Bonilla (Vendedor), Alex (Bodega)
+Duración: 30 minutos
+Objetivo: Identificar dolor points operativos y requerimientos de usuario
+PROCESO DE VENTAS ACTUAL
+1. ¿Cómo es un día típico de ventas para usted?
+Daniel: "Llego, reviso qué productos tenemos en las hojas de inventario, atiendo clientes, hago cotizaciones, si aceptan lleno la factura, y cobro, si es por envió, hago el comprobante de entrega"
+2. ¿Qué es lo más difícil del proceso actual?
+Daniel: "Los cálculos, siempre tengo miedo de equivocarme con los impuestos o descuentos. Y buscar precios, aunque toma su tiempo, la mayoría los tenemos memorizados, pero cuando cambian cuesta de aprendérselos."
+Alex: "Que no sabemos en tiempo real qué se vendió. A veces vienen a buscar productos que según las hojas de inventarios tenemos, pero ya no están."
+CONOCIMIENTO TECNOLÓGICO
+3. ¿Qué tan cómodos se sienten usando tecnología?
+Daniel: "Uso redes sociales, el sistema actual, aunque no es muy intuitivo, todo normal. En la casa manejo Excel básico."
+Alex: "Igual, no soy experto, pero aprendo rápido si es fácil de usar."
+EXPECTATIVAS DEL NUEVO SISTEMA
+4. ¿Qué funciones les gustaría que tuviera el nuevo sistema?
+Daniel: "Que calcule todo automático, que pueda buscar productos rápido, y que imprima facturas bonitas, que pueda hacer cotizaciones rápidas desde el celular, ver inventario en tiempo real, y que sea rápido."
+Alex: "Que cuando entre mercadería nueva solo tenga que escanearlo o algo así, y que se actualice automático."
+
+Figura 152. Entrevista Grupal
+INSTRUMENTO #3: OBSERVACIÓN DIRECTA - REGISTRO DE CAMPO
+Período: 29 julio - 9 agosto, 2025
+Observador: Carlos Argeñal
+Total horas: 40 horas distribuidas en 2 semanas
+SESIÓN 1: PROCESO DE VENTA TÍPICA
+Fecha: 29 julio, 2025
+Hora: 9:30 AM - 11:30 AM
+Actividad observada: Venta a cliente regular
+Tiempo registrado:
+Búsqueda de productos en catálogo físico: 2 minutos
+Cálculo manual de precios y cantidades: 2 minutos
+Llenado de factura: 3 minutos
+Revisión de cálculos: 1 minutos
+Total, por venta: 8 minutos
+Errores observados:
+1 error de cálculo de impuestos (detectado y corregido)
+Cliente preguntó por producto que según inventario había, pero en bodega no estaba
+Vendedor olvidó anotar la venta en hojas de inventario
+
+
+Figura 163. Proceso de Venta Típica Cliente Ejemplo #1
+
+Figura 174. Proceso de Venta Típica Cliente Ejemplo #2
+SESIÓN 2: MANEJO DE INVENTARIO
+Fecha: 2 agosto, 2025
+Hora: 2:00 PM - 4:00 PM
+Actividad observada: Entrada de mercadería nueva
+Proceso observado:
+Recepción física de productos: 15 minutos
+Conteo manual: 20 minutos
+Anotación en hojas de inventario: 10 minutos
+Ubicación en bodega: 25 minutos
+Total: 70 minutos
+Ineficiencias detectadas:
+Conteo manual duplicado por desconfianza
+Información no disponible inmediatamente para vendedores
+Sin códigos de producto estandarizados
+
+Figura 185. Entrada de Mercadería Nueva
+SESIÓN 3: GENERACIÓN DE REPORTES
+Fecha: 5 agosto, 2025
+Hora: 8:00 AM - 12:00 PM
+Actividad observada: Preparación de reporte mensual para SAR
+Proceso observado:
+Recopilación de facturas físicas: 45 minutos
+Digitación en Excel: 180 minutos
+Verificación y corrección de errores: 60 minutos
+Generación de reporte final: 30 minutos
+Total: 315 minutos (5.25 horas)
+Problemas identificados:
+2 facturas con errores de cálculo
+1 factura duplicada
+Información inconsistente entre fuentes
+
+Figura 196. Proceso de Generación de Reportes
+
+
+INSTRUMENTO #4: ENCUESTA A CLIENTES FRECUENTES
+METODOLOGÍA
+Período: 10-15 agosto, 2025
+Muestra: 30 clientes frecuentes
+Método: Encuesta digital mediante Google Forms, aplicada de forma presencial en el establecimiento
+Herramienta: Google Forms para registro y análisis de datos https://docs.google.com/forms/d/1bFAUyxBJq9kokNhQcgkU3Yvx4nJ6-fJbEON5kaoj1_c/edit
+Duración promedio: 3-5 minutos por cliente
+DATOS DEMOGRÁFICOS
+1. Edad
+•    18-30 años: 8 clientes (26.7%)
+•    31-45 años: 15 clientes (50%)
+•    46-60 años: 6 clientes (20%)
+•    Más de 60: 1 cliente (3.3%)
+
+Figura 207. Encuesta a clientes frecuentes. Resultados de Pregunta #1.
+
+2. ¿Con qué frecuencia realiza compras en nuestro establecimiento?  
+•    Mensual: 18 clientes (60%)
+•    Trimestral: 8 clientes (26.7%)
+•    Esporádica: 4 clientes (13.3%)
+
+Figura 218. Encuesta a clientes frecuentes. Resultados de Pregunta #2.
+
+EXPERIENCIA ACTUAL DE COMPRA
+3. ¿Cómo califica el proceso actual de compra en nuestro establecimiento?  (1-5)
+•    Excelente (5): 2 clientes (6.7%)
+•    Bueno (4): 12 clientes (40%)
+•    Regular (3): 11 clientes (36.7%)
+•    Malo (2): 4 clientes (13.3%)
+•    Muy malo (1): 1 cliente (3.3%)
+
+Figura 229. Encuesta a clientes frecuentes. Resultados de Pregunta #3.
+
+4. ¿Qué es lo que más le molesta del proceso actual de compra?  
+•    Lentitud en el proceso de facturación: 14 clientes (46.7%)
+•    Falta de productos mostrados/disponible: 8 clientes (26.7%)
+•    Errores en las facturas: 5 clientes (16.7%)
+•    Horarios limitados de atención: 3 clientes (10%)
+
+Figura 2310. Encuesta a clientes frecuentes. Resultados de Pregunta #4.
+INTERÉS EN COMERCIO ELECTRÓNICO
+5. ¿Le gustaría poder ver nuestros productos en línea antes de venir a la tienda?  
+•    Sí: 26 clientes (86.7%)
+•    No: 2 clientes (6.7%)
+•    Tal vez: 2 clientes (6.7%)
+
+Figura 2411. Encuesta a clientes frecuentes. Resultados de Pregunta #5.
+6. ¿Estaría interesado/a en hacer pedidos por internet para recoger en tienda?  
+•    Definitivamente sí: 18 clientes (60%)
+•    Probablemente sí: 8 clientes (26.7%)
+•    No estoy seguro: 3 clientes (10%)
+•    Probablemente no: 1 cliente (3.3%)
+•    Definitivamente no: 0 clientes (0%)
+
+Figura 2512. Encuesta a clientes frecuentes. Resultados de Pregunta #6.
+
+7. ¿Qué métodos de pago preferiría para compras en línea?
+•    Tarjeta de crédito/débito: 22 clientes (93.9%)
+•    Transferencia bancaria: 15 clientes (50%)
+•    Efectivo: 12 clientes (40%)
+•    Link de Pago: 8 clientes (26.7%)
+
+Figura 2613. Encuesta a clientes frecuentes. Resultados de Pregunta #7.
+
+Figura 2714. Encuesta a clientes frecuentes. Cliente Ejemplo #1
+
+Figura 2815. Encuesta a clientes frecuentes. Cliente Ejemplo #2
+
+Figura 2916. Encuesta a clientes frecuentes. Cliente Ejemplo #3
+INSTRUMENTO #5: LISTA DE VERIFICACIÓN TÉCNICA
+Fecha: 20 agosto, 2025
+Evaluador: Carlos Argeñal
+Objetivo: Evaluar infraestructura tecnológica actual
+HARDWARE DISPONIBLE
+[x] 1 Computadoras de escritorio (Windows 10)
+[x] 5 Smartphones (Android)
+[x] 1 Impresora térmica (facturas)
+[x] 1 Impresora grande (documentos)
+[ ] Lector de códigos de barras
+[x] Router WiFi (internet 10 Mbps)
+CONECTIVIDAD
+[x] Internet estable (Claro)
+[x] WiFi en área de ventas
+[x] Cobertura móvil adecuada
+[ ] Internet de respaldo
+[ ] Línea telefónica fija
+INFRAESTRUCTURA ELÉCTRICA
+[x] Suministro eléctrico estable
+[x] Planta eléctrica
+[ ] UPS para equipos críticos
+[x] Tomas de corriente suficientes
+[x] Cableado en buen estado
+CONOCIMIENTOS TÉCNICOS DEL PERSONAL
+Administrador: Intermedio (Excel, email, redes sociales, navegación web)
+Vendedores: Intermedio (Excel, email, redes sociales, navegación web)
+Bodega: Básico (uso de celular)
+Motorista: Básico (GPS, WhatsApp)
+
+Figura 3017. Llenado de Lista de Verificación Técnica
