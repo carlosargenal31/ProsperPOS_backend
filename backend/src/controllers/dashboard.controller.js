@@ -451,25 +451,36 @@ exports.getRecentSales = async (req, res) => {
  */
 exports.getTopCustomers = async (req, res) => {
   try {
-    const { limit = 5 } = req.query;
-    const limitNum = parseInt(limit);
+    const { limit = 5, date_from, date_to } = req.query;
+    const limitNum = parseInt(limit) || 5;
 
-    const [customers] = await db.query(`
+    // Fechas por defecto: mes actual (desde el día 1 hasta hoy)
+    const now = new Date();
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const dateFrom = date_from || firstDayOfMonth.toISOString().split('T')[0];
+    const dateTo = date_to || now.toISOString().split('T')[0];
+
+    // db.execute() ya devuelve el array de resultados directamente (no desestructurar)
+    const customers = await db.execute(`
       SELECT
         c.id,
         c.nombre as name,
-        c.email,
-        c.telefono as phone,
-        COUNT(i.id) as total_orders,
+        COUNT(DISTINCT i.id) as total_invoices,
         COALESCE(SUM(i.total), 0) as total_spent
       FROM customers c
       INNER JOIN invoices i ON c.id = i.customer_id
       WHERE i.deleted_at IS NULL
+        AND i.payment_status = 'paid'
         AND c.is_active = 1
-      GROUP BY c.id
-      ORDER BY total_orders DESC
+        AND i.issue_date >= ?
+        AND i.issue_date <= ?
+      GROUP BY c.id, c.nombre
+      HAVING total_invoices > 0
+      ORDER BY total_spent DESC
       LIMIT ${limitNum}
-    `);
+    `, [dateFrom + ' 00:00:00', dateTo + ' 23:59:59']);
+
+    logger.info(`✅ Top customers query returned ${customers.length} customers`);
 
     return sendSuccessResponse(res, customers);
 
@@ -486,87 +497,101 @@ exports.getCustomersOverview = async (req, res) => {
   try {
     const { period = 'week' } = req.query;
 
-    // Definir fecha de inicio según el período
-    let startDate;
-    let previousStartDate;
-    let previousEndDate;
+    // Calcular fechas usando JavaScript para mayor claridad
+    const now = new Date();
+    let daysBack = 7; // Default semanal
 
     if (period === 'today') {
-      startDate = 'CURDATE()';
-      previousStartDate = 'DATE_SUB(CURDATE(), INTERVAL 1 DAY)';
-      previousEndDate = 'DATE_SUB(CURDATE(), INTERVAL 1 DAY)';
+      daysBack = 1;
     } else if (period === 'month') {
-      startDate = 'DATE_SUB(CURDATE(), INTERVAL 30 DAY)';
-      previousStartDate = 'DATE_SUB(CURDATE(), INTERVAL 60 DAY)';
-      previousEndDate = 'DATE_SUB(CURDATE(), INTERVAL 31 DAY)';
-    } else { // week
-      startDate = 'DATE_SUB(CURDATE(), INTERVAL 7 DAY)';
-      previousStartDate = 'DATE_SUB(CURDATE(), INTERVAL 14 DAY)';
-      previousEndDate = 'DATE_SUB(CURDATE(), INTERVAL 8 DAY)';
+      daysBack = 30;
     }
 
-    // Obtener clientes del período actual
+    // Período actual
+    const currentStartDate = new Date(now);
+    currentStartDate.setDate(currentStartDate.getDate() - daysBack);
+    const currentStartStr = currentStartDate.toISOString().split('T')[0] + ' 00:00:00';
+    const currentEndStr = now.toISOString().split('T')[0] + ' 23:59:59';
+
+    // Período anterior (para comparación)
+    const previousEndDate = new Date(currentStartDate);
+    previousEndDate.setDate(previousEndDate.getDate() - 1);
+    const previousStartDate = new Date(previousEndDate);
+    previousStartDate.setDate(previousStartDate.getDate() - daysBack);
+    const previousStartStr = previousStartDate.toISOString().split('T')[0] + ' 00:00:00';
+    const previousEndStr = previousEndDate.toISOString().split('T')[0] + ' 23:59:59';
+
+    logger.info(`📊 Resumen de Clientes - Período: ${period} (${daysBack} días)`);
+    logger.info(`📊 Actual: ${currentStartStr} a ${currentEndStr}`);
+    logger.info(`📊 Anterior: ${previousStartStr} a ${previousEndStr}`);
+
+    // Obtener clientes del período actual con conteo de facturas EN el período
     const currentCustomers = await db.execute(`
-      SELECT DISTINCT c.id
+      SELECT
+        c.id,
+        c.nombre,
+        COUNT(DISTINCT i.id) as invoices_in_period
       FROM customers c
       INNER JOIN invoices i ON c.id = i.customer_id
-      WHERE i.issue_date >= ${startDate}
+      WHERE i.issue_date >= ?
+        AND i.issue_date <= ?
         AND i.deleted_at IS NULL
         AND i.payment_status = 'paid'
-    `);
+      GROUP BY c.id, c.nombre
+    `, [currentStartStr, currentEndStr]);
+
+    logger.info(`📊 Clientes en período actual: ${currentCustomers.length}`);
 
     // Clasificar clientes en primera vez vs recurrentes
+    // Primera vez: cliente que compró SOLO 1 VEZ en el período
+    // Recurrente: cliente que compró 2 O MÁS VECES en el período
     let firstTime = 0;
     let returning = 0;
 
     for (const customer of currentCustomers) {
-      // Verificar si el cliente tiene facturas ANTES del período actual
-      const hasHistoricalPurchases = await db.execute(`
-        SELECT COUNT(*) as count
-        FROM invoices
-        WHERE customer_id = ?
-          AND deleted_at IS NULL
-          AND payment_status = 'paid'
-          AND issue_date < ${startDate}
-      `, [customer.id]);
+      const purchasesInPeriod = parseInt(customer.invoices_in_period) || 0;
 
-      if (hasHistoricalPurchases[0].count > 0) {
+      if (purchasesInPeriod > 1) {
         returning++;
+        logger.debug(`  Recurrente: ${customer.nombre} (${purchasesInPeriod} facturas)`);
       } else {
         firstTime++;
+        logger.debug(`  Primera vez: ${customer.nombre} (${purchasesInPeriod} factura)`);
       }
     }
 
+    logger.info(`📊 Primera vez: ${firstTime}, Recurrentes: ${returning}`);
+
     // Calcular porcentajes (comparado con período anterior)
     const previousCustomers = await db.execute(`
-      SELECT DISTINCT c.id
+      SELECT
+        c.id,
+        COUNT(DISTINCT i.id) as invoices_in_period
       FROM customers c
       INNER JOIN invoices i ON c.id = i.customer_id
-      WHERE i.issue_date >= ${previousStartDate}
-        AND i.issue_date <= ${previousEndDate}
+      WHERE i.issue_date >= ?
+        AND i.issue_date <= ?
         AND i.deleted_at IS NULL
         AND i.payment_status = 'paid'
-    `);
+      GROUP BY c.id
+    `, [previousStartStr, previousEndStr]);
+
+    logger.info(`📊 Clientes en período anterior: ${previousCustomers.length}`);
 
     let previousFirstTime = 0;
     let previousReturning = 0;
 
     for (const customer of previousCustomers) {
-      const hasHistoricalPurchases = await db.execute(`
-        SELECT COUNT(*) as count
-        FROM invoices
-        WHERE customer_id = ?
-          AND deleted_at IS NULL
-          AND payment_status = 'paid'
-          AND issue_date < ${previousStartDate}
-      `, [customer.id]);
+      const purchasesInPeriod = parseInt(customer.invoices_in_period) || 0;
 
-      if (hasHistoricalPurchases[0].count > 0) {
+      if (purchasesInPeriod > 1) {
         previousReturning++;
       } else {
         previousFirstTime++;
       }
     }
+
+    logger.info(`📊 Anterior - Primera vez: ${previousFirstTime}, Recurrentes: ${previousReturning}`);
 
     // Calcular cambio porcentual
     const firstTimePercentage = previousFirstTime > 0
@@ -716,5 +741,52 @@ exports.getRecentTransactions = async (req, res) => {
   } catch (error) {
     logger.error('Error getting recent transactions:', error);
     return sendErrorResponse(res, 'Error al obtener transacciones recientes', 500);
+  }
+};
+
+/**
+ * Obtener categorías más vendidas
+ */
+exports.getTopCategories = async (req, res) => {
+  try {
+    const { limit = 5, period = 'week' } = req.query;
+    const limitNum = parseInt(limit) || 5;
+
+    let dateCondition = 'DATE(i.issue_date) = CURDATE()';
+
+    if (period === 'week') {
+      dateCondition = 'i.issue_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)';
+    } else if (period === 'month') {
+      dateCondition = 'i.issue_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)';
+    }
+
+    logger.info(`📊 Getting top categories with period: ${period}, limit: ${limitNum}`);
+
+    const categories = await db.execute(`
+      SELECT
+        c.id,
+        c.name,
+        COUNT(DISTINCT ii.product_id) as products_count,
+        SUM(ii.quantity) as total_sold,
+        SUM(ii.line_total) as total_revenue
+      FROM invoice_items ii
+      INNER JOIN invoices i ON ii.invoice_id = i.id
+      INNER JOIN products p ON ii.product_id = p.id
+      INNER JOIN categories c ON p.category_id = c.id
+      WHERE ${dateCondition}
+        AND i.payment_status = 'paid'
+        AND i.deleted_at IS NULL
+      GROUP BY c.id, c.name
+      ORDER BY total_revenue DESC
+      LIMIT ${limitNum}
+    `);
+
+    logger.info(`✅ Top categories query returned ${categories.length} categories`);
+
+    return sendSuccessResponse(res, categories);
+
+  } catch (error) {
+    logger.error('Error getting top categories:', error);
+    return sendErrorResponse(res, 'Error al obtener categorías más vendidas', 500);
   }
 };

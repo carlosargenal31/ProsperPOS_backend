@@ -6,6 +6,7 @@
 const Invoice = require('../models/invoice.model');
 const db = require('../utils/database');
 const logger = require('../utils/logger');
+const { getHondurasDateTime } = require('../utils/helpers');
 
 class BillingService {
   /**
@@ -74,7 +75,7 @@ class BillingService {
         customer_id: sale.customer_id,
         customer_name: sale.customer_name || 'CONSUMIDOR FINAL',
         customer_rtn: sale.customer_rtn,
-        issue_date: sale.sale_date || new Date(),
+        issue_date: sale.sale_date || getHondurasDateTime(),
         warehouse_id: sale.warehouse_id || options.warehouse_id,
         tax_rate: sale.tax_rate || 15.00,
         shipping_cost: sale.shipping || 0,
@@ -156,7 +157,7 @@ class BillingService {
           ) VALUES (?, ?, ?, ?, ?)`,
           [
             result.id,
-            invoiceData.issue_date || new Date(),
+            invoiceData.issue_date || getHondurasDateTime(),
             totals.total,
             invoiceData.payment_method,
             invoiceData.created_by

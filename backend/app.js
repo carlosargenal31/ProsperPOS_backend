@@ -263,7 +263,8 @@ app.use('*', (req, res) => {
         'GET /api/v1/products - Listar productos',
         'GET /api/v1/categories - Listar categorías',
         'GET /api/v1/customers - Listar clientes',
-        'GET /api/v1/suppliers - Listar proveedores'
+        'GET /api/v1/suppliers - Listar proveedores',
+        'GET /api/v1/sales-book - Libro de Ventas (Sales Book)'
       ]
     }
   ));

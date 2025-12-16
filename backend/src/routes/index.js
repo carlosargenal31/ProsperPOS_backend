@@ -50,6 +50,16 @@ const consecutiveRoutes = require('./consecutive.routes');
 const accountStatementRoutes = require('./account-statement.routes');
 const dashboardRoutes = require('./dashboard.routes');
 const cargoDescargoRoutes = require('./cargo-descargo.routes');
+const salesBookRoutes = require('./sales-book.routes');
+const purchaseBookRoutes = require('./purchase-book.routes');
+const reprintRoutes = require('./reprint.routes');
+const purchaseReprintRoutes = require('./purchase-reprint.routes');
+const profitLossRoutes = require('./profit-loss.routes');
+const supplierReportRoutes = require('./supplier-report.routes');
+const purchaseStatementRoutes = require('./purchase-statement.routes');
+const ecommerceRoutes = require('./ecommerce.routes');
+const soldItemsRoutes = require('./sold-items.routes');
+const physicalInventoryRoutes = require('./physical-inventory.routes');
 
 
 // ===================================================================
@@ -97,6 +107,16 @@ router.use('/v1/consecutives', consecutiveRoutes);
 router.use('/v1/account-statement', accountStatementRoutes);
 router.use('/v1/dashboard', dashboardRoutes);
 router.use('/v1/cargo-descargo', cargoDescargoRoutes);
+router.use('/v1/sales-book', salesBookRoutes);
+router.use('/v1/purchase-book', purchaseBookRoutes);
+router.use('/v1/reprint', reprintRoutes);
+router.use('/v1/purchase-reprint', purchaseReprintRoutes);
+router.use('/v1/profit-loss', profitLossRoutes);
+router.use('/v1/supplier-reports', supplierReportRoutes);
+router.use('/v1/purchase-statement', purchaseStatementRoutes);
+router.use('/v1/ecommerce', ecommerceRoutes);
+router.use('/v1/sold-items', soldItemsRoutes);
+router.use('/v1/physical-inventory', physicalInventoryRoutes);
 
 // ===================================================================
 // RUTAS FUTURAS (Comentadas)
@@ -157,7 +177,21 @@ router.get('/', (req, res) => {
       '/api/v1/pos',
       '/api/v1/billing',
       '/api/v1/shipments',
-      '/api/v1/offers'
+      '/api/v1/offers',
+      '/api/v1/sales-book - Libro de Ventas',
+      '/api/v1/purchase-book - Libro de Compras',
+      '/api/v1/profit-loss - Reporte de Pérdidas y Ganancias',
+      '/api/v1/supplier-reports - Reportes de Proveedores',
+      '/api/v1/invoices-sales',
+      '/api/v1/sales-returns',
+      '/api/v1/purchase-returns',
+      '/api/v1/quotes',
+      '/api/v1/pending-invoices',
+      '/api/v1/account-statement',
+      '/api/v1/dashboard',
+      '/api/v1/cargo-descargo',
+      '/api/v1/sold-items - Productos Vendidos',
+      '/api/v1/physical-inventory - Lista de Inventario Físico'
     ],
     comingSoon: [
       '/api/v1/sales',

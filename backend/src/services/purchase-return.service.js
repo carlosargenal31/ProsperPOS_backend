@@ -113,10 +113,10 @@ class PurchaseReturnService {
 
       // 6. NO HAY ITEMS - Solo registramos el monto total de la devolución
 
-      // 7. ACTUALIZAR ESTADO DE LA COMPRA A 'DEVUELTA'
+      // 7. ACTUALIZAR ESTADO DE LA COMPRA A 'RETURNED' (DEVUELTA)
       const updatePurchaseStatusSql = `
         UPDATE purchases_documents
-        SET status = 'Devuelta',
+        SET status = 'Returned',
             updated_at = NOW()
         WHERE id = ?
       `;

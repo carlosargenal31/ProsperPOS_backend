@@ -39,7 +39,7 @@ class QuotesController {
       const countSql = 'SELECT COUNT(*) as total FROM quotes';
       const countResult = await db.query(countSql);
       const quoteCount = countResult[0].total + 1;
-      const quoteNumber = `COTIZACION ${String(quoteCount).padStart(10, '0')}`;
+      const quoteNumber = String(quoteCount).padStart(10, '0');
 
       // Insertar cotización
       const insertSql = `

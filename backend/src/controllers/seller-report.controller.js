@@ -29,9 +29,10 @@ class SellerReportController {
           COUNT(DISTINCT i.id) as total_invoices,
           SUM(i.subtotal) as neto,
           SUM(i.total) as total_con_isv,
-          COALESCE(SUM(CASE WHEN i.invoice_type = 'credit_note' THEN i.total ELSE 0 END), 0) as devuelto,
+          COALESCE(SUM(sr.total), 0) as devuelto,
           SUM(i.paid_amount) as cobrado
         FROM invoices i
+        LEFT JOIN sales_returns sr ON sr.invoice_id = i.id AND sr.affect_sales_book = 1
         WHERE i.status = 'issued'
           AND i.deleted_at IS NULL
       `;

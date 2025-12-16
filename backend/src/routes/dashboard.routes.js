@@ -89,4 +89,12 @@ router.get('/category-stats', dashboardController.getCategoryStats);
  */
 router.get('/recent-transactions', dashboardController.getRecentTransactions);
 
+/**
+ * @route   GET /api/dashboard/top-categories
+ * @desc    Obtener categorías más vendidas
+ * @access  Private
+ * @query   limit, period (today, week, month)
+ */
+router.get('/top-categories', dashboardController.getTopCategories);
+
 module.exports = router;

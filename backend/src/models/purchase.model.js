@@ -24,48 +24,48 @@ class Purchase {
       } = filters;
 
       const offset = (page - 1) * limit;
-      let whereConditions = ['1=1', 'deleted_at IS NULL', 'status != "Devuelta"']; // Excluir eliminados y devueltos
+      let whereConditions = ['1=1', 'pd.deleted_at IS NULL', 'pd.status != "Returned"']; // Excluir eliminados y devueltos
       const params = [];
 
       if (search) {
         whereConditions.push(`(
-          purchase_number LIKE ? OR
-          supplier_name LIKE ? OR
-          supplier_id_number LIKE ?
+          pd.purchase_number LIKE ? OR
+          pd.supplier_name LIKE ? OR
+          pd.supplier_id_number LIKE ?
         )`);
         const searchParam = `%${search}%`;
         params.push(searchParam, searchParam, searchParam);
       }
 
       if (supplier_id) {
-        whereConditions.push('supplier_name = ?');
+        whereConditions.push('pd.supplier_name = ?');
         params.push(supplier_id); // Actually receiving supplier_name from frontend
       }
 
       if (status) {
-        whereConditions.push('status = ?');
+        whereConditions.push('pd.status = ?');
         params.push(status);
       }
 
       if (document_type) {
-        whereConditions.push('document_type = ?');
+        whereConditions.push('pd.document_type = ?');
         params.push(document_type);
       }
 
       if (date_from) {
-        whereConditions.push('DATE(purchase_date) >= ?');
+        whereConditions.push('DATE(pd.purchase_date) >= ?');
         params.push(date_from);
       }
 
       if (date_to) {
-        whereConditions.push('DATE(purchase_date) <= ?');
+        whereConditions.push('DATE(pd.purchase_date) <= ?');
         params.push(date_to);
       }
 
       const whereClause = whereConditions.join(' AND ');
 
       // Count query
-      const countQuery = `SELECT COUNT(*) as total FROM purchases_documents WHERE ${whereClause}`;
+      const countQuery = `SELECT COUNT(*) as total FROM purchases_documents pd WHERE ${whereClause}`;
       const countResult = await db.query(countQuery, params);
       const totalRecords = countResult && countResult[0] ? countResult[0].total : 0;
 
@@ -77,10 +77,13 @@ class Purchase {
       const offsetValue = parseInt(offset) || 0;
 
       const query = `
-        SELECT *
-        FROM purchases_documents
+        SELECT
+          pd.*,
+          COALESCE(CONCAT(u.first_name, ' ', u.last_name), u.username, 'Sistema') as created_by_name
+        FROM purchases_documents pd
+        LEFT JOIN users u ON pd.created_by = u.id
         WHERE ${whereClause}
-        ORDER BY created_at DESC
+        ORDER BY pd.created_at DESC
         LIMIT ${limitValue} OFFSET ${offsetValue}
       `;
 
@@ -114,7 +117,12 @@ class Purchase {
   static async getById(id) {
     try {
       const [purchases] = await db.query(
-        'SELECT * FROM purchases_documents WHERE id = ?',
+        `SELECT
+          pd.*,
+          COALESCE(CONCAT(u.first_name, ' ', u.last_name), u.username, 'Sistema') as created_by_name
+        FROM purchases_documents pd
+        LEFT JOIN users u ON pd.created_by = u.id
+        WHERE pd.id = ?`,
         [id]
       );
 
@@ -182,10 +190,13 @@ class Purchase {
           supplier_id_number,
           status,
           net_amount,
+          discount_amount,
+          surcharge_amount,
           tax_amount,
           total_amount,
-          notes
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          notes,
+          created_by
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           purchaseNumber,
           purchaseData.document_type || 'FACTURA',
@@ -196,9 +207,12 @@ class Purchase {
           purchaseData.supplier_id_number || null,
           purchaseData.status || 'Completed',
           netAmount,
+          parseFloat(purchaseData.discount_amount) || 0,
+          parseFloat(purchaseData.surcharge_amount) || 0,
           taxAmount,
           totalAmount,
-          purchaseData.notes || null
+          purchaseData.notes || null,
+          purchaseData.created_by || null
         ]
       );
 
@@ -271,6 +285,9 @@ class Purchase {
 
       const allowedFields = [
         'supplier_name', 'supplier_id_number',
+        'invoice_number', 'purchase_date',
+        'net_amount', 'discount_amount', 'surcharge_amount',
+        'tax_amount', 'total_amount',
         'status', 'notes'
       ];
 

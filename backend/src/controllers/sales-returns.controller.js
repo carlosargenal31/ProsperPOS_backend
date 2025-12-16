@@ -123,16 +123,32 @@ class SalesReturnsController {
       const creditNoteCount = countResult[0].total + 1;
       const creditNoteCorrelative = `NC-${String(creditNoteCount).padStart(6, '0')}`;
 
-      // 2. Obtener resolución de nota de crédito activa
+      // 2. Obtener resolución de nota de crédito activa AUTOMÁTICAMENTE
       let resolutionData = null;
       let creditNoteNumber = null;
+      let resolvedCreditNoteResolutionId = credit_note_resolution_id;
 
-      if (credit_note_resolution_id) {
+      // Si no se proporciona resolución, buscar la activa para notas de crédito
+      if (!resolvedCreditNoteResolutionId) {
+        const findResolutionSql = `
+          SELECT * FROM resolutions
+          WHERE tipo_documento = 'credit_note' AND is_active = 1 AND deleted_at IS NULL
+          ORDER BY id DESC
+          LIMIT 1
+        `;
+        const foundResolutions = await db.query(findResolutionSql);
+        if (foundResolutions && foundResolutions.length > 0) {
+          resolvedCreditNoteResolutionId = foundResolutions[0].id;
+        }
+      }
+
+      // Obtener datos de la resolución y generar número
+      if (resolvedCreditNoteResolutionId) {
         const resolutionSql = `
           SELECT * FROM resolutions
-          WHERE id = ? AND tipo_documento = 'credit_note' AND activa = 1 AND deleted_at IS NULL
+          WHERE id = ? AND is_active = 1 AND deleted_at IS NULL
         `;
-        const resolutions = await db.query(resolutionSql, [credit_note_resolution_id]);
+        const resolutions = await db.query(resolutionSql, [resolvedCreditNoteResolutionId]);
 
         if (resolutions && resolutions.length > 0) {
           resolutionData = resolutions[0];
@@ -149,7 +165,7 @@ class SalesReturnsController {
             SET nro_actual_control = nro_actual_control + 1
             WHERE id = ?
           `;
-          await db.query(updateResolutionSql, [credit_note_resolution_id]);
+          await db.query(updateResolutionSql, [resolvedCreditNoteResolutionId]);
         }
       }
 
@@ -190,7 +206,7 @@ class SalesReturnsController {
         invoice.customer_name,
         invoice.customer_rtn || null,
         emission_date,
-        credit_note_resolution_id || null,
+        resolvedCreditNoteResolutionId || null,
         resolutionData?.cai || resolutionData?.numero_resolucion || null,
         resolutionData?.numero_autorizacion || null,
         resolutionData?.nro_inicial_control || null,

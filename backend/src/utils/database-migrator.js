@@ -9,11 +9,12 @@ class DatabaseMigrator {
   
   static async runMigrations() {
     logger.info('🔄 Iniciando migraciones automáticas de base de datos...');
-    
+
     try {
       await this.createTables();
       await this.createIndexes();
       await this.insertDefaultData();
+      await this.addBranchIdToInvoices();
       logger.info('✅ Migraciones completadas exitosamente');
     } catch (error) {
       logger.error('❌ Error en migraciones:', error);
@@ -520,6 +521,52 @@ class DatabaseMigrator {
     } catch (error) {
       await connection.rollback();
       throw error;
+    } finally {
+      connection.release();
+    }
+  }
+
+  static async addBranchIdToInvoices() {
+    const connection = await db.getConnection();
+
+    try {
+      // Verificar si la columna branch_id ya existe
+      const [columns] = await connection.execute(`
+        SELECT COLUMN_NAME
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+        AND TABLE_NAME = 'invoices'
+        AND COLUMN_NAME = 'branch_id'
+      `);
+
+      if (columns.length === 0) {
+        logger.info('🔧 Agregando columna branch_id a la tabla invoices...');
+
+        // Agregar columna branch_id después de warehouse_id
+        await connection.execute(`
+          ALTER TABLE invoices
+          ADD COLUMN branch_id INT DEFAULT 1 COMMENT 'ID de la sucursal (branches)'
+          AFTER warehouse_id
+        `);
+
+        // Actualizar todos los registros existentes con branch_id = 1
+        await connection.execute(`
+          UPDATE invoices SET branch_id = 1 WHERE branch_id IS NULL
+        `);
+
+        // Crear índice para mejorar el rendimiento
+        await connection.execute(`
+          CREATE INDEX idx_invoices_branch_id ON invoices(branch_id)
+        `);
+
+        logger.info('✅ Columna branch_id agregada exitosamente a invoices');
+      } else {
+        logger.info('✅ Columna branch_id ya existe en invoices');
+      }
+
+    } catch (error) {
+      logger.error('❌ Error al agregar branch_id a invoices:', error);
+      // No lanzar el error para que la aplicación continúe
     } finally {
       connection.release();
     }
