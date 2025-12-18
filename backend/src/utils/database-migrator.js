@@ -15,6 +15,7 @@ class DatabaseMigrator {
       await this.createIndexes();
       await this.insertDefaultData();
       await this.addBranchIdToInvoices();
+      await this.createInventoryAdjustmentTables();
       logger.info('✅ Migraciones completadas exitosamente');
     } catch (error) {
       logger.error('❌ Error en migraciones:', error);
@@ -582,6 +583,110 @@ class DatabaseMigrator {
     } catch (error) {
       logger.error('❌ Error de conexión a base de datos:', error);
       return false;
+    }
+  }
+
+  /**
+   * Crear tablas para el módulo de ajuste de inventario
+   */
+  static async createInventoryAdjustmentTables() {
+    const connection = await db.getConnection();
+
+    try {
+      logger.info('📦 Creando tablas de ajuste de inventario...');
+
+      // Tabla principal de ajustes de inventario
+      await connection.execute(`
+        CREATE TABLE IF NOT EXISTS inventory_adjustments (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          consecutive VARCHAR(50) NOT NULL UNIQUE,
+          issue_date DATETIME NOT NULL,
+          issuer VARCHAR(100) NOT NULL,
+          warehouse_id INT NOT NULL,
+          concept TEXT NULL,
+          total_items INT DEFAULT 0,
+          status ENUM('pending', 'processed', 'cancelled') DEFAULT 'pending',
+          created_by INT NOT NULL,
+          updated_by INT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          deleted_at TIMESTAMP NULL,
+
+          INDEX idx_inventory_adjustments_consecutive (consecutive),
+          INDEX idx_inventory_adjustments_warehouse (warehouse_id),
+          INDEX idx_inventory_adjustments_status (status),
+          INDEX idx_inventory_adjustments_created_by (created_by),
+          INDEX idx_inventory_adjustments_issue_date (issue_date),
+
+          FOREIGN KEY (created_by) REFERENCES users(id),
+          FOREIGN KEY (updated_by) REFERENCES users(id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+      `);
+
+      logger.info('✅ Tabla inventory_adjustments creada/verificada');
+
+      // Tabla de detalles de ajustes de inventario
+      await connection.execute(`
+        CREATE TABLE IF NOT EXISTS inventory_adjustment_details (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          adjustment_id INT NOT NULL,
+          product_id INT NOT NULL,
+          warehouse_id INT NOT NULL,
+          quantity_before DECIMAL(15,3) NOT NULL DEFAULT 0 COMMENT 'Existencia teórica (stock anterior)',
+          quantity_actual DECIMAL(15,3) NOT NULL DEFAULT 0 COMMENT 'Existencia física (cantidad contada)',
+          quantity_new DECIMAL(15,3) NOT NULL DEFAULT 0 COMMENT 'Nueva cantidad (igual a quantity_actual)',
+          difference DECIMAL(15,3) NOT NULL DEFAULT 0 COMMENT 'Diferencia (quantity_actual - quantity_before)',
+          cost_unit DECIMAL(15,2) DEFAULT 0,
+          cost_before DECIMAL(15,2) DEFAULT 0,
+          cost_actual DECIMAL(15,2) DEFAULT 0,
+          cost_new DECIMAL(15,2) DEFAULT 0,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+          INDEX idx_inventory_adjustment_details_adjustment (adjustment_id),
+          INDEX idx_inventory_adjustment_details_product (product_id),
+          INDEX idx_inventory_adjustment_details_warehouse (warehouse_id),
+
+          FOREIGN KEY (adjustment_id) REFERENCES inventory_adjustments(id) ON DELETE CASCADE,
+          FOREIGN KEY (product_id) REFERENCES products(id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+      `);
+
+      logger.info('✅ Tabla inventory_adjustment_details creada/verificada');
+
+      // Asegurar que la tabla stock tenga created_at y updated_at
+      const [columns] = await connection.execute(`
+        SELECT COLUMN_NAME
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = 'stock'
+          AND COLUMN_NAME IN ('created_at', 'updated_at')
+      `);
+
+      if (columns.length < 2) {
+        logger.info('🔧 Agregando columnas created_at/updated_at a tabla stock...');
+
+        try {
+          await connection.execute(`
+            ALTER TABLE stock
+            ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+          `);
+          logger.info('✅ Columnas agregadas a stock');
+        } catch (error) {
+          // Si ya existen, ignorar el error
+          if (!error.message.includes('Duplicate column name')) {
+            throw error;
+          }
+        }
+      }
+
+      logger.info('✅ Tablas de ajuste de inventario listas');
+
+    } catch (error) {
+      logger.error('❌ Error al crear tablas de ajuste de inventario:', error);
+      // No lanzar el error para que la aplicación continúe
+    } finally {
+      connection.release();
     }
   }
 }

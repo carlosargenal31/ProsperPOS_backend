@@ -14,6 +14,57 @@ class ProductService {
   /**
    * Obtener lista de productos con filtros
    */
+  /**
+   * Obtener todos los productos para búsqueda (sin paginación)
+   */
+  static async getAllProductsForSearch(filters) {
+    try {
+      const { search = '', status = 'active' } = filters;
+
+      let whereClause = 'WHERE p.deleted_at IS NULL';
+      const params = [];
+
+      // Filtro de estado
+      if (status && status !== 'all') {
+        whereClause += ' AND p.status = ?';
+        params.push(status);
+      }
+
+      // Filtro de búsqueda
+      if (search) {
+        whereClause += ' AND (p.name LIKE ? OR p.code LIKE ? OR p.barcode LIKE ?)';
+        const searchTerm = `%${search}%`;
+        params.push(searchTerm, searchTerm, searchTerm);
+      }
+
+      const query = `
+        SELECT
+          p.id,
+          p.code,
+          p.name,
+          p.barcode,
+          p.status,
+          c.name as category_name,
+          sc.name as subcategory_name,
+          b.name as brand_name
+        FROM products p
+        LEFT JOIN categories c ON p.category_id = c.id
+        LEFT JOIN subcategories sc ON p.subcategory_id = sc.id
+        LEFT JOIN brands b ON p.brand_id = b.id
+        ${whereClause}
+        ORDER BY p.name ASC
+        LIMIT 10000
+      `;
+
+      const products = await db.query(query, params);
+      return products;
+
+    } catch (error) {
+      logger.error('Error in getAllProductsForSearch:', error);
+      throw error;
+    }
+  }
+
   static async getProducts(filters) {
     try {
       const {
@@ -21,7 +72,9 @@ class ProductService {
         limit = 20,
         search = '',
         sort_by = 'id',
-        sort_order = 'ASC'
+        sort_order = 'ASC',
+        warehouse_id,
+        includeStock = false
       } = filters;
 
       const pageNum = parseInt(page);
@@ -55,7 +108,34 @@ class ProductService {
       // Construir query con ORDER BY seguro (sin interpolación problemática)
       const orderByClause = `ORDER BY ${sortColumn} ${sortDirection}`;
 
-      const query = `SELECT p.*, c.name as category_name, sc.name as subcategory_name, b.name as brand_name FROM products p LEFT JOIN categories c ON p.category_id = c.id LEFT JOIN subcategories sc ON p.subcategory_id = sc.id LEFT JOIN brands b ON p.brand_id = b.id ${whereClause} ${orderByClause} LIMIT ${limitNum} OFFSET ${offset}`;
+      // Si se solicita incluir stock, agregarlo a la consulta
+      let selectClause = 'p.*, c.name as category_name, sc.name as subcategory_name, b.name as brand_name';
+      let joinClause = '';
+
+      if (includeStock) {
+        if (warehouse_id) {
+          // Stock de una bodega específica
+          selectClause += ', COALESCE(s.quantity, 0) as stock';
+          joinClause = `LEFT JOIN stock s ON p.id = s.product_id AND s.warehouse_id = ${parseInt(warehouse_id)}`;
+        } else {
+          // Stock total de todas las bodegas
+          selectClause += ', COALESCE(SUM(s.quantity), 0) as stock';
+          joinClause = 'LEFT JOIN stock s ON p.id = s.product_id';
+        }
+      }
+
+      const query = `
+        SELECT ${selectClause}
+        FROM products p
+        LEFT JOIN categories c ON p.category_id = c.id
+        LEFT JOIN subcategories sc ON p.subcategory_id = sc.id
+        LEFT JOIN brands b ON p.brand_id = b.id
+        ${joinClause}
+        ${whereClause}
+        ${includeStock && !warehouse_id ? 'GROUP BY p.id' : ''}
+        ${orderByClause}
+        LIMIT ${limitNum} OFFSET ${offset}
+      `;
 
       // Para esta query usamos solo los parámetros de búsqueda
       const products = await db.query(query, searchParams);

@@ -46,6 +46,16 @@ router.get('/low-stock',
 );
 
 /**
+ * @route   GET /api/v1/products/search/all
+ * @desc    Buscar todos los productos sin paginación (para búsquedas)
+ * @access  Private (products.read)
+ */
+router.get('/search/all',
+  requirePermission('products.read'),
+  ProductController.getAllProductsForSearch
+);
+
+/**
  * @route   GET /api/v1/products/generate-code
  * @desc    Generar código de producto
  * @access  Private (products.create)

@@ -13,6 +13,23 @@ class ProductController {
   // =================================================================
 
   /**
+   * Obtener todos los productos para búsqueda (sin paginación)
+   */
+  static async getAllProductsForSearch(req, res) {
+    try {
+      const { search = '', status = 'active' } = req.query;
+
+      const products = await ProductService.getAllProductsForSearch({ search, status });
+
+      return sendSuccessResponse(res, products, 'Productos obtenidos exitosamente');
+
+    } catch (error) {
+      logger.error('Error getting all products for search:', error);
+      return sendErrorResponse(res, 500, 'Error al obtener productos');
+    }
+  }
+
+  /**
    * Obtener lista de productos con filtros y paginación
    */
   static async getProducts(req, res) {
@@ -28,7 +45,9 @@ class ProductController {
         min_price,
         max_price,
         sort_by = 'created_at',
-        sort_order = 'DESC'
+        sort_order = 'DESC',
+        warehouse_id,
+        includeStock
       } = req.query;
 
       const store_id = req.user?.store_id || 1;
@@ -45,7 +64,9 @@ class ProductController {
         max_price: max_price ? parseFloat(max_price) : null,
         sort_by,
         sort_order,
-        store_id
+        store_id,
+        warehouse_id: warehouse_id ? parseInt(warehouse_id) : null,
+        includeStock: includeStock === 'true' || includeStock === true
       };
 
       const result = await ProductService.getProducts(filters);

@@ -4,8 +4,10 @@ const { AppError } = require('../utils/errors');
 class CargoDescargoService {
   async getAllDocuments(filters) {
     try {
-      return await CargoDescargo.getAll(filters);
+      const documents = await CargoDescargo.getAll(filters);
+      return documents || [];
     } catch (error) {
+      console.error('Error en getAllDocuments:', error);
       throw new AppError('Error al obtener documentos de cargo/descargo', 500, error);
     }
   }
@@ -25,13 +27,12 @@ class CargoDescargoService {
 
   async createDocument(documentData, details, userId) {
     try {
+      console.log('createDocument - documentData:', JSON.stringify(documentData, null, 2));
+      console.log('createDocument - details count:', details?.length);
+
       // Validaciones
       if (!documentData.document_type || !['CARGO', 'DESCARGO'].includes(documentData.document_type)) {
         throw new AppError('Tipo de documento inválido', 400);
-      }
-
-      if (!documentData.movement_type) {
-        throw new AppError('Tipo de movimiento requerido', 400);
       }
 
       if (!documentData.warehouse_id) {
@@ -57,8 +58,12 @@ class CargoDescargoService {
       documentData.tax_amount = documentData.tax_amount || 0;
       documentData.total_amount = subtotal + (documentData.tax_amount || 0);
 
-      return await CargoDescargo.create(documentData, details, userId);
+      console.log('createDocument - antes de llamar a CargoDescargo.create');
+      const result = await CargoDescargo.create(documentData, details, userId);
+      console.log('createDocument - resultado:', result?.id);
+      return result;
     } catch (error) {
+      console.error('createDocument - error capturado:', error);
       if (error instanceof AppError) throw error;
       throw new AppError('Error al crear documento', 500, error);
     }
