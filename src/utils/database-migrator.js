@@ -15,6 +15,8 @@ class DatabaseMigrator {
       await this.createIndexes();
       await this.insertDefaultData();
       await this.addBranchIdToInvoices();
+      await this.createInventoryAdjustmentTables();
+      await this.moveMinMaxStockToStockTable();
       logger.info('✅ Migraciones completadas exitosamente');
     } catch (error) {
       logger.error('❌ Error en migraciones:', error);
@@ -210,9 +212,9 @@ class DatabaseMigrator {
           code VARCHAR(50) UNIQUE NOT NULL,
           barcode VARCHAR(100) NULL,
           sku VARCHAR(100) NULL,
-          category_id VARCHAR(36) NULL,
-          brand_id VARCHAR(36) NULL,
-          supplier_id VARCHAR(36) NULL,
+          category_id INT NULL,
+          brand_id INT NULL,
+          supplier_id INT NULL,
           description TEXT NULL,
           unit VARCHAR(20) DEFAULT 'Unidad',
           min_stock INT DEFAULT 0,
@@ -404,7 +406,7 @@ class DatabaseMigrator {
         CREATE TABLE IF NOT EXISTS purchases (
           id INT AUTO_INCREMENT PRIMARY KEY,
           purchase_number VARCHAR(50) UNIQUE NOT NULL,
-          supplier_id VARCHAR(36) NOT NULL,
+          supplier_id INT NOT NULL,
           user_id INT NOT NULL,
           store_id INT NOT NULL,
           purchase_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -582,6 +584,188 @@ class DatabaseMigrator {
     } catch (error) {
       logger.error('❌ Error de conexión a base de datos:', error);
       return false;
+    }
+  }
+
+  /**
+   * Crear tablas para el módulo de ajuste de inventario
+   */
+  static async createInventoryAdjustmentTables() {
+    const connection = await db.getConnection();
+
+    try {
+      logger.info('📦 Creando tablas de ajuste de inventario...');
+
+      // Tabla principal de ajustes de inventario
+      await connection.execute(`
+        CREATE TABLE IF NOT EXISTS inventory_adjustments (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          consecutive VARCHAR(50) NOT NULL UNIQUE,
+          issue_date DATETIME NOT NULL,
+          issuer VARCHAR(100) NOT NULL,
+          warehouse_id INT NOT NULL,
+          concept TEXT NULL,
+          total_items INT DEFAULT 0,
+          status ENUM('pending', 'processed', 'cancelled') DEFAULT 'pending',
+          created_by INT NOT NULL,
+          updated_by INT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          deleted_at TIMESTAMP NULL,
+
+          INDEX idx_inventory_adjustments_consecutive (consecutive),
+          INDEX idx_inventory_adjustments_warehouse (warehouse_id),
+          INDEX idx_inventory_adjustments_status (status),
+          INDEX idx_inventory_adjustments_created_by (created_by),
+          INDEX idx_inventory_adjustments_issue_date (issue_date),
+
+          FOREIGN KEY (created_by) REFERENCES users(id),
+          FOREIGN KEY (updated_by) REFERENCES users(id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+      `);
+
+      logger.info('✅ Tabla inventory_adjustments creada/verificada');
+
+      // Tabla de detalles de ajustes de inventario
+      await connection.execute(`
+        CREATE TABLE IF NOT EXISTS inventory_adjustment_details (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          adjustment_id INT NOT NULL,
+          product_id INT NOT NULL,
+          warehouse_id INT NOT NULL,
+          quantity_before DECIMAL(15,3) NOT NULL DEFAULT 0 COMMENT 'Existencia teórica (stock anterior)',
+          quantity_actual DECIMAL(15,3) NOT NULL DEFAULT 0 COMMENT 'Existencia física (cantidad contada)',
+          quantity_new DECIMAL(15,3) NOT NULL DEFAULT 0 COMMENT 'Nueva cantidad (igual a quantity_actual)',
+          difference DECIMAL(15,3) NOT NULL DEFAULT 0 COMMENT 'Diferencia (quantity_actual - quantity_before)',
+          cost_unit DECIMAL(15,2) DEFAULT 0,
+          cost_before DECIMAL(15,2) DEFAULT 0,
+          cost_actual DECIMAL(15,2) DEFAULT 0,
+          cost_new DECIMAL(15,2) DEFAULT 0,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+          INDEX idx_inventory_adjustment_details_adjustment (adjustment_id),
+          INDEX idx_inventory_adjustment_details_product (product_id),
+          INDEX idx_inventory_adjustment_details_warehouse (warehouse_id),
+
+          FOREIGN KEY (adjustment_id) REFERENCES inventory_adjustments(id) ON DELETE CASCADE,
+          FOREIGN KEY (product_id) REFERENCES products(id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+      `);
+
+      logger.info('✅ Tabla inventory_adjustment_details creada/verificada');
+
+      // Asegurar que la tabla stock tenga created_at y updated_at
+      const [columns] = await connection.execute(`
+        SELECT COLUMN_NAME
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = 'stock'
+          AND COLUMN_NAME IN ('created_at', 'updated_at')
+      `);
+
+      if (columns.length < 2) {
+        logger.info('🔧 Agregando columnas created_at/updated_at a tabla stock...');
+
+        try {
+          await connection.execute(`
+            ALTER TABLE stock
+            ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+          `);
+          logger.info('✅ Columnas agregadas a stock');
+        } catch (error) {
+          // Si ya existen, ignorar el error
+          if (!error.message.includes('Duplicate column name')) {
+            throw error;
+          }
+        }
+      }
+
+      logger.info('✅ Tablas de ajuste de inventario listas');
+
+    } catch (error) {
+      logger.error('❌ Error al crear tablas de ajuste de inventario:', error);
+      // No lanzar el error para que la aplicación continúe
+    } finally {
+      connection.release();
+    }
+  }
+
+  static async moveMinMaxStockToStockTable() {
+    const connection = await db.getConnection();
+
+    try {
+      logger.info('📦 Migrando min_stock y max_stock a la tabla stock...');
+
+      // Verificar si las columnas ya existen en stock
+      const [stockColumns] = await connection.execute(`
+        SELECT COLUMN_NAME
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = 'stock'
+          AND COLUMN_NAME IN ('min_stock', 'max_stock')
+      `);
+
+      if (stockColumns.length === 0) {
+        // Agregar columnas min_stock y max_stock a la tabla stock
+        logger.info('🔧 Agregando columnas min_stock y max_stock a tabla stock...');
+        await connection.execute(`
+          ALTER TABLE stock
+          ADD COLUMN min_stock DECIMAL(15,3) DEFAULT 0,
+          ADD COLUMN max_stock DECIMAL(15,3) DEFAULT 1000
+        `);
+        logger.info('✅ Columnas agregadas a stock');
+
+        // Migrar datos existentes de products a stock
+        logger.info('🔄 Migrando datos de products.min_stock y products.max_stock a stock...');
+        await connection.execute(`
+          UPDATE stock s
+          INNER JOIN products p ON s.product_id = p.id
+          SET s.min_stock = COALESCE(p.min_stock, 0),
+              s.max_stock = COALESCE(p.max_stock, 1000)
+          WHERE p.min_stock IS NOT NULL OR p.max_stock IS NOT NULL
+        `);
+        logger.info('✅ Datos migrados correctamente');
+      } else {
+        logger.info('✅ Columnas min_stock y max_stock ya existen en stock');
+      }
+
+      // Verificar si las columnas aún existen en products antes de eliminarlas
+      const [productColumns] = await connection.execute(`
+        SELECT COLUMN_NAME
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = 'products'
+          AND COLUMN_NAME IN ('min_stock', 'max_stock')
+      `);
+
+      if (productColumns.length > 0) {
+        logger.info('🔧 Eliminando columnas min_stock y max_stock de tabla products...');
+
+        // Eliminar columnas una por una ya que MySQL no soporta DROP COLUMN IF EXISTS con múltiples columnas
+        const columnNames = productColumns.map(col => col.COLUMN_NAME);
+
+        for (const columnName of columnNames) {
+          try {
+            await connection.execute(`ALTER TABLE products DROP COLUMN ${columnName}`);
+            logger.info(`✅ Columna ${columnName} eliminada de products`);
+          } catch (error) {
+            if (!error.message.includes("check that it exists")) {
+              logger.error(`Error eliminando columna ${columnName}:`, error.message);
+            }
+          }
+        }
+      } else {
+        logger.info('✅ Columnas min_stock y max_stock ya fueron eliminadas de products');
+      }
+
+      logger.info('✅ Migración de min_stock y max_stock completada');
+
+    } catch (error) {
+      logger.error('❌ Error al migrar min_stock y max_stock:', error);
+      // No lanzar el error para que la aplicación continúe
+    } finally {
+      connection.release();
     }
   }
 }

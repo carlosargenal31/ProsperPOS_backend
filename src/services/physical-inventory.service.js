@@ -27,7 +27,6 @@ class PhysicalInventoryService {
         include_codes = false,
         include_unit = false,
         include_brand = false,
-        include_images = false,
         group_by_warehouses = true,
         group_by_groups = false,
         group_by_articles = false,
@@ -82,64 +81,37 @@ class PhysicalInventoryService {
 
       const whereClause = whereConditions.join(' AND ');
 
-      // Campos dinámicos según opciones
+      logger.info('Physical Inventory WHERE conditions:', whereConditions);
+      logger.info('Physical Inventory params:', params);
+
+      // Campos - SIEMPRE incluir todos los campos para que estén disponibles en el frontend
       let selectFields = `
         p.id,
         p.name as nombre,
-        p.type as tipo,
+        p.code as codigo,
         c.name as categoria,
         sc.name as subcategoria,
+        b.name as marca,
+        p.unit as unidad_medida,
         w.id as warehouse_id,
         w.nombre as almacen,
         COALESCE(stock_data.stock_quantity, 0) as cantidad,
         COALESCE(stock_data.stock_quantity_reservada, 0) as apartadas,
         COALESCE(stock_data.stock_quantity, 0) + COALESCE(stock_data.stock_quantity_reservada, 0) as cant_total,
-        p.unit as unidad_medida
+        COALESCE(p.cost, 0) as costo_unit,
+        COALESCE(p.cost, 0) * COALESCE(stock_data.stock_quantity, 0) as costo_total,
+        COALESCE(p.price_1, 0) as precio_unit,
+        COALESCE(p.price_1, 0) * COALESCE(stock_data.stock_quantity, 0) as precio_total
       `;
-
-      // Incluir campos opcionales
-      if (include_codes || is_for_inventory_taking) {
-        selectFields += `, p.code as codigo`;
-      }
-
-      if (include_brand) {
-        selectFields += `, b.name as marca`;
-      }
-
-      if (include_unit) {
-        selectFields += `, p.unit as unidad`;
-      }
-
-      if (include_cost) {
-        selectFields += `,
-          COALESCE(p.cost, 0) as costo_unit,
-          COALESCE(p.cost, 0) * COALESCE(stock_data.stock_quantity, 0) as costo_total
-        `;
-      }
-
-      if (include_average_cost) {
-        selectFields += `,
-          COALESCE(p.average_cost, 0) as costo_promedio
-        `;
-      }
-
-      if (include_prices) {
-        selectFields += `,
-          COALESCE(p.price, 0) as precio_neto
-        `;
-      }
 
       // Subconsulta para obtener stock por bodega
       const stockSubquery = `
         SELECT
           s.product_id,
           s.warehouse_id,
-          SUM(CASE WHEN s.type = 'in' OR s.type = 'initial' THEN s.quantity
-                   WHEN s.type = 'out' OR s.type = 'sale' THEN -s.quantity
-                   ELSE 0 END) as stock_quantity,
-          SUM(CASE WHEN s.type = 'reserved' THEN s.quantity ELSE 0 END) as stock_quantity_reservada
+          SUM(COALESCE(s.quantity, 0)) as stock_quantity,
+          SUM(COALESCE(s.reserved_quantity, 0)) as stock_quantity_reservada
         FROM stock s
-        WHERE s.deleted_at IS NULL
         GROUP BY s.product_id, s.warehouse_id
       `;
 
@@ -183,6 +155,7 @@ class PhysicalInventoryService {
         cantidad_total: 0,
         apartadas_total: 0,
         costo_total: 0,
+        precio_total: 0,
         impuestos_total: 0
       };
 
@@ -198,7 +171,8 @@ class PhysicalInventoryService {
               totals: {
                 cantidad: 0,
                 apartadas: 0,
-                costo_total: 0
+                costo_total: 0,
+                precio_total: 0
               }
             };
           }
@@ -210,6 +184,11 @@ class PhysicalInventoryService {
           if (include_cost) {
             groupedData[warehouseKey].totals.costo_total += parseFloat(item.costo_total || 0);
             totalGeneral.costo_total += parseFloat(item.costo_total || 0);
+          }
+
+          if (include_prices) {
+            groupedData[warehouseKey].totals.precio_total += parseFloat(item.precio_total || 0);
+            totalGeneral.precio_total += parseFloat(item.precio_total || 0);
           }
 
           totalGeneral.cantidad_total += parseFloat(item.cantidad || 0);
@@ -227,6 +206,10 @@ class PhysicalInventoryService {
           if (include_cost) {
             totalGeneral.costo_total += parseFloat(item.costo_total || 0);
           }
+
+          if (include_prices) {
+            totalGeneral.precio_total += parseFloat(item.precio_total || 0);
+          }
         });
 
         groupedData = items;
@@ -237,7 +220,11 @@ class PhysicalInventoryService {
         totalGeneral.costo_total = parseFloat(totalGeneral.costo_total.toFixed(2));
       }
 
-      return {
+      if (include_prices) {
+        totalGeneral.precio_total = parseFloat(totalGeneral.precio_total.toFixed(2));
+      }
+
+      const result = {
         data: groupedData,
         totals: totalGeneral,
         filters: {
@@ -259,10 +246,18 @@ class PhysicalInventoryService {
           include_codes,
           include_unit,
           include_brand,
-          include_images,
           is_for_inventory_taking
         }
       };
+
+      logger.info('Physical Inventory Result:', {
+        totalItems: items.length,
+        groupedDataLength: Array.isArray(groupedData) ? groupedData.length : Object.keys(groupedData).length,
+        totalRegistros: totalGeneral.total_registros,
+        isGroupedByWarehouses: group_by_warehouses
+      });
+
+      return result;
     } catch (error) {
       logger.error('Error in PhysicalInventoryService.getPhysicalInventory:', error);
       throw error;

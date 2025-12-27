@@ -95,7 +95,7 @@ class PurchaseReprintController {
           sql = `
             SELECT
               pr.id,
-              pr.correlative as document_number,
+              pr.credit_note_number as document_number,
               pr.credit_note_number as full_number,
               pr.credit_note_date as issue_date,
               NULL as expiry_date,
@@ -210,6 +210,12 @@ class PurchaseReprintController {
       SELECT
         pd.*,
         pd.purchase_number as correlative,
+        pd.supplier_id_number as supplier_rtn,
+        pd.net_amount as subtotal,
+        pd.discount_amount as discount,
+        pd.surcharge_amount as surcharge,
+        pd.tax_amount as tax,
+        pd.total_amount,
         COALESCE(CONCAT(u.first_name, ' ', u.last_name), u.username, 'Sistema') as created_by_name
       FROM purchases_documents pd
       LEFT JOIN users u ON pd.created_by = u.id
@@ -226,7 +232,13 @@ class PurchaseReprintController {
       SELECT
         pdi.*,
         pdi.product_code,
-        pdi.product_name
+        pdi.product_name,
+        pdi.quantity,
+        pdi.unit_price,
+        pdi.discount_amount as discount,
+        pdi.tax_amount as tax,
+        pdi.subtotal,
+        pdi.total
       FROM purchases_documents_items pdi
       WHERE pdi.purchase_id = ?
     `;
@@ -242,11 +254,17 @@ class PurchaseReprintController {
       SELECT
         pr.*,
         pr.correlative,
-        pd.invoice_number,
-        pd.purchase_date,
-        CONCAT(u.first_name, ' ', u.last_name) as created_by_name
+        pr.purchase_number,
+        pr.supplier_name,
+        pr.supplier_rtn,
+        pr.emission_date,
+        pr.subtotal,
+        pr.subtotal as subtotal_15,
+        pr.tax,
+        pr.total,
+        pr.notes,
+        COALESCE(CONCAT(u.first_name, ' ', u.last_name), u.username, 'Sistema') as created_by_name
       FROM purchase_returns pr
-      LEFT JOIN purchases_documents pd ON pr.purchase_id = pd.id
       LEFT JOIN users u ON pr.created_by = u.id
       WHERE pr.id = ?
     `;
@@ -278,11 +296,17 @@ class PurchaseReprintController {
         pr.correlative,
         pr.credit_note_number,
         pr.credit_note_date,
-        pd.invoice_number,
-        pd.purchase_date,
-        CONCAT(u.first_name, ' ', u.last_name) as created_by_name
+        pr.purchase_number,
+        pr.supplier_name,
+        pr.supplier_rtn,
+        pr.emission_date,
+        pr.subtotal,
+        pr.subtotal as subtotal_15,
+        pr.tax,
+        pr.total,
+        pr.notes,
+        COALESCE(CONCAT(u.first_name, ' ', u.last_name), u.username, 'Sistema') as created_by_name
       FROM purchase_returns pr
-      LEFT JOIN purchases_documents pd ON pr.purchase_id = pd.id
       LEFT JOIN users u ON pr.created_by = u.id
       WHERE pr.id = ?
         AND pr.credit_note_received = 1

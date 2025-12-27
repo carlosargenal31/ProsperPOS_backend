@@ -14,13 +14,11 @@ router.use(authenticateToken);
  * @route   GET /api/physical-inventory
  * @desc    Obtener el inventario físico con filtros
  * @access  Private
- * @query   article_code, article_name, group_id, subgroup_id, warehouse_id,
- *          sub_warehouse_id, brand_id, model, reference, existence_filter,
- *          report_type, include_cost, include_average_cost, include_prices,
- *          include_serials, include_codes, include_alternative_codes,
- *          include_unit, include_brand, include_model, include_sizes_colors,
- *          include_images, group_by_warehouses, group_by_groups,
- *          group_by_articles, include_suspended, is_for_inventory_taking
+ * @query   product_id, article_name, category_id, subcategory_id, warehouse_id,
+ *          brand_id, existence_filter, include_cost, include_average_cost,
+ *          include_prices, include_codes, include_unit, include_brand,
+ *          group_by_warehouses, group_by_groups, group_by_articles,
+ *          include_suspended, is_for_inventory_taking
  */
 router.get('/', PhysicalInventoryController.getPhysicalInventory);
 
@@ -36,13 +34,11 @@ router.get('/summary', PhysicalInventoryController.getInventorySummary);
  * @route   GET /api/physical-inventory/export
  * @desc    Exportar inventario físico a Excel/PDF
  * @access  Private
- * @query   article_code, article_name, group_id, subgroup_id, warehouse_id,
- *          sub_warehouse_id, brand_id, model, reference, existence_filter,
- *          report_type, include_cost, include_average_cost, include_prices,
- *          include_serials, include_codes, include_alternative_codes,
- *          include_unit, include_brand, include_model, include_sizes_colors,
- *          include_images, group_by_warehouses, group_by_groups,
- *          group_by_articles, include_suspended, is_for_inventory_taking
+ * @query   product_id, article_name, category_id, subcategory_id, warehouse_id,
+ *          brand_id, existence_filter, include_cost, include_average_cost,
+ *          include_prices, include_codes, include_unit, include_brand,
+ *          group_by_warehouses, group_by_groups, group_by_articles,
+ *          include_suspended, is_for_inventory_taking
  */
 router.get('/export', PhysicalInventoryController.exportPhysicalInventory);
 

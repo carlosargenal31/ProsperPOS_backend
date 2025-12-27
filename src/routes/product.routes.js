@@ -7,6 +7,7 @@ const router = express.Router();
 const ProductController = require('../controllers/product.controller');
 const { authenticateToken, requirePermission } = require('../middleware/auth.middleware');
 const { validateProductCreation, validateProductUpdate, validateStockAdjustment } = require('../middleware/validation.middleware');
+const upload = require('../middleware/upload.middleware');
 
 // Middleware global
 router.use(authenticateToken);
@@ -46,6 +47,16 @@ router.get('/low-stock',
 );
 
 /**
+ * @route   GET /api/v1/products/search/all
+ * @desc    Buscar todos los productos sin paginación (para búsquedas)
+ * @access  Private (products.read)
+ */
+router.get('/search/all',
+  requirePermission('products.read'),
+  ProductController.getAllProductsForSearch
+);
+
+/**
  * @route   GET /api/v1/products/generate-code
  * @desc    Generar código de producto
  * @access  Private (products.create)
@@ -63,6 +74,16 @@ router.get('/generate-code',
 router.get('/barcode/:barcode',
   requirePermission('products.read'),
   ProductController.getProductByBarcode
+);
+
+/**
+ * @route   GET /api/v1/products/:id/gallery
+ * @desc    Obtener imágenes de galería del producto
+ * @access  Private (products.read)
+ */
+router.get('/:id/gallery',
+  requirePermission('products.read'),
+  ProductController.getProductGallery
 );
 
 /**
@@ -93,6 +114,14 @@ router.post('/',
  */
 router.put('/:id',
   requirePermission('products.update'),
+  upload.fields([
+    { name: 'image', maxCount: 1 },
+    { name: 'gallery_0', maxCount: 1 },
+    { name: 'gallery_1', maxCount: 1 },
+    { name: 'gallery_2', maxCount: 1 },
+    { name: 'gallery_3', maxCount: 1 },
+    { name: 'gallery_4', maxCount: 1 }
+  ]),
   validateProductUpdate,
   ProductController.updateProduct
 );

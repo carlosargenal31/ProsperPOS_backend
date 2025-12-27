@@ -36,6 +36,7 @@ class CargoDescargoController {
 
       return sendSuccessResponse(res, document, 'Documento obtenido exitosamente');
     } catch (error) {
+      console.error('Error en getDocumentById:', error);
       return sendErrorResponse(res, error.statusCode || 500, error.message);
     }
   }
@@ -56,6 +57,7 @@ class CargoDescargoController {
 
       return sendSuccessResponse(res, newDocument, 'Documento creado exitosamente', 201);
     } catch (error) {
+      console.error('Error en createDocument:', error);
       return sendErrorResponse(res, error.statusCode || 500, error.message);
     }
   }

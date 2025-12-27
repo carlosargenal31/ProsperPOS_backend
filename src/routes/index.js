@@ -60,6 +60,8 @@ const purchaseStatementRoutes = require('./purchase-statement.routes');
 const ecommerceRoutes = require('./ecommerce.routes');
 const soldItemsRoutes = require('./sold-items.routes');
 const physicalInventoryRoutes = require('./physical-inventory.routes');
+const inventoryAdjustmentRoutes = require('./inventory-adjustment.routes');
+const uploadRoutes = require('./upload.routes');
 
 
 // ===================================================================
@@ -117,6 +119,8 @@ router.use('/v1/purchase-statement', purchaseStatementRoutes);
 router.use('/v1/ecommerce', ecommerceRoutes);
 router.use('/v1/sold-items', soldItemsRoutes);
 router.use('/v1/physical-inventory', physicalInventoryRoutes);
+router.use('/v1/inventory-adjustments', inventoryAdjustmentRoutes);
+router.use('/v1/upload', uploadRoutes);
 
 // ===================================================================
 // RUTAS FUTURAS (Comentadas)

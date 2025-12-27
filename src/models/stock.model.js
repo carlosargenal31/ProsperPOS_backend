@@ -12,17 +12,23 @@ class Stock {
    */
   static async getCurrent(filters = {}) {
     try {
-      const { 
+      const {
         warehouse_id = null,
+        store_id = null,
         product_id = null,
         low_stock = false,
-        page = 1, 
-        limit = 50 
+        page = 1,
+        limit = 50
       } = filters;
-      
+
       const offset = (page - 1) * limit;
-      let whereClause = 'WHERE s.deleted_at IS NULL';
+      let whereClause = 'WHERE 1=1';
       const params = [];
+
+      if (store_id) {
+        whereClause += ' AND s.store_id = ?';
+        params.push(store_id);
+      }
 
       if (warehouse_id) {
         whereClause += ' AND s.warehouse_id = ?';
@@ -85,10 +91,10 @@ class Stock {
   /**
    * Obtener stock de un producto específico
    */
-  static async getByProductId(product_id, warehouse_id = null) {
+  static async getByProductId(product_id, warehouse_id = null, store_id = null) {
     try {
       let query = `
-        SELECT 
+        SELECT
           s.*,
           w.name as warehouse_name,
           p.name as product_name,
@@ -97,10 +103,15 @@ class Stock {
         FROM stock s
         INNER JOIN warehouses w ON s.warehouse_id = w.id
         INNER JOIN products p ON s.product_id = p.id
-        WHERE s.product_id = ? AND s.deleted_at IS NULL
+        WHERE s.product_id = ?
       `;
 
       const params = [product_id];
+
+      if (store_id) {
+        query += ' AND s.store_id = ?';
+        params.push(store_id);
+      }
 
       if (warehouse_id) {
         query += ' AND s.warehouse_id = ?';
@@ -121,27 +132,32 @@ class Stock {
    */
   static async adjust(adjustmentData) {
     const connection = await db.getConnection();
-    
+
     try {
       await connection.beginTransaction();
 
       const {
         product_id,
         warehouse_id,
+        store_id,
         new_quantity,
         reason,
         notes,
         adjusted_by
       } = adjustmentData;
 
+      if (!store_id) {
+        throw new Error('store_id es requerido para ajustar stock');
+      }
+
       // Obtener cantidad actual
       const [currentStock] = await connection.execute(
-        'SELECT quantity FROM stock WHERE product_id = ? AND warehouse_id = ? AND deleted_at IS NULL',
-        [product_id, warehouse_id]
+        'SELECT quantity FROM stock WHERE product_id = ? AND warehouse_id = ? AND store_id = ?',
+        [product_id, warehouse_id, store_id]
       );
 
       if (currentStock.length === 0) {
-        throw new Error('Stock no encontrado para este producto en este almacén');
+        throw new Error('Stock no encontrado para este producto en este almacén y tienda');
       }
 
       const oldQuantity = currentStock[0].quantity;
@@ -149,8 +165,8 @@ class Stock {
 
       // Actualizar stock
       await connection.execute(
-        'UPDATE stock SET quantity = ?, updated_at = NOW() WHERE product_id = ? AND warehouse_id = ?',
-        [new_quantity, product_id, warehouse_id]
+        'UPDATE stock SET quantity = ?, updated_at = NOW() WHERE product_id = ? AND warehouse_id = ? AND store_id = ?',
+        [new_quantity, product_id, warehouse_id, store_id]
       );
 
       // Registrar movimiento
@@ -189,12 +205,13 @@ class Stock {
    */
   static async transfer(transferData) {
     const connection = await db.getConnection();
-    
+
     try {
       await connection.beginTransaction();
 
       const {
         product_id,
+        store_id,
         from_warehouse_id,
         to_warehouse_id,
         quantity,
@@ -202,10 +219,14 @@ class Stock {
         transferred_by
       } = transferData;
 
+      if (!store_id) {
+        throw new Error('store_id es requerido para transferir stock');
+      }
+
       // Verificar stock origen
       const [fromStock] = await connection.execute(
-        'SELECT quantity FROM stock WHERE product_id = ? AND warehouse_id = ? AND deleted_at IS NULL',
-        [product_id, from_warehouse_id]
+        'SELECT quantity FROM stock WHERE product_id = ? AND warehouse_id = ? AND store_id = ?',
+        [product_id, from_warehouse_id, store_id]
       );
 
       if (fromStock.length === 0 || fromStock[0].quantity < quantity) {
@@ -214,16 +235,16 @@ class Stock {
 
       // Reducir stock origen
       await connection.execute(
-        'UPDATE stock SET quantity = quantity - ?, updated_at = NOW() WHERE product_id = ? AND warehouse_id = ?',
-        [quantity, product_id, from_warehouse_id]
+        'UPDATE stock SET quantity = quantity - ?, updated_at = NOW() WHERE product_id = ? AND warehouse_id = ? AND store_id = ?',
+        [quantity, product_id, from_warehouse_id, store_id]
       );
 
       // Aumentar stock destino
       await connection.execute(`
-        INSERT INTO stock (product_id, warehouse_id, quantity, created_at, updated_at)
-        VALUES (?, ?, ?, NOW(), NOW())
+        INSERT INTO stock (product_id, store_id, warehouse_id, quantity, created_at, updated_at)
+        VALUES (?, ?, ?, ?, NOW(), NOW())
         ON DUPLICATE KEY UPDATE quantity = quantity + ?, updated_at = NOW()
-      `, [product_id, to_warehouse_id, quantity, quantity]);
+      `, [product_id, store_id, to_warehouse_id, quantity, quantity]);
 
       // Registrar movimientos
       await connection.execute(`
@@ -254,11 +275,12 @@ class Stock {
   /**
    * Obtener productos con stock bajo
    */
-  static async getLowStock(warehouse_id = null, limit = 50) {
+  static async getLowStock(warehouse_id = null, store_id = null, limit = 50) {
     try {
       let query = `
-        SELECT 
+        SELECT
           s.product_id,
+          s.store_id,
           p.name as product_name,
           p.sku,
           p.min_stock,
@@ -268,12 +290,16 @@ class Stock {
         FROM stock s
         INNER JOIN products p ON s.product_id = p.id
         INNER JOIN warehouses w ON s.warehouse_id = w.id
-        WHERE s.quantity <= p.min_stock 
-          AND s.deleted_at IS NULL
+        WHERE s.quantity <= p.min_stock
           AND p.deleted_at IS NULL
       `;
 
       const params = [];
+
+      if (store_id) {
+        query += ' AND s.store_id = ?';
+        params.push(store_id);
+      }
 
       if (warehouse_id) {
         query += ' AND s.warehouse_id = ?';
@@ -379,11 +405,12 @@ class Stock {
   /**
    * Obtener valorización de inventario
    */
-  static async getValuation(warehouse_id = null) {
+  static async getValuation(warehouse_id = null, store_id = null) {
     try {
       let query = `
-        SELECT 
+        SELECT
           w.name as warehouse_name,
+          s.store_id,
           COUNT(DISTINCT s.product_id) as total_products,
           SUM(s.quantity) as total_units,
           SUM(s.quantity * p.cost_price) as total_cost_value,
@@ -391,18 +418,22 @@ class Stock {
         FROM stock s
         INNER JOIN products p ON s.product_id = p.id
         INNER JOIN warehouses w ON s.warehouse_id = w.id
-        WHERE s.deleted_at IS NULL AND p.deleted_at IS NULL
+        WHERE p.deleted_at IS NULL
       `;
 
       const params = [];
 
+      if (store_id) {
+        query += ' AND s.store_id = ?';
+        params.push(store_id);
+      }
+
       if (warehouse_id) {
         query += ' AND s.warehouse_id = ?';
         params.push(warehouse_id);
-        query += ' GROUP BY w.id, w.name';
-      } else {
-        query += ' GROUP BY w.id, w.name';
       }
+
+      query += ' GROUP BY w.id, w.name, s.store_id';
 
       const [result] = await db.execute(query, params);
       return result;

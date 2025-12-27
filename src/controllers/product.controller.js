@@ -5,12 +5,30 @@
 const ProductService = require('../services/product.service');
 const { sendSuccessResponse, sendErrorResponse } = require('../utils/response');
 const logger = require('../utils/logger');
+const { getInstance: getGCSInstance } = require('../utils/google-cloud-storage');
 
 class ProductController {
   
   // =================================================================
   // MÉTODOS DE PRODUCTOS
   // =================================================================
+
+  /**
+   * Obtener todos los productos para búsqueda (sin paginación)
+   */
+  static async getAllProductsForSearch(req, res) {
+    try {
+      const { search = '', status = 'active' } = req.query;
+
+      const products = await ProductService.getAllProductsForSearch({ search, status });
+
+      return sendSuccessResponse(res, products, 'Productos obtenidos exitosamente');
+
+    } catch (error) {
+      logger.error('Error getting all products for search:', error);
+      return sendErrorResponse(res, 500, 'Error al obtener productos');
+    }
+  }
 
   /**
    * Obtener lista de productos con filtros y paginación
@@ -22,13 +40,16 @@ class ProductController {
         limit = 20,
         search = '',
         category_id,
+        subcategory_id,
         brand_id,
         supplier_id,
         status = 'active',
         min_price,
         max_price,
         sort_by = 'created_at',
-        sort_order = 'DESC'
+        sort_order = 'DESC',
+        warehouse_id,
+        includeStock
       } = req.query;
 
       const store_id = req.user?.store_id || 1;
@@ -38,6 +59,7 @@ class ProductController {
         limit: parseInt(limit),
         search,
         category_id,
+        subcategory_id,
         brand_id,
         supplier_id,
         status,
@@ -45,7 +67,9 @@ class ProductController {
         max_price: max_price ? parseFloat(max_price) : null,
         sort_by,
         sort_order,
-        store_id
+        store_id,
+        warehouse_id: warehouse_id ? parseInt(warehouse_id) : null,
+        includeStock: includeStock === 'true' || includeStock === true
       };
 
       const result = await ProductService.getProducts(filters);
@@ -103,6 +127,23 @@ class ProductController {
   }
 
   /**
+   * Obtener imágenes de galería del producto
+   */
+  static async getProductGallery(req, res) {
+    try {
+      const { id } = req.params;
+
+      const images = await ProductService.getProductGalleryImages(id);
+
+      return sendSuccessResponse(res, images, 'Imágenes de galería obtenidas exitosamente');
+
+    } catch (error) {
+      logger.error('Error getting product gallery:', error);
+      return sendErrorResponse(res, 500, 'Error al obtener imágenes de galería');
+    }
+  }
+
+  /**
    * Crear nuevo producto
    */
   static async createProduct(req, res) {
@@ -146,30 +187,115 @@ class ProductController {
         store_id: req.user?.store_id || 1
       };
 
+      // Manejar imagen principal si existe
+      if (req.files && req.files.image && req.files.image[0]) {
+        try {
+          const gcs = getGCSInstance();
+          const file = req.files.image[0];
+          const ext = file.mimetype.split('/')[1];
+
+          const uploadResult = await gcs.uploadProductImage(
+            file.buffer,
+            id,
+            'main',
+            {
+              extension: ext,
+              contentType: file.mimetype,
+              metadata: {
+                originalName: file.originalname,
+                uploadedBy: req.user.id,
+                uploadedAt: new Date().toISOString()
+              }
+            }
+          );
+
+          updateData.image_url = uploadResult.url;
+
+          logger.info('Main image uploaded to GCS for product', {
+            productId: id,
+            imageUrl: uploadResult.url
+          });
+        } catch (uploadError) {
+          logger.error('Error uploading main image to GCS:', uploadError);
+        }
+      }
+
+      // Manejar imágenes de galería
+      const galleryImages = [];
+      if (req.files) {
+        for (let i = 0; i < 5; i++) {
+          const fieldName = `gallery_${i}`;
+          if (req.files[fieldName] && req.files[fieldName][0]) {
+            try {
+              const gcs = getGCSInstance();
+              const file = req.files[fieldName][0];
+              const ext = file.mimetype.split('/')[1];
+
+              const uploadResult = await gcs.uploadProductImage(
+                file.buffer,
+                id,
+                `gallery_${i}`,
+                {
+                  extension: ext,
+                  contentType: file.mimetype,
+                  metadata: {
+                    originalName: file.originalname,
+                    uploadedBy: req.user.id,
+                    uploadedAt: new Date().toISOString(),
+                    imageOrder: i
+                  }
+                }
+              );
+
+              galleryImages.push({
+                image_url: uploadResult.url,
+                image_order: i,
+                is_primary: false
+              });
+
+              logger.info('Gallery image uploaded to GCS', {
+                productId: id,
+                imageUrl: uploadResult.url,
+                order: i
+              });
+            } catch (uploadError) {
+              logger.error(`Error uploading gallery image ${i}:`, uploadError);
+            }
+          }
+        }
+      }
+
+      // Actualizar producto
       const product = await ProductService.updateProduct(id, updateData);
 
       if (!product) {
         return sendErrorResponse(res, 404, 'Producto no encontrado');
       }
 
+      // Guardar imágenes de galería en la tabla product_images
+      if (galleryImages.length > 0) {
+        await ProductService.saveProductGalleryImages(id, galleryImages);
+      }
+
       logger.info('Product updated', {
         productId: id,
-        userId: req.user.id
+        userId: req.user.id,
+        galleryImagesCount: galleryImages.length
       });
 
       return sendSuccessResponse(res, product, 'Producto actualizado exitosamente');
 
     } catch (error) {
       logger.error('Error updating product:', error);
-      
+
       if (error.message.includes('ya existe')) {
         return sendErrorResponse(res, 409, error.message);
       }
-      
+
       if (error.message.includes('no encontrado')) {
         return sendErrorResponse(res, 404, error.message);
       }
-      
+
       return sendErrorResponse(res, 500, 'Error al actualizar producto');
     }
   }

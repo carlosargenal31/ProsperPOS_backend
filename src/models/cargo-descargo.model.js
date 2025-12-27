@@ -9,14 +9,12 @@ class CargoDescargo {
       let query = `
         SELECT
           cd.*,
-          w.name as warehouse_name,
-          w2.name as warehouse_to_name,
-          CONCAT(u.first_name, ' ', u.last_name) as registered_by_name,
-          COUNT(cdd.id) as total_items,
-          SUM(cdd.quantity) as total_quantity
+          w.nombre as warehouse_name,
+          CONCAT(IFNULL(u.first_name, ''), ' ', IFNULL(u.last_name, '')) as registered_by_name,
+          IFNULL(COUNT(cdd.id), 0) as total_items,
+          IFNULL(SUM(cdd.quantity), 0) as total_quantity
         FROM cargo_descargo cd
         LEFT JOIN warehouses w ON cd.warehouse_id = w.id
-        LEFT JOIN warehouses w2 ON cd.warehouse_to_id = w2.id
         LEFT JOIN users u ON cd.registered_by = u.id
         LEFT JOIN cargo_descargo_details cdd ON cd.id = cdd.cargo_descargo_id
         WHERE 1=1
@@ -30,8 +28,8 @@ class CargoDescargo {
       }
 
       if (filters.warehouse_id) {
-        query += ` AND (cd.warehouse_id = ? OR cd.warehouse_to_id = ?)`;
-        params.push(filters.warehouse_id, filters.warehouse_id);
+        query += ` AND cd.warehouse_id = ?`;
+        params.push(filters.warehouse_id);
       }
 
       if (filters.status) {
@@ -58,11 +56,12 @@ class CargoDescargo {
       query += ` GROUP BY cd.id ORDER BY cd.registration_date DESC, cd.created_at DESC`;
 
       if (filters.limit) {
-        query += ` LIMIT ? OFFSET ?`;
-        params.push(parseInt(filters.limit), parseInt(filters.offset || 0));
+        const limit = parseInt(filters.limit) || 20;
+        const offset = parseInt(filters.offset) || 0;
+        query += ` LIMIT ${limit} OFFSET ${offset}`;
       }
 
-      const [documents] = await db.query(query, params);
+      const documents = await db.query(query, params);
       return documents;
     } catch (error) {
       throw error;
@@ -74,28 +73,27 @@ class CargoDescargo {
    */
   static async getById(id) {
     try {
-      const [documents] = await db.query(
+      // db.query YA retorna solo los rows, NO [rows, fields]
+      const rows = await db.query(
         `SELECT
           cd.*,
-          w.name as warehouse_name,
-          w2.name as warehouse_to_name,
-          CONCAT(u.first_name, ' ', u.last_name) as registered_by_name
+          w.nombre as warehouse_name,
+          CONCAT(IFNULL(u.first_name, ''), ' ', IFNULL(u.last_name, '')) as registered_by_name
         FROM cargo_descargo cd
         LEFT JOIN warehouses w ON cd.warehouse_id = w.id
-        LEFT JOIN warehouses w2 ON cd.warehouse_to_id = w2.id
         LEFT JOIN users u ON cd.registered_by = u.id
         WHERE cd.id = ?`,
         [id]
       );
 
-      if (documents.length === 0) {
+      if (!rows || rows.length === 0) {
         return null;
       }
 
-      const document = documents[0];
+      const document = rows[0];
 
       // Obtener detalles
-      const [details] = await db.query(
+      const detailRows = await db.query(
         `SELECT
           cdd.*,
           p.name as product_name,
@@ -108,7 +106,7 @@ class CargoDescargo {
         [id]
       );
 
-      document.details = details;
+      document.details = detailRows || [];
       return document;
     } catch (error) {
       throw error;
@@ -130,16 +128,14 @@ class CargoDescargo {
       // Insertar documento principal
       const [result] = await connection.query(
         `INSERT INTO cargo_descargo (
-          document_number, document_type, movement_type, warehouse_id,
-          warehouse_to_id, issuer, concept, registration_date,
+          document_number, document_type, warehouse_id,
+          issuer, concept, registration_date,
           registered_by, subtotal, tax_amount, total_amount, status, notes
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           documentNumber,
           documentData.document_type,
-          documentData.movement_type,
           documentData.warehouse_id,
-          documentData.warehouse_to_id || null,
           documentData.issuer,
           documentData.concept || '',
           documentData.registration_date,
@@ -216,14 +212,12 @@ class CargoDescargo {
       // Actualizar documento principal
       await connection.query(
         `UPDATE cargo_descargo SET
-          movement_type = ?, warehouse_id = ?, warehouse_to_id = ?,
+          warehouse_id = ?,
           issuer = ?, concept = ?, registration_date = ?,
           subtotal = ?, tax_amount = ?, total_amount = ?, notes = ?
         WHERE id = ?`,
         [
-          documentData.movement_type,
           documentData.warehouse_id,
-          documentData.warehouse_to_id || null,
           documentData.issuer,
           documentData.concept || '',
           documentData.registration_date,
@@ -317,7 +311,7 @@ class CargoDescargo {
    */
   static async cancel(id) {
     try {
-      const [existing] = await db.query(
+      const existing = await db.query(
         'SELECT status FROM cargo_descargo WHERE id = ?',
         [id]
       );
@@ -346,7 +340,7 @@ class CargoDescargo {
    */
   static async delete(id) {
     try {
-      const [existing] = await db.query(
+      const existing = await db.query(
         'SELECT status FROM cargo_descargo WHERE id = ?',
         [id]
       );
@@ -402,10 +396,9 @@ class CargoDescargo {
    */
   static async getSummaryByWarehouse(warehouseId, dateFrom, dateTo) {
     try {
-      const [summary] = await db.query(
+      const summary = await db.query(
         `SELECT
           cd.document_type,
-          cd.movement_type,
           COUNT(*) as total_documents,
           SUM(cd.total_amount) as total_amount,
           SUM(cdd.quantity) as total_quantity
@@ -414,7 +407,7 @@ class CargoDescargo {
         WHERE cd.warehouse_id = ?
           AND cd.status = 'PROCESADO'
           AND cd.registration_date BETWEEN ? AND ?
-        GROUP BY cd.document_type, cd.movement_type`,
+        GROUP BY cd.document_type`,
         [warehouseId, dateFrom, dateTo]
       );
 

@@ -23,8 +23,10 @@ class EcommerceProductsController {
         sort = 'newest' // newest, price_asc, price_desc, name_asc
       } = req.query;
 
-      const offset = (page - 1) * limit;
-      let whereClause = 'WHERE p.status = "active" AND p.deleted_at IS NULL';
+      const pageNum = parseInt(page);
+      const limitNum = parseInt(limit);
+      const offset = (pageNum - 1) * limitNum;
+      let whereClause = "WHERE p.status = 'active' AND p.deleted_at IS NULL";
       const params = [];
 
       // Filtros
@@ -45,12 +47,12 @@ class EcommerceProductsController {
       }
 
       if (min_price) {
-        whereClause += ' AND pp.price >= ?';
+        whereClause += ' AND p.price_1 >= ?';
         params.push(parseFloat(min_price));
       }
 
       if (max_price) {
-        whereClause += ' AND pp.price <= ?';
+        whereClause += ' AND p.price_1 <= ?';
         params.push(parseFloat(max_price));
       }
 
@@ -58,10 +60,10 @@ class EcommerceProductsController {
       let orderBy = 'ORDER BY p.created_at DESC';
       switch (sort) {
         case 'price_asc':
-          orderBy = 'ORDER BY pp.price ASC';
+          orderBy = 'ORDER BY p.price_1 ASC';
           break;
         case 'price_desc':
-          orderBy = 'ORDER BY pp.price DESC';
+          orderBy = 'ORDER BY p.price_1 DESC';
           break;
         case 'name_asc':
           orderBy = 'ORDER BY p.name ASC';
@@ -76,43 +78,41 @@ class EcommerceProductsController {
           p.description,
           p.image,
           p.unit,
-          c.name as category_name,
-          b.name as brand_name,
-          pp.price as sale_price,
-          t.rate as tax_rate,
-          (SELECT SUM(s.quantity) FROM stock s WHERE s.product_id = p.id) as stock_available
+          COALESCE(c.name, '') as category_name,
+          COALESCE(b.name, '') as brand_name,
+          p.price_1 as sale_price,
+          COALESCE(t.rate, 0) as tax_rate,
+          0 as stock_available
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
         LEFT JOIN brands b ON p.brand_id = b.id
-        LEFT JOIN product_prices pp ON p.id = pp.product_id AND pp.price_type = 'sale'
-        LEFT JOIN taxes t ON p.tax_id = t.id
+        LEFT JOIN tax_rates t ON p.tax_rate_id = t.id
         ${whereClause}
         ${orderBy}
         LIMIT ? OFFSET ?
       `;
 
-      params.push(parseInt(limit), offset);
-      const [products] = await db.execute(query, params);
+      const finalParams = [...params, limitNum, offset];
+      const products = await db.execute(query, finalParams);
 
       // Contar total
       const countQuery = `
         SELECT COUNT(DISTINCT p.id) as total
         FROM products p
-        LEFT JOIN product_prices pp ON p.id = pp.product_id AND pp.price_type = 'sale'
         ${whereClause}
       `;
-      const countParams = params.slice(0, -2);
-      const [countResult] = await db.execute(countQuery, countParams);
+      const countParams = [...params];
+      const countResult = await db.execute(countQuery, countParams);
 
       res.json({
         success: true,
         data: {
           products,
           pagination: {
-            page: parseInt(page),
-            limit: parseInt(limit),
+            page: pageNum,
+            limit: limitNum,
             total: countResult[0].total,
-            totalPages: Math.ceil(countResult[0].total / limit)
+            totalPages: Math.ceil(countResult[0].total / limitNum)
           }
         }
       });
@@ -143,23 +143,22 @@ class EcommerceProductsController {
           p.image,
           p.unit,
           c.id as category_id,
-          c.name as category_name,
+          COALESCE(c.name, '') as category_name,
           b.id as brand_id,
-          b.name as brand_name,
-          pp.price as sale_price,
-          t.rate as tax_rate,
-          (SELECT SUM(s.quantity) FROM stock s WHERE s.product_id = p.id) as stock_available
+          COALESCE(b.name, '') as brand_name,
+          p.price_1 as sale_price,
+          COALESCE(t.rate, 0) as tax_rate,
+          0 as stock_available
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
         LEFT JOIN brands b ON p.brand_id = b.id
-        LEFT JOIN product_prices pp ON p.id = pp.product_id AND pp.price_type = 'sale'
-        LEFT JOIN taxes t ON p.tax_id = t.id
+        LEFT JOIN tax_rates t ON p.tax_rate_id = t.id
         WHERE p.id = ? AND p.status = 'active' AND p.deleted_at IS NULL
       `;
 
-      const [products] = await db.execute(query, [id]);
+      const products = await db.execute(query, [id]);
 
-      if (products.length === 0) {
+      if (!products || products.length === 0) {
         return res.status(404).json({
           success: false,
           message: 'Producto no encontrado'
@@ -198,7 +197,7 @@ class EcommerceProductsController {
         ORDER BY c.name ASC
       `;
 
-      const [categories] = await db.execute(query);
+      const categories = await db.execute(query);
 
       res.json({
         success: true,
@@ -232,7 +231,7 @@ class EcommerceProductsController {
         ORDER BY b.name ASC
       `;
 
-      const [brands] = await db.execute(query);
+      const brands = await db.execute(query);
 
       res.json({
         success: true,
@@ -262,22 +261,22 @@ class EcommerceProductsController {
           p.code,
           p.description,
           p.image,
-          c.name as category_name,
-          b.name as brand_name,
-          pp.price as sale_price,
-          t.rate as tax_rate,
-          (SELECT SUM(s.quantity) FROM stock s WHERE s.product_id = p.id) as stock_available
+          p.unit,
+          COALESCE(c.name, '') as category_name,
+          COALESCE(b.name, '') as brand_name,
+          p.price_1 as sale_price,
+          COALESCE(t.rate, 0) as tax_rate,
+          0 as stock_available
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
         LEFT JOIN brands b ON p.brand_id = b.id
-        LEFT JOIN product_prices pp ON p.id = pp.product_id AND pp.price_type = 'sale'
-        LEFT JOIN taxes t ON p.tax_id = t.id
+        LEFT JOIN tax_rates t ON p.tax_rate_id = t.id
         WHERE p.status = 'active' AND p.deleted_at IS NULL
         ORDER BY RAND()
         LIMIT ?
       `;
 
-      const [products] = await db.execute(query, [parseInt(limit)]);
+      const products = await db.execute(query, [parseInt(limit)]);
 
       res.json({
         success: true,
@@ -313,10 +312,9 @@ class EcommerceProductsController {
           p.name,
           p.code,
           p.image,
-          pp.price as sale_price,
-          (SELECT SUM(s.quantity) FROM stock s WHERE s.product_id = p.id) as stock_available
+          p.price_1 as sale_price,
+          0 as stock_available
         FROM products p
-        LEFT JOIN product_prices pp ON p.id = pp.product_id AND pp.price_type = 'sale'
         WHERE p.status = 'active'
           AND p.deleted_at IS NULL
           AND (p.name LIKE ? OR p.code LIKE ? OR p.barcode LIKE ?)
@@ -324,7 +322,7 @@ class EcommerceProductsController {
       `;
 
       const searchTerm = `%${q}%`;
-      const [products] = await db.execute(query, [
+      const products = await db.execute(query, [
         searchTerm, searchTerm, searchTerm, parseInt(limit)
       ]);
 

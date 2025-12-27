@@ -15,7 +15,10 @@
     "db:seed": "node scripts/seed.js",
     "db:backup": "node scripts/backup.js",
     "logs:clear": "rm -rf logs/*.log",
-    "setup": "node setup-project.js"
+    "setup": "node setup-project.js",
+    "gcs:test": "node scripts/test-gcs-upload.js",
+    "gcs:migrate": "node scripts/migrate-images-to-gcs.js",
+    "cloudsql:test": "node scripts/test-cloud-sql-connection.js"
   },
   "keywords": [
     "pos",
@@ -30,6 +33,7 @@
   "author": "ProsperPOS Team",
   "license": "MIT",
   "dependencies": {
+    "@google-cloud/storage": "^7.18.0",
     "axios": "^1.6.2",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^2.4.3",
