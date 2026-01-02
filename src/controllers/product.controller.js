@@ -628,6 +628,52 @@ class ProductController {
       return sendErrorResponse(res, 500, 'Error al obtener reporte');
     }
   }
+
+  /**
+   * Marcar/desmarcar producto como destacado
+   */
+  static async toggleFeatured(req, res) {
+    try {
+      const { id } = req.params;
+      const { is_featured } = req.body;
+      const db = require('../utils/database');
+
+      // Validar que el producto existe
+      const checkQuery = `
+        SELECT id, name, is_featured
+        FROM products
+        WHERE id = ? AND deleted_at IS NULL
+      `;
+
+      const products = await db.execute(checkQuery, [id]);
+
+      if (!products || products.length === 0) {
+        return sendErrorResponse(res, 404, 'Producto no encontrado');
+      }
+
+      // Actualizar estado de destacado
+      const updateQuery = `
+        UPDATE products
+        SET is_featured = ?, updated_at = NOW()
+        WHERE id = ?
+      `;
+
+      await db.execute(updateQuery, [is_featured ? 1 : 0, id]);
+
+      return sendSuccessResponse(
+        res,
+        {
+          id: parseInt(id),
+          is_featured: is_featured ? 1 : 0
+        },
+        `Producto ${is_featured ? 'marcado' : 'desmarcado'} como destacado`
+      );
+
+    } catch (error) {
+      logger.error('Error toggling featured product:', error);
+      return sendErrorResponse(res, 500, 'Error al actualizar producto destacado');
+    }
+  }
 }
 
 module.exports = ProductController;

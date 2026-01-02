@@ -161,6 +161,12 @@ class PurchaseReprintController {
     try {
       const { documentType, documentId } = req.params;
 
+      console.log('=== getDocumentDetails ===');
+      console.log('documentType:', documentType);
+      console.log('documentType (type):', typeof documentType);
+      console.log('documentType (encoded):', encodeURIComponent(documentType));
+      console.log('documentId:', documentId);
+
       let documentData = null;
 
       switch (documentType) {
@@ -174,9 +180,10 @@ class PurchaseReprintController {
           documentData = await PurchaseReprintController.getPurchaseCreditNoteDetails(documentId);
           break;
         default:
+          console.log('No matching document type found');
           return res.status(400).json({
             success: false,
-            message: 'Tipo de documento no válido'
+            message: 'Tipo de documento no válido: ' + documentType
           });
       }
 
@@ -192,6 +199,7 @@ class PurchaseReprintController {
         data: documentData
       });
     } catch (error) {
+      console.error('Error in getDocumentDetails:', error);
       logger.error('Error in PurchaseReprintController.getDocumentDetails:', error);
       res.status(500).json({
         success: false,
@@ -206,129 +214,159 @@ class PurchaseReprintController {
   // ===================================================================
 
   static async getPurchaseDetails(id) {
-    const sql = `
-      SELECT
-        pd.*,
-        pd.purchase_number as correlative,
-        pd.supplier_id_number as supplier_rtn,
-        pd.net_amount as subtotal,
-        pd.discount_amount as discount,
-        pd.surcharge_amount as surcharge,
-        pd.tax_amount as tax,
-        pd.total_amount,
-        COALESCE(CONCAT(u.first_name, ' ', u.last_name), u.username, 'Sistema') as created_by_name
-      FROM purchases_documents pd
-      LEFT JOIN users u ON pd.created_by = u.id
-      WHERE pd.id = ?
-    `;
+    try {
+      console.log('getPurchaseDetails called with id:', id);
 
-    const results = await db.query(sql, [id]);
-    if (!results || results.length === 0) return null;
+      const sql = `
+        SELECT
+          pd.*,
+          pd.purchase_number as correlative,
+          pd.supplier_id_number as supplier_rtn,
+          pd.net_amount as subtotal,
+          pd.discount_amount as discount,
+          pd.surcharge_amount as surcharge,
+          pd.tax_amount as tax,
+          pd.total_amount,
+          COALESCE(CONCAT(u.first_name, ' ', u.last_name), u.username, 'Sistema') as created_by_name
+        FROM purchases_documents pd
+        LEFT JOIN users u ON pd.created_by = u.id
+        WHERE pd.id = ?
+      `;
 
-    const purchase = results[0];
+      const results = await db.query(sql, [id]);
+      console.log('Purchase query results:', results?.length || 0);
 
-    // Obtener items
-    const itemsSql = `
-      SELECT
-        pdi.*,
-        pdi.product_code,
-        pdi.product_name,
-        pdi.quantity,
-        pdi.unit_price,
-        pdi.discount_amount as discount,
-        pdi.tax_amount as tax,
-        pdi.subtotal,
-        pdi.total
-      FROM purchases_documents_items pdi
-      WHERE pdi.purchase_id = ?
-    `;
+      if (!results || results.length === 0) return null;
 
-    const items = await db.query(itemsSql, [id]);
-    purchase.items = items;
+      const purchase = results[0];
 
-    return purchase;
+      // Obtener items
+      const itemsSql = `
+        SELECT
+          pdi.*,
+          pdi.product_code,
+          pdi.product_name,
+          pdi.quantity,
+          pdi.unit_price,
+          pdi.discount_amount as discount,
+          pdi.tax_amount as tax,
+          pdi.subtotal,
+          pdi.total
+        FROM purchases_documents_items pdi
+        WHERE pdi.purchase_id = ?
+      `;
+
+      const items = await db.query(itemsSql, [id]);
+      console.log('Purchase items found:', items?.length || 0);
+      purchase.items = items;
+
+      return purchase;
+    } catch (error) {
+      console.error('Error in getPurchaseDetails:', error);
+      throw error;
+    }
   }
 
   static async getPurchaseReturnDetails(id) {
-    const sql = `
-      SELECT
-        pr.*,
-        pr.correlative,
-        pr.purchase_number,
-        pr.supplier_name,
-        pr.supplier_rtn,
-        pr.emission_date,
-        pr.subtotal,
-        pr.subtotal as subtotal_15,
-        pr.tax,
-        pr.total,
-        pr.notes,
-        COALESCE(CONCAT(u.first_name, ' ', u.last_name), u.username, 'Sistema') as created_by_name
-      FROM purchase_returns pr
-      LEFT JOIN users u ON pr.created_by = u.id
-      WHERE pr.id = ?
-    `;
+    try {
+      console.log('getPurchaseReturnDetails called with id:', id);
 
-    const results = await db.query(sql, [id]);
-    if (!results || results.length === 0) return null;
+      const sql = `
+        SELECT
+          pr.*,
+          pr.correlative,
+          pr.purchase_number,
+          pr.supplier_name,
+          pr.supplier_rtn,
+          pr.emission_date,
+          pr.subtotal,
+          pr.subtotal as subtotal_15,
+          pr.tax,
+          pr.total,
+          pr.notes,
+          COALESCE(CONCAT(u.first_name, ' ', u.last_name), u.username, 'Sistema') as created_by_name
+        FROM purchase_returns pr
+        LEFT JOIN users u ON pr.created_by = u.id
+        WHERE pr.id = ?
+      `;
 
-    const returnData = results[0];
+      const results = await db.query(sql, [id]);
+      console.log('Purchase return query results:', results?.length || 0);
 
-    // Las devoluciones de compra no tienen items (solo monto)
-    // pero mantenemos la estructura por consistencia
-    const itemsSql = `
-      SELECT
-        pri.*
-      FROM purchase_return_items pri
-      WHERE pri.purchase_return_id = ?
-    `;
+      if (!results || results.length === 0) return null;
 
-    const items = await db.query(itemsSql, [id]);
-    returnData.items = items || [];
+      const returnData = results[0];
 
-    return returnData;
+      // Las devoluciones de compra no tienen items (solo monto)
+      // pero mantenemos la estructura por consistencia
+      const itemsSql = `
+        SELECT
+          pri.*
+        FROM purchase_return_items pri
+        WHERE pri.purchase_return_id = ?
+      `;
+
+      const items = await db.query(itemsSql, [id]);
+      console.log('Purchase return items found:', items?.length || 0);
+      returnData.items = items || [];
+
+      return returnData;
+    } catch (error) {
+      console.error('Error in getPurchaseReturnDetails:', error);
+      throw error;
+    }
   }
 
   static async getPurchaseCreditNoteDetails(id) {
-    const sql = `
-      SELECT
-        pr.*,
-        pr.correlative,
-        pr.credit_note_number,
-        pr.credit_note_date,
-        pr.purchase_number,
-        pr.supplier_name,
-        pr.supplier_rtn,
-        pr.emission_date,
-        pr.subtotal,
-        pr.subtotal as subtotal_15,
-        pr.tax,
-        pr.total,
-        pr.notes,
-        COALESCE(CONCAT(u.first_name, ' ', u.last_name), u.username, 'Sistema') as created_by_name
-      FROM purchase_returns pr
-      LEFT JOIN users u ON pr.created_by = u.id
-      WHERE pr.id = ?
-        AND pr.credit_note_received = 1
-    `;
+    try {
+      console.log('getPurchaseCreditNoteDetails called with id:', id);
 
-    const results = await db.query(sql, [id]);
-    if (!results || results.length === 0) return null;
+      const sql = `
+        SELECT
+          pr.*,
+          pr.correlative,
+          pr.credit_note_number,
+          pr.credit_note_date,
+          pr.purchase_number,
+          pr.supplier_name,
+          pr.supplier_rtn,
+          pr.emission_date,
+          pr.subtotal,
+          pr.subtotal as subtotal_15,
+          pr.tax,
+          pr.total,
+          pr.notes,
+          COALESCE(CONCAT(u.first_name, ' ', u.last_name), u.username, 'Sistema') as created_by_name
+        FROM purchase_returns pr
+        LEFT JOIN users u ON pr.created_by = u.id
+        WHERE pr.id = ?
+          AND pr.credit_note_received = 1
+      `;
 
-    const creditNote = results[0];
+      const results = await db.query(sql, [id]);
+      console.log('Credit note query results:', results?.length || 0);
 
-    // Las notas de crédito de compra se basan en devoluciones
-    const itemsSql = `
-      SELECT
-        pri.*
-      FROM purchase_return_items pri
-      WHERE pri.purchase_return_id = ?
-    `;
+      if (!results || results.length === 0) return null;
 
-    const items = await db.query(itemsSql, [id]);
-    creditNote.items = items || [];
+      const creditNote = results[0];
 
-    return creditNote;
+      // Las notas de crédito de compra se basan en devoluciones
+      const itemsSql = `
+        SELECT
+          pri.*
+        FROM purchase_return_items pri
+        WHERE pri.purchase_return_id = ?
+      `;
+
+      const items = await db.query(itemsSql, [id]);
+      console.log('Credit note items found:', items?.length || 0);
+      creditNote.items = items || [];
+
+      return creditNote;
+    } catch (error) {
+      console.error('Error in getPurchaseCreditNoteDetails:', error);
+      throw error;
+    }
   }
 }
 

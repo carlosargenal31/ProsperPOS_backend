@@ -86,7 +86,7 @@ class EcommerceProductsController {
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
         LEFT JOIN brands b ON p.brand_id = b.id
-        LEFT JOIN tax_rates t ON p.tax_rate_id = t.id
+        LEFT JOIN tax_rates t ON p.tax_id = t.id
         ${whereClause}
         ${orderBy}
         LIMIT ? OFFSET ?
@@ -152,7 +152,7 @@ class EcommerceProductsController {
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
         LEFT JOIN brands b ON p.brand_id = b.id
-        LEFT JOIN tax_rates t ON p.tax_rate_id = t.id
+        LEFT JOIN tax_rates t ON p.tax_id = t.id
         WHERE p.id = ? AND p.status = 'active' AND p.deleted_at IS NULL
       `;
 
@@ -184,14 +184,24 @@ class EcommerceProductsController {
    */
   static async getCategories(req, res) {
     try {
+      const { visible_only = 'false' } = req.query;
+
+      let whereClause = 'WHERE c.is_active = 1 AND c.deleted_at IS NULL';
+
+      // Si se solicita solo categorías visibles en e-commerce
+      if (visible_only === 'true') {
+        whereClause += ' AND c.show_in_ecommerce = 1';
+      }
+
       const query = `
         SELECT
           c.id,
           c.name,
+          c.image_url,
           COUNT(DISTINCT p.id) as products_count
         FROM categories c
-        LEFT JOIN products p ON c.id = p.category_id AND p.status = 'active' AND p.deleted_at IS NULL
-        WHERE c.is_active = 1 AND c.deleted_at IS NULL
+        LEFT JOIN products p ON c.id = p.category_id AND p.deleted_at IS NULL AND p.is_active = 1
+        ${whereClause}
         GROUP BY c.id
         HAVING products_count > 0
         ORDER BY c.name ASC
@@ -252,7 +262,7 @@ class EcommerceProductsController {
    */
   static async getFeaturedProducts(req, res) {
     try {
-      const limit = req.query.limit || 8;
+      const limit = req.query.limit || 10;
 
       const query = `
         SELECT
@@ -261,7 +271,7 @@ class EcommerceProductsController {
           p.code,
           p.description,
           p.image,
-          p.unit,
+          COALESCE(u.name, 'UND') as unit,
           COALESCE(c.name, '') as category_name,
           COALESCE(b.name, '') as brand_name,
           p.price_1 as sale_price,
@@ -270,9 +280,12 @@ class EcommerceProductsController {
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
         LEFT JOIN brands b ON p.brand_id = b.id
-        LEFT JOIN tax_rates t ON p.tax_rate_id = t.id
-        WHERE p.status = 'active' AND p.deleted_at IS NULL
-        ORDER BY RAND()
+        LEFT JOIN tax_rates t ON p.tax_id = t.id
+        LEFT JOIN units u ON p.unit_id = u.id
+        WHERE p.is_active = 1
+          AND p.deleted_at IS NULL
+          AND p.is_featured = 1
+        ORDER BY p.updated_at DESC
         LIMIT ?
       `;
 
@@ -339,6 +352,58 @@ class EcommerceProductsController {
       });
     }
   }
+
+  /**
+   * Marcar/desmarcar producto como destacado
+   */
+  static async toggleFeatured(req, res) {
+    try {
+      const { id } = req.params;
+      const { is_featured } = req.body;
+
+      // Validar que el producto existe
+      const checkQuery = `
+        SELECT id, name, is_featured
+        FROM products
+        WHERE id = ? AND deleted_at IS NULL
+      `;
+
+      const products = await db.execute(checkQuery, [id]);
+
+      if (!products || products.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: 'Producto no encontrado'
+        });
+      }
+
+      // Actualizar estado de destacado
+      const updateQuery = `
+        UPDATE products
+        SET is_featured = ?, updated_at = NOW()
+        WHERE id = ?
+      `;
+
+      await db.execute(updateQuery, [is_featured ? 1 : 0, id]);
+
+      res.json({
+        success: true,
+        message: `Producto ${is_featured ? 'marcado' : 'desmarcado'} como destacado`,
+        data: {
+          id: parseInt(id),
+          is_featured: is_featured ? 1 : 0
+        }
+      });
+
+    } catch (error) {
+      logger.error('Error in toggleFeatured:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error al actualizar producto destacado'
+      });
+    }
+  }
 }
 
 module.exports = EcommerceProductsController;
+

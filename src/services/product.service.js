@@ -294,6 +294,7 @@ class ProductService {
         unit_id,
         weight,
         show_in_online_store = 0,
+        is_featured = 0,
         tax_id,
         image_url,
         is_active = 1,
@@ -315,14 +316,14 @@ class ProductService {
         INSERT INTO products (
           name, short_name, code, category_id, subcategory_id, brand_id, supplier_id,
           description, cost, price_1, price_2, price_3, price_4, price_5, price_6,
-          unit_id, weight, show_in_online_store, tax_id, image, is_active, created_by, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+          unit_id, weight, show_in_online_store, is_featured, tax_id, image, is_active, created_by, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
       `;
 
       const result = await db.execute(insertQuery, [
         name, short_name, code, category_id, subcategory_id, brand_id, supplier_id,
         description, cost, price_1, price_2, price_3, price_4, price_5, price_6,
-        unit_id, weight, show_in_online_store, tax_id, image_url, is_active, created_by
+        unit_id, weight, show_in_online_store, is_featured, tax_id, image_url, is_active, created_by
       ]);
 
       return {
@@ -360,6 +361,7 @@ class ProductService {
         unit_id,
         weight,
         show_in_online_store,
+        is_featured,
         tax_id,
         image_url,
         is_active,
@@ -382,7 +384,7 @@ class ProductService {
           name = ?, short_name = ?, category_id = ?, subcategory_id = ?,
           brand_id = ?, supplier_id = ?, description = ?, cost = ?, price_1 = ?, price_2 = ?,
           price_3 = ?, price_4 = ?, price_5 = ?, price_6 = ?,
-          unit_id = ?, weight = ?, show_in_online_store = ?, tax_id = ?,
+          unit_id = ?, weight = ?, show_in_online_store = ?, is_featured = ?, tax_id = ?,
           image = ?, is_active = ?,
           updated_by = ?, updated_at = NOW()
         WHERE id = ?
@@ -391,7 +393,7 @@ class ProductService {
       await db.execute(updateQuery, [
         name, short_name, category_id, subcategory_id, brand_id, supplier_id,
         description, cost, price_1, price_2, price_3, price_4, price_5, price_6,
-        unit_id, weight, show_in_online_store, tax_id, image_url, is_active, updated_by, id
+        unit_id, weight, show_in_online_store, is_featured, tax_id, image_url, is_active, updated_by, id
       ]);
 
       return { id, name };

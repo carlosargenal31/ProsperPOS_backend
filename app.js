@@ -107,9 +107,10 @@ app.use(rateLimitMiddleware.api);
 // Compresión
 app.use(compression());
 
-// Parseo de JSON
-app.use(express.json({ 
+// Parseo de JSON - solo para requests application/json
+app.use(express.json({
   limit: process.env.MAX_JSON_SIZE || '10mb',
+  type: 'application/json', // Solo parsear application/json
   verify: (req, res, buf) => {
     try {
       JSON.parse(buf);
@@ -120,11 +121,15 @@ app.use(express.json({
   }
 }));
 
-// Parseo de URL encoded
-app.use(express.urlencoded({ 
-  extended: true, 
-  limit: process.env.MAX_URL_SIZE || '10mb' 
+// Parseo de URL encoded - solo para requests application/x-www-form-urlencoded
+app.use(express.urlencoded({
+  extended: true,
+  limit: process.env.MAX_URL_SIZE || '10mb',
+  type: 'application/x-www-form-urlencoded' // Solo parsear URL encoded
 }));
+
+// NOTE: File uploads are handled by multer in individual routes
+// Do NOT use express-fileupload here as it conflicts with multer
 
 // Archivos estáticos
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

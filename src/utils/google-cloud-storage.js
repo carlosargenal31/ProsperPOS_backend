@@ -51,8 +51,14 @@ class GoogleCloudStorageService {
         resumable: false
       });
 
-      // No hacer público individualmente - el bucket ya tiene Uniform Access configurado
-      // El bucket debe estar configurado como público a nivel de bucket en Google Cloud Console
+      // Hacer el archivo público
+      try {
+        await file.makePublic();
+        logger.info('File made public', { destination });
+      } catch (publicError) {
+        logger.warn('Could not make file public (bucket may have uniform access):', publicError.message);
+        // Continuar aunque falle - el bucket puede tener acceso uniforme configurado
+      }
 
       // Generar URL pública
       const publicUrl = `${this.imageBaseUrl}/${destination}`;
@@ -392,6 +398,7 @@ class GoogleCloudStorageService {
       throw error;
     }
   }
+
 }
 
 // Singleton instance

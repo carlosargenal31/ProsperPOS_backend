@@ -136,6 +136,16 @@ router.delete('/:id',
   ProductController.deleteProduct
 );
 
+/**
+ * @route   PATCH /api/v1/products/:id/featured
+ * @desc    Marcar/desmarcar producto como destacado
+ * @access  Private (products.update)
+ */
+router.patch('/:id/featured',
+  requirePermission('products.update'),
+  ProductController.toggleFeatured
+);
+
 // ===================================================================
 // RUTAS DE INVENTARIO (STOCK)
 // ===================================================================

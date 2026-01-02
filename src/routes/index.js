@@ -62,6 +62,9 @@ const soldItemsRoutes = require('./sold-items.routes');
 const physicalInventoryRoutes = require('./physical-inventory.routes');
 const inventoryAdjustmentRoutes = require('./inventory-adjustment.routes');
 const uploadRoutes = require('./upload.routes');
+const stockHistoryRoutes = require('./stock-history.routes');
+const barcodeRoutes = require('./barcode.routes');
+const bannerRoutes = require('./banner.routes');
 
 
 // ===================================================================
@@ -121,6 +124,9 @@ router.use('/v1/sold-items', soldItemsRoutes);
 router.use('/v1/physical-inventory', physicalInventoryRoutes);
 router.use('/v1/inventory-adjustments', inventoryAdjustmentRoutes);
 router.use('/v1/upload', uploadRoutes);
+router.use('/v1/stock-history', stockHistoryRoutes);
+router.use('/v1/barcodes', barcodeRoutes);
+router.use('/v1/banners', bannerRoutes);
 
 // ===================================================================
 // RUTAS FUTURAS (Comentadas)

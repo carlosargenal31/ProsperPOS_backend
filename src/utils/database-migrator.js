@@ -455,6 +455,33 @@ class DatabaseMigrator {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
       `);
 
+      // 16. Tabla de items de documentos de compra (purchases_documents)
+      await connection.execute(`
+        CREATE TABLE IF NOT EXISTS purchases_documents_items (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          purchase_id INT NOT NULL,
+          product_id INT,
+          product_code VARCHAR(100),
+          product_name VARCHAR(255) NOT NULL,
+          quantity DECIMAL(15,3) NOT NULL,
+          unit_price DECIMAL(15,2) NOT NULL,
+          discount_percentage DECIMAL(5,2) DEFAULT 0,
+          discount_amount DECIMAL(15,2) DEFAULT 0,
+          tax_percentage DECIMAL(5,2) DEFAULT 0,
+          tax_amount DECIMAL(15,2) DEFAULT 0,
+          subtotal DECIMAL(15,2) NOT NULL,
+          total DECIMAL(15,2) NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+          INDEX idx_purchases_documents_items_purchase (purchase_id),
+          INDEX idx_purchases_documents_items_product (product_id),
+
+          FOREIGN KEY (purchase_id) REFERENCES purchases_documents(id) ON DELETE CASCADE,
+          FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+      `);
+
       logger.info('✅ Todas las tablas creadas exitosamente');
       
     } finally {

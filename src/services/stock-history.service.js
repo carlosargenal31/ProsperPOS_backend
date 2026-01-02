@@ -280,10 +280,10 @@ class StockHistoryService {
   static async getWarehouses() {
     try {
       const query = `
-        SELECT id, name AS label, name AS value
+        SELECT id, nombre AS label, nombre AS value
         FROM warehouses
         WHERE deleted_at IS NULL
-        ORDER BY name ASC
+        ORDER BY nombre ASC
       `;
 
       const rows = await db.query(query);

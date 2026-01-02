@@ -4,10 +4,28 @@
 
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
 const CategoryService = require('../services/category.service');
 const { authenticateToken, requirePermission } = require('../middleware/auth.middleware');
 const { sendSuccessResponse, sendErrorResponse } = require('../utils/response');
 const logger = require('../utils/logger');
+
+// Configurar multer para manejar archivos en memoria
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB
+  },
+  fileFilter: (req, file, cb) => {
+    // Validar tipo de archivo
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Tipo de archivo no permitido. Solo se aceptan imágenes JPEG, PNG y WEBP'));
+    }
+  }
+});
 
 // Middleware global de autenticación
 router.use(authenticateToken);
@@ -210,6 +228,60 @@ router.get('/:id/subcategories',
     } catch (error) {
       logger.error('Error getting subcategories:', error);
       return sendErrorResponse(res, 500, 'Error al obtener subcategorías');
+    }
+  }
+);
+
+/**
+ * @route   POST /api/v1/categories/:id/image
+ * @desc    Subir imagen de categoría
+ * @access  Private (categories.update)
+ */
+router.post('/:id/image',
+  requirePermission('categories.update'),
+  upload.single('image'),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      if (!req.file) {
+        return sendErrorResponse(res, 400, 'No se proporcionó ninguna imagen');
+      }
+
+      const result = await CategoryService.uploadCategoryImage(
+        id,
+        req.file.buffer,
+        req.file.originalname,
+        req.file.mimetype
+      );
+
+      return sendSuccessResponse(res, result, 'Imagen subida exitosamente');
+
+    } catch (error) {
+      logger.error('Error uploading category image:', error);
+      return sendErrorResponse(res, 500, error.message || 'Error al subir imagen');
+    }
+  }
+);
+
+/**
+ * @route   DELETE /api/v1/categories/:id/image
+ * @desc    Eliminar imagen de categoría
+ * @access  Private (categories.update)
+ */
+router.delete('/:id/image',
+  requirePermission('categories.update'),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const result = await CategoryService.deleteCategoryImage(id);
+
+      return sendSuccessResponse(res, result, 'Imagen eliminada exitosamente');
+
+    } catch (error) {
+      logger.error('Error deleting category image:', error);
+      return sendErrorResponse(res, 500, 'Error al eliminar imagen');
     }
   }
 );

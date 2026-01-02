@@ -4,6 +4,7 @@
 
 const db = require('../utils/database');
 const logger = require('../utils/logger');
+const { getInstance: getGCSInstance } = require('../utils/google-cloud-storage');
 
 class BrandService {
 
@@ -281,6 +282,78 @@ class BrandService {
 
     } catch (error) {
       logger.error('Error in getActiveBrands:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Subir logo de marca a Google Cloud Storage
+   */
+  static async uploadBrandLogo(brandId, fileBuffer, fileName, contentType) {
+    try {
+      const gcs = getGCSInstance();
+
+      // Extraer extensión del archivo
+      const extension = fileName.split('.').pop() || 'jpg';
+
+      // Crear nombre único para la marca
+      const uniqueFileName = `brand_${brandId}.${extension}`;
+
+      // Subir imagen a GCS en la carpeta 'brands'
+      const result = await gcs.uploadFile(fileBuffer, uniqueFileName, 'brands', {
+        contentType,
+        brandId
+      });
+
+      // Actualizar URL de logo en la base de datos
+      await db.execute(
+        'UPDATE brands SET logo_url = ?, updated_at = NOW() WHERE id = ?',
+        [result.url, brandId]
+      );
+
+      logger.info('Brand logo uploaded successfully', { brandId, url: result.url });
+
+      return {
+        success: true,
+        url: result.url,
+        brandId
+      };
+
+    } catch (error) {
+      logger.error('Error uploading brand logo:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Eliminar logo de marca
+   */
+  static async deleteBrandLogo(brandId) {
+    try {
+      // Obtener la URL actual del logo
+      const brand = await this.getBrandById(brandId);
+
+      if (!brand || !brand.logo_url) {
+        return { success: true, message: 'No hay logo para eliminar' };
+      }
+
+      const gcs = getGCSInstance();
+
+      // Eliminar imagen de GCS
+      await gcs.deleteFile(brand.logo_url);
+
+      // Actualizar base de datos para remover la URL
+      await db.execute(
+        'UPDATE brands SET logo_url = NULL, updated_at = NOW() WHERE id = ?',
+        [brandId]
+      );
+
+      logger.info('Brand logo deleted successfully', { brandId });
+
+      return { success: true };
+
+    } catch (error) {
+      logger.error('Error deleting brand logo:', error);
       throw error;
     }
   }
