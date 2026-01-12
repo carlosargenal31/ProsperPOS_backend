@@ -104,13 +104,13 @@ router.post(
 // Settings
 router.get(
   '/settings',
-  requirePermission('billing.settings.manage'),
+  requirePermission('billing.access'),
   BillingController.getSettings
 );
 
 router.put(
   '/settings',
-  requirePermission('billing.settings.manage'),
+  requirePermission('billing.access'),
   BillingController.updateSettings
 );
 

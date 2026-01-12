@@ -76,7 +76,7 @@ async function startServer() {
         console.log('      GET  /api/v1/suppliers - Listar proveedores');
         console.log('   📝 Credenciales por defecto:');
         console.log('      Username: admin@prosperpos.com');
-        console.log('      Password: admin123');
+        console.log('      Password: Admin1234');
         console.log('');
       }
       

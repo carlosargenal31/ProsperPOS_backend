@@ -27,7 +27,22 @@ const upload = multer({
   }
 });
 
-// Middleware global de autenticación
+/**
+ * @route   GET /api/v1/banners/active
+ * @desc    Obtener banners activos (público para e-commerce)
+ * @access  Public
+ */
+router.get('/active', async (req, res) => {
+  try {
+    const result = await BannerService.getActiveBanners();
+    return res.json(result);
+  } catch (error) {
+    logger.error('Error getting active banners:', error);
+    return sendErrorResponse(res, 500, 'Error al obtener banners activos');
+  }
+});
+
+// Middleware de autenticación para las rutas protegidas
 router.use(authenticateToken);
 
 /**
@@ -42,21 +57,6 @@ router.get('/', async (req, res) => {
   } catch (error) {
     logger.error('Error getting banners:', error);
     return sendErrorResponse(res, 500, 'Error al obtener banners');
-  }
-});
-
-/**
- * @route   GET /api/v1/banners/active
- * @desc    Obtener banners activos
- * @access  Private
- */
-router.get('/active', async (req, res) => {
-  try {
-    const result = await BannerService.getActiveBanners();
-    return res.json(result);
-  } catch (error) {
-    logger.error('Error getting active banners:', error);
-    return sendErrorResponse(res, 500, 'Error al obtener banners activos');
   }
 });
 

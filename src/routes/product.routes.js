@@ -87,6 +87,16 @@ router.get('/:id/gallery',
 );
 
 /**
+ * @route   DELETE /api/v1/products/:id/gallery/:imageId
+ * @desc    Eliminar imagen de galería del producto
+ * @access  Private (products.update)
+ */
+router.delete('/:id/gallery/:imageId',
+  requirePermission('products.update'),
+  ProductController.deleteGalleryImage
+);
+
+/**
  * @route   GET /api/v1/products/:id
  * @desc    Obtener producto por ID
  * @access  Private (products.read)

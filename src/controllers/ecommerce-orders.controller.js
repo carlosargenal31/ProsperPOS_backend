@@ -2,9 +2,7 @@
 // PROSPERPOS - CONTROLADOR DE PEDIDOS E-COMMERCE
 // ===================================================================
 
-const WebOrder = require('../models/web-order.model');
-const WebCustomer = require('../models/web-customer.model');
-const ShoppingCart = require('../models/shopping-cart.model');
+const OrderService = require('../services/order.service');
 const logger = require('../utils/logger');
 const db = require('../utils/database');
 
@@ -17,84 +15,99 @@ class EcommerceOrdersController {
     try {
       const customerId = req.customer.id;
       const {
-        shipping_address,
-        shipping_city,
-        shipping_state,
-        shipping_country = 'Honduras',
-        shipping_postal_code,
-        customer_notes,
-        payment_method = 'whatsapp'
+        delivery_address,
+        department,
+        city,
+        items,
+        notes,
+        customer_dni,
+        invoice_type,
+        rtn,
+        business_name,
+        payment_method
       } = req.body;
 
       // Validar dirección de envío
-      if (!shipping_address || !shipping_city) {
+      if (!delivery_address || !city) {
         return res.status(400).json({
           success: false,
           message: 'Dirección y ciudad de envío son requeridas'
         });
       }
 
-      // Obtener carrito del cliente
-      const cart = await ShoppingCart.getByCustomerId(customerId);
-
-      if (!cart.items || cart.items.length === 0) {
+      // Validar items
+      if (!items || items.length === 0) {
         return res.status(400).json({
           success: false,
-          message: 'El carrito está vacío'
+          message: 'El pedido debe tener al menos un producto'
         });
       }
 
       // Obtener datos del cliente
-      const customer = await WebCustomer.getById(customerId);
+      const customers = await db.query(
+        'SELECT * FROM ecommerce_customers WHERE id = ?',
+        [customerId]
+      );
 
-      // Preparar items del pedido
-      const orderItems = cart.items.map(item => ({
-        product_id: item.product_id,
-        product_name: item.product_name,
-        product_code: item.product_code,
-        product_image: item.product_image,
-        quantity: item.quantity,
-        unit_price: item.unit_price || 0,
-        tax_rate: item.tax_rate || 0
-      }));
+      if (customers.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: 'Cliente no encontrado'
+        });
+      }
+
+      const customer = customers[0];
+
+      // Calcular total
+      let totalAmount = 0;
+      const orderItems = items.map(item => {
+        const subtotal = parseFloat(item.unit_price) * parseInt(item.quantity);
+        totalAmount += subtotal;
+
+        return {
+          product_id: item.product_id,
+          product_name: item.product_name,
+          product_code: item.product_code || null,
+          quantity: parseInt(item.quantity),
+          unit_price: parseFloat(item.unit_price),
+          subtotal: subtotal
+        };
+      });
 
       // Crear pedido
       const orderData = {
         customer_id: customerId,
-        customer_name: `${customer.first_name} ${customer.last_name}`,
-        customer_email: customer.email,
-        customer_phone: customer.phone || '',
-        shipping_address,
-        shipping_city,
-        shipping_state,
-        shipping_country,
-        shipping_postal_code,
+        customer_name: `${customer.first_name || ''} ${customer.last_name || ''}`.trim(),
+        customer_email: customer.email || null,
+        customer_phone: customer.phone || null,
+        customer_dni: customer_dni || customer.dni || null,
+        delivery_address: delivery_address || null,
+        department: department || null,
+        city: city || null,
+        invoice_type: invoice_type || 'Consumidor Final',
+        rtn: rtn || null,
+        business_name: business_name || null,
+        payment_method: payment_method || 'Efectivo',
+        total_amount: totalAmount,
         items: orderItems,
-        customer_notes,
-        payment_method
+        notes: notes || null
       };
 
-      const result = await WebOrder.create(orderData);
+      logger.info('Order data to create:', JSON.stringify(orderData, null, 2));
+
+      const result = await OrderService.createOrder(orderData);
 
       // Obtener el pedido completo
-      const order = await WebOrder.getById(result.id);
-
-      // Enviar a WhatsApp
-      try {
-        await this.sendOrderToWhatsApp(order);
-        await WebOrder.markWhatsAppSent(result.id);
-      } catch (whatsappError) {
-        logger.error('Error sending to WhatsApp:', whatsappError);
-        // No fallar la creación del pedido si falla WhatsApp
-      }
+      const order = await OrderService.getOrderById(result.order_id);
 
       res.status(201).json({
         success: true,
         message: 'Pedido creado exitosamente',
         data: {
-          order_id: result.id,
+          order_id: result.order_id,
           order_number: result.order_number,
-          total: result.total
+          total: totalAmount,
+          status: 'pendiente'
         }
       });
 
@@ -115,14 +128,20 @@ class EcommerceOrdersController {
       const customerId = req.customer.id;
       const { order_number } = req.params;
 
-      const order = await WebOrder.getByOrderNumber(order_number);
+      // Buscar el pedido por número
+      const orders = await db.query(
+        'SELECT * FROM orders WHERE order_number = ?',
+        [order_number]
+      );
 
-      if (!order) {
+      if (orders.length === 0) {
         return res.status(404).json({
           success: false,
           message: 'Pedido no encontrado'
         });
       }
+
+      const order = orders[0];
 
       // Verificar que el pedido pertenece al cliente
       if (order.customer_id !== customerId) {
@@ -132,9 +151,12 @@ class EcommerceOrdersController {
         });
       }
 
+      // Obtener el pedido completo con items
+      const fullOrder = await OrderService.getOrderById(order.id);
+
       res.json({
         success: true,
-        data: order
+        data: fullOrder
       });
 
     } catch (error) {
@@ -152,17 +174,19 @@ class EcommerceOrdersController {
   static async getMyOrders(req, res) {
     try {
       const customerId = req.customer.id;
-      const { page = 1, limit = 10, status = null } = req.query;
+      const { status = null } = req.query;
 
-      const orders = await WebCustomer.getOrders(customerId, {
-        page,
-        limit,
-        status
-      });
+      const orders = await OrderService.getOrdersByCustomerId(customerId);
+
+      // Filtrar por estado si se proporciona
+      let filteredOrders = orders;
+      if (status) {
+        filteredOrders = orders.filter(order => order.status === status);
+      }
 
       res.json({
         success: true,
-        data: orders
+        data: filteredOrders
       });
 
     } catch (error) {
@@ -175,22 +199,27 @@ class EcommerceOrdersController {
   }
 
   /**
-   * Cancelar pedido
+   * Cancelar pedido (solo si está pendiente)
    */
   static async cancelOrder(req, res) {
     try {
       const customerId = req.customer.id;
       const { order_number } = req.params;
-      const { reason = 'Cancelado por el cliente' } = req.body;
 
-      const order = await WebOrder.getByOrderNumber(order_number);
+      // Buscar el pedido por número
+      const orders = await db.query(
+        'SELECT * FROM orders WHERE order_number = ?',
+        [order_number]
+      );
 
-      if (!order) {
+      if (orders.length === 0) {
         return res.status(404).json({
           success: false,
           message: 'Pedido no encontrado'
         });
       }
+
+      const order = orders[0];
 
       // Verificar que el pedido pertenece al cliente
       if (order.customer_id !== customerId) {
@@ -200,15 +229,16 @@ class EcommerceOrdersController {
         });
       }
 
-      // Solo permitir cancelar si está en estado pending o confirmed
-      if (!['pending', 'confirmed'].includes(order.status)) {
+      // Solo permitir cancelar si está en estado pendiente
+      if (order.status !== 'pendiente') {
         return res.status(400).json({
           success: false,
-          message: 'Este pedido no puede ser cancelado'
+          message: 'Solo se pueden cancelar pedidos pendientes'
         });
       }
 
-      await WebOrder.cancel(order.id, reason, customerId);
+      // Eliminar el pedido
+      await OrderService.deleteOrder(order.id);
 
       res.json({
         success: true,
@@ -225,51 +255,58 @@ class EcommerceOrdersController {
   }
 
   /**
-   * Enviar pedido a WhatsApp
+   * Generar mensaje de WhatsApp para un pedido
    */
   static async sendOrderToWhatsApp(order) {
     try {
       // Obtener número de WhatsApp de la configuración
-      const [settings] = await db.execute(
-        'SELECT setting_value FROM ecommerce_settings WHERE setting_key = "whatsapp_number"'
+      const settings = await db.query(
+        'SELECT setting_value FROM ecommerce_settings WHERE setting_key = ?',
+        ['whatsapp_number']
       );
 
       const whatsappNumber = settings[0]?.setting_value || '+504 0000-0000';
 
       // Formatear mensaje
-      let message = `🛒 *NUEVO PEDIDO WEB*\n\n`;
+      let message = `🛒 *NUEVO PEDIDO EN LÍNEA*\n\n`;
       message += `📋 *Pedido:* ${order.order_number}\n`;
       message += `👤 *Cliente:* ${order.customer_name}\n`;
-      message += `📧 *Email:* ${order.customer_email}\n`;
-      message += `📱 *Teléfono:* ${order.customer_phone}\n\n`;
 
-      message += `📦 *PRODUCTOS:*\n`;
+      if (order.customer_email) {
+        message += `📧 *Email:* ${order.customer_email}\n`;
+      }
+
+      if (order.customer_phone) {
+        message += `📱 *Teléfono:* ${order.customer_phone}\n`;
+      }
+
+      message += `\n📦 *PRODUCTOS:*\n`;
       order.items.forEach((item, index) => {
         message += `${index + 1}. ${item.product_name}\n`;
-        message += `   Cantidad: ${item.quantity} x L${item.unit_price.toFixed(2)}\n`;
-        message += `   Subtotal: L${item.total.toFixed(2)}\n`;
+        message += `   Cantidad: ${item.quantity} x L${parseFloat(item.unit_price).toFixed(2)}\n`;
+        message += `   Subtotal: L${parseFloat(item.subtotal).toFixed(2)}\n`;
       });
 
-      message += `\n💰 *TOTAL: L${order.total.toFixed(2)}*\n\n`;
+      message += `\n💰 *TOTAL: L${parseFloat(order.total_amount).toFixed(2)}*\n\n`;
 
       message += `📍 *DIRECCIÓN DE ENVÍO:*\n`;
-      message += `${order.shipping_address}\n`;
-      message += `${order.shipping_city}, ${order.shipping_state || ''}\n`;
-      message += `${order.shipping_country}\n`;
+      message += `${order.delivery_address}\n`;
 
-      if (order.customer_notes) {
-        message += `\n📝 *Notas del cliente:*\n${order.customer_notes}\n`;
+      if (order.department) {
+        message += `${order.city}, ${order.department}\n`;
+      } else {
+        message += `${order.city}\n`;
+      }
+
+      if (order.notes) {
+        message += `\n📝 *Notas del cliente:*\n${order.notes}\n`;
       }
 
       // Generar URL de WhatsApp
       const encodedMessage = encodeURIComponent(message);
       const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/\D/g, '')}?text=${encodedMessage}`;
 
-      // Log para debug (en producción, aquí se enviaría realmente)
-      console.log('WhatsApp URL:', whatsappUrl);
-      console.log('Message:', message);
-
-      return { success: true, url: whatsappUrl };
+      return { success: true, url: whatsappUrl, message };
 
     } catch (error) {
       logger.error('Error in sendOrderToWhatsApp:', error);
@@ -285,14 +322,20 @@ class EcommerceOrdersController {
       const customerId = req.customer.id;
       const { order_number } = req.params;
 
-      const order = await WebOrder.getByOrderNumber(order_number);
+      // Buscar el pedido por número
+      const orders = await db.query(
+        'SELECT * FROM orders WHERE order_number = ?',
+        [order_number]
+      );
 
-      if (!order) {
+      if (orders.length === 0) {
         return res.status(404).json({
           success: false,
           message: 'Pedido no encontrado'
         });
       }
+
+      const order = orders[0];
 
       // Verificar que el pedido pertenece al cliente
       if (order.customer_id !== customerId) {
@@ -302,7 +345,10 @@ class EcommerceOrdersController {
         });
       }
 
-      const result = await this.sendOrderToWhatsApp(order);
+      // Obtener el pedido completo con items
+      const fullOrder = await OrderService.getOrderById(order.id);
+
+      const result = await this.sendOrderToWhatsApp(fullOrder);
 
       res.json({
         success: true,

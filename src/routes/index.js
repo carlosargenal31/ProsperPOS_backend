@@ -65,6 +65,9 @@ const uploadRoutes = require('./upload.routes');
 const stockHistoryRoutes = require('./stock-history.routes');
 const barcodeRoutes = require('./barcode.routes');
 const bannerRoutes = require('./banner.routes');
+const companyRoutes = require('./company.routes');
+const locationRoutes = require('./location.routes');
+const orderRoutes = require('./order.routes');
 
 
 // ===================================================================
@@ -127,6 +130,9 @@ router.use('/v1/upload', uploadRoutes);
 router.use('/v1/stock-history', stockHistoryRoutes);
 router.use('/v1/barcodes', barcodeRoutes);
 router.use('/v1/banners', bannerRoutes);
+router.use('/v1/companies', companyRoutes);
+router.use('/v1/locations', locationRoutes);
+router.use('/v1/orders', orderRoutes);
 
 // ===================================================================
 // RUTAS FUTURAS (Comentadas)

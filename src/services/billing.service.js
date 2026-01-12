@@ -462,13 +462,40 @@ class BillingService {
    */
   static async getSettings() {
     try {
-      const [settings] = await db.query(
-        'SELECT * FROM billing_settings LIMIT 1'
+      const settings = await db.execute(
+        'SELECT * FROM billing_settings WHERE id = 1 LIMIT 1'
       );
 
-      return settings[0] || {};
+      if (!settings || settings.length === 0) {
+        // Crear configuración inicial si no existe
+        await db.execute(`
+          INSERT INTO billing_settings (
+            id,
+            company_name,
+            invoice_prefix,
+            credit_note_prefix,
+            last_invoice_number,
+            last_credit_note_number,
+            invoice_number_length,
+            default_payment_terms,
+            default_tax_rate,
+            default_currency,
+            show_company_logo,
+            show_tax_breakdown,
+            enable_auto_email,
+            email_subject
+          ) VALUES (1, 'ProsperPOS', 'FAC', 'NC', 0, 0, 6, 30, 15.00, 'HNL', 1, 1, 0, 'Nueva Factura')
+        `);
+
+        const newSettings = await db.execute(
+          'SELECT * FROM billing_settings WHERE id = 1 LIMIT 1'
+        );
+        return newSettings[0];
+      }
+
+      return settings[0];
     } catch (error) {
-      logError('Error in BillingService.getSettings:', error);
+      logger.error('Error in BillingService.getSettings:', error);
       throw error;
     }
   }
@@ -511,14 +538,14 @@ class BillingService {
         throw new Error('No hay datos para actualizar');
       }
 
-      const [result] = await db.query(
+      const result = await db.execute(
         `UPDATE billing_settings SET ${updates.join(', ')} WHERE id = 1`,
         params
       );
 
       return { message: 'Configuración actualizada exitosamente' };
     } catch (error) {
-      logError('Error in BillingService.updateSettings:', error);
+      logger.error('Error in BillingService.updateSettings:', error);
       throw error;
     }
   }

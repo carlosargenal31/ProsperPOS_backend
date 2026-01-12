@@ -70,6 +70,14 @@ router.delete('/category/:categoryId', UploadController.deleteCategoryImage);
 // ===================================================================
 
 /**
+ * @route   POST /api/upload
+ * @desc    Subir archivo genérico a Google Cloud Storage
+ * @access  Private
+ * @body    folder (opcional)
+ */
+router.post('/', upload.single('file'), UploadController.uploadGenericFile);
+
+/**
  * @route   POST /api/upload/signed-url
  * @desc    Obtener URL firmada temporal para acceso a archivo privado
  * @access  Private

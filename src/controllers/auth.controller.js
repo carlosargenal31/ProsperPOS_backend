@@ -65,6 +65,88 @@ class AuthController {
   }
 
   /**
+   * Login con Google OAuth usando Access Token
+   */
+  static async googleOAuthLogin(req, res) {
+    try {
+      console.log('📨 googleOAuthLogin - Request body:', req.body);
+
+      const { email, given_name, family_name, picture, sub } = req.body;
+      const ipAddress = req.ip || req.connection.remoteAddress;
+      const userAgent = req.get('User-Agent');
+
+      if (!email || !sub) {
+        console.log('❌ Información incompleta:', { email, sub });
+        return sendErrorResponse(res, 400, 'Información de Google incompleta');
+      }
+
+      console.log('✅ Llamando a AuthService.loginWithGoogleOAuth...');
+      const result = await AuthService.loginWithGoogleOAuth({
+        email,
+        given_name,
+        family_name,
+        picture,
+        sub,
+        ipAddress,
+        userAgent
+      });
+
+      console.log('✅ Login exitoso, resultado:', { hasToken: !!result.token, hasCustomer: !!result.customer });
+      logger.info(`Login con Google OAuth: ${email}`);
+
+      return sendSuccessResponse(res, result, 'Login con Google exitoso');
+
+    } catch (error) {
+      console.error('❌ Error en googleOAuthLogin controller:', error.message);
+      console.error('Stack:', error.stack);
+      logger.error('Error in Google OAuth login controller:', error);
+
+      if (error.message === 'Usuario inactivo') {
+        return sendErrorResponse(res, 403, 'Tu cuenta ha sido desactivada. Contacta al administrador');
+      }
+
+      return sendErrorResponse(res, 500, `Error al iniciar sesión con Google: ${error.message}`);
+    }
+  }
+
+  /**
+   * Login con Google OAuth (método original con ID Token)
+   */
+  static async googleLogin(req, res) {
+    try {
+      const { token: googleToken } = req.body;
+      const ipAddress = req.ip || req.connection.remoteAddress;
+      const userAgent = req.get('User-Agent');
+
+      if (!googleToken) {
+        return sendErrorResponse(res, 400, 'Token de Google requerido');
+      }
+
+      const result = await AuthService.loginWithGoogle({
+        googleToken,
+        ipAddress,
+        userAgent
+      });
+
+      logger.auth('GOOGLE_LOGIN', result.user.id, {
+        ip: ipAddress,
+        userAgent
+      });
+
+      return sendSuccessResponse(res, result, 'Login con Google exitoso');
+
+    } catch (error) {
+      logger.error('Error in Google login controller:', error);
+
+      if (error.message === 'Usuario inactivo') {
+        return sendErrorResponse(res, 403, 'Tu cuenta ha sido desactivada. Contacta al administrador');
+      }
+
+      return sendErrorResponse(res, 500, error.message || 'Error al iniciar sesión con Google');
+    }
+  }
+
+  /**
    * Registro de nuevo usuario
    */
   static async register(req, res) {

@@ -144,6 +144,23 @@ class ProductController {
   }
 
   /**
+   * Eliminar imagen de galería
+   */
+  static async deleteGalleryImage(req, res) {
+    try {
+      const { id, imageId } = req.params;
+
+      await ProductService.deleteGalleryImage(id, imageId);
+
+      return sendSuccessResponse(res, null, 'Imagen eliminada exitosamente');
+
+    } catch (error) {
+      logger.error('Error deleting gallery image:', error);
+      return sendErrorResponse(res, 500, error.message || 'Error al eliminar imagen de galería');
+    }
+  }
+
+  /**
    * Crear nuevo producto
    */
   static async createProduct(req, res) {
@@ -186,6 +203,14 @@ class ProductController {
         updated_by: req.user.id,
         store_id: req.user?.store_id || 1
       };
+
+      // Debug logging for files
+      logger.info('Update product - Files received:', {
+        hasFiles: !!req.files,
+        fileKeys: req.files ? Object.keys(req.files) : [],
+        imageField: req.files?.image ? 'present' : 'missing',
+        imageCount: req.files?.image?.length || 0
+      });
 
       // Manejar imagen principal si existe
       if (req.files && req.files.image && req.files.image[0]) {
@@ -272,7 +297,18 @@ class ProductController {
         return sendErrorResponse(res, 404, 'Producto no encontrado');
       }
 
-      // Guardar imágenes de galería en la tabla product_images
+      // Procesar imágenes de galería
+      // 1. Obtener lista de IDs de imágenes existentes a mantener
+      const existingGalleryIds = req.body.existing_gallery_ids
+        ? JSON.parse(req.body.existing_gallery_ids)
+        : [];
+
+      // 2. Eliminar (soft delete) todas las imágenes que NO están en la lista
+      if (existingGalleryIds.length > 0 || galleryImages.length > 0) {
+        await ProductService.cleanupGalleryImages(id, existingGalleryIds);
+      }
+
+      // 3. Guardar nuevas imágenes de galería en la tabla product_images
       if (galleryImages.length > 0) {
         await ProductService.saveProductGalleryImages(id, galleryImages);
       }
@@ -280,7 +316,8 @@ class ProductController {
       logger.info('Product updated', {
         productId: id,
         userId: req.user.id,
-        galleryImagesCount: galleryImages.length
+        galleryImagesCount: galleryImages.length,
+        existingImagesKept: existingGalleryIds.length
       });
 
       return sendSuccessResponse(res, product, 'Producto actualizado exitosamente');

@@ -10,6 +10,10 @@ const EcommerceAuthController = require('../controllers/ecommerce-auth.controlle
 const EcommerceProductsController = require('../controllers/ecommerce-products.controller');
 const EcommerceCartController = require('../controllers/ecommerce-cart.controller');
 const EcommerceOrdersController = require('../controllers/ecommerce-orders.controller');
+const EcommerceCustomersController = require('../controllers/ecommerce-customers.controller');
+const CustomerAddressesController = require('../controllers/customer-addresses.controller');
+const BillingInfoController = require('../controllers/billing-info.controller');
+const FavoritesController = require('../controllers/favorites.controller');
 
 // Middleware
 const { verifyCustomerToken, optionalCustomerAuth } = require('../middleware/ecommerce-auth.middleware');
@@ -22,14 +26,23 @@ const { verifyCustomerToken, optionalCustomerAuth } = require('../middleware/eco
 router.post('/auth/register', EcommerceAuthController.register);
 router.post('/auth/login', EcommerceAuthController.login);
 
+// Registro de clientes (nueva tabla ecommerce_customers)
+router.post('/customers/register', EcommerceCustomersController.register);
+router.post('/customers/login', EcommerceCustomersController.login);
+
 // Productos
 router.get('/products/catalog', EcommerceProductsController.getCatalog);
 router.get('/products/featured', EcommerceProductsController.getFeaturedProducts);
 router.get('/products/search', EcommerceProductsController.search);
+router.get('/products', EcommerceProductsController.getCatalog); // Para búsqueda autocompletada
 router.get('/products/:id', EcommerceProductsController.getProductDetails);
 
-// Categorías y Marcas
+// Búsqueda y sugerencias
+router.get('/search-suggestions', EcommerceProductsController.getSearchSuggestions);
+
+// Categorías, Subcategorías y Marcas
 router.get('/categories', EcommerceProductsController.getCategories);
+router.get('/subcategories', EcommerceProductsController.getSubcategories);
 router.get('/brands', EcommerceProductsController.getBrands);
 
 // ===================================================================
@@ -40,6 +53,31 @@ router.get('/brands', EcommerceProductsController.getBrands);
 router.get('/auth/profile', verifyCustomerToken, EcommerceAuthController.getProfile);
 router.put('/auth/profile', verifyCustomerToken, EcommerceAuthController.updateProfile);
 router.put('/auth/change-password', verifyCustomerToken, EcommerceAuthController.changePassword);
+
+// Perfil de clientes (nueva tabla ecommerce_customers)
+router.get('/customers/profile', verifyCustomerToken, EcommerceCustomersController.getProfile);
+router.put('/customers/profile', verifyCustomerToken, EcommerceCustomersController.updateProfile);
+router.put('/customers/change-password', verifyCustomerToken, EcommerceCustomersController.changePassword);
+
+// Direcciones de clientes
+router.get('/customers/addresses', verifyCustomerToken, CustomerAddressesController.getAddresses);
+router.post('/customers/addresses', verifyCustomerToken, CustomerAddressesController.createAddress);
+router.put('/customers/addresses/:id', verifyCustomerToken, CustomerAddressesController.updateAddress);
+router.delete('/customers/addresses/:id', verifyCustomerToken, CustomerAddressesController.deleteAddress);
+router.put('/customers/addresses/:id/set-default', verifyCustomerToken, CustomerAddressesController.setDefaultAddress);
+
+// Información de facturación (RTN)
+router.get('/customers/billing-info', verifyCustomerToken, BillingInfoController.getBillingInfo);
+router.post('/customers/billing-info', verifyCustomerToken, BillingInfoController.createBillingInfo);
+router.put('/customers/billing-info/:id', verifyCustomerToken, BillingInfoController.updateBillingInfo);
+router.delete('/customers/billing-info/:id', verifyCustomerToken, BillingInfoController.deleteBillingInfo);
+router.put('/customers/billing-info/:id/set-default', verifyCustomerToken, BillingInfoController.setDefaultBillingInfo);
+
+// Favoritos
+router.get('/favorites', verifyCustomerToken, FavoritesController.getFavorites);
+router.post('/favorites', verifyCustomerToken, FavoritesController.addFavorite);
+router.delete('/favorites/:product_id', verifyCustomerToken, FavoritesController.removeFavorite);
+router.get('/favorites/check/:product_id', verifyCustomerToken, FavoritesController.isFavorite);
 
 // Carrito de compras
 router.get('/cart', verifyCustomerToken, EcommerceCartController.getCart);

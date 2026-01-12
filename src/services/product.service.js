@@ -144,11 +144,13 @@ class ProductService {
             c.name as category_name,
             sc.name as subcategory_name,
             b.name as brand_name,
+            t.rate as tax_rate,
             ROUND(COALESCE(stock_totals.total_stock, 0), 2) as stock
           FROM products p
           LEFT JOIN categories c ON p.category_id = c.id
           LEFT JOIN subcategories sc ON p.subcategory_id = sc.id
           LEFT JOIN brands b ON p.brand_id = b.id
+          LEFT JOIN tax_rates t ON p.tax_id = t.id
           LEFT JOIN (
             SELECT product_id, ROUND(SUM(quantity), 2) as total_stock
             FROM stock
@@ -166,11 +168,13 @@ class ProductService {
             c.name as category_name,
             sc.name as subcategory_name,
             b.name as brand_name,
+            t.rate as tax_rate,
             ROUND(COALESCE(s.quantity, 0), 2) as stock
           FROM products p
           LEFT JOIN categories c ON p.category_id = c.id
           LEFT JOIN subcategories sc ON p.subcategory_id = sc.id
           LEFT JOIN brands b ON p.brand_id = b.id
+          LEFT JOIN tax_rates t ON p.tax_id = t.id
           LEFT JOIN stock s ON p.id = s.product_id AND s.warehouse_id = ${parseInt(warehouse_id)}
           ${whereClause}
           ${orderByClause}
@@ -183,11 +187,13 @@ class ProductService {
             p.*,
             c.name as category_name,
             sc.name as subcategory_name,
-            b.name as brand_name
+            b.name as brand_name,
+            t.rate as tax_rate
           FROM products p
           LEFT JOIN categories c ON p.category_id = c.id
           LEFT JOIN subcategories sc ON p.subcategory_id = sc.id
           LEFT JOIN brands b ON p.brand_id = b.id
+          LEFT JOIN tax_rates t ON p.tax_id = t.id
           ${whereClause}
           ${orderByClause}
           LIMIT ${limitNum} OFFSET ${offset}
@@ -298,7 +304,10 @@ class ProductService {
         tax_id,
         image_url,
         is_active = 1,
-        created_by
+        created_by,
+        color = null,
+        acabado = null,
+        estilo = null
       } = productData;
 
       // Verificar duplicados
@@ -316,14 +325,18 @@ class ProductService {
         INSERT INTO products (
           name, short_name, code, category_id, subcategory_id, brand_id, supplier_id,
           description, cost, price_1, price_2, price_3, price_4, price_5, price_6,
-          unit_id, weight, show_in_online_store, is_featured, tax_id, image, is_active, created_by, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+          unit_id, weight, show_in_online_store, is_featured, tax_id, image, is_active,
+          color, acabado, estilo,
+          created_by, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
       `;
 
       const result = await db.execute(insertQuery, [
         name, short_name, code, category_id, subcategory_id, brand_id, supplier_id,
         description, cost, price_1, price_2, price_3, price_4, price_5, price_6,
-        unit_id, weight, show_in_online_store, is_featured, tax_id, image_url, is_active, created_by
+        unit_id, weight, show_in_online_store, is_featured, tax_id, image_url, is_active,
+        color, acabado, estilo,
+        created_by
       ]);
 
       return {
@@ -343,34 +356,9 @@ class ProductService {
    */
   static async updateProduct(id, productData) {
     try {
-      const {
-        name,
-        short_name,
-        category_id,
-        subcategory_id,
-        brand_id,
-        supplier_id,
-        description,
-        cost,
-        price_1,
-        price_2,
-        price_3,
-        price_4,
-        price_5,
-        price_6,
-        unit_id,
-        weight,
-        show_in_online_store,
-        is_featured,
-        tax_id,
-        image_url,
-        is_active,
-        updated_by
-      } = productData;
-
-      // Verificar que existe
+      // Verificar que existe y obtener datos actuales
       const existing = await db.execute(
-        'SELECT id FROM products WHERE id = ? AND deleted_at IS NULL',
+        'SELECT * FROM products WHERE id = ? AND deleted_at IS NULL',
         [id]
       );
 
@@ -378,23 +366,118 @@ class ProductService {
         throw new Error('Producto no encontrado');
       }
 
-      // Actualizar
-      const updateQuery = `
-        UPDATE products SET
-          name = ?, short_name = ?, category_id = ?, subcategory_id = ?,
-          brand_id = ?, supplier_id = ?, description = ?, cost = ?, price_1 = ?, price_2 = ?,
-          price_3 = ?, price_4 = ?, price_5 = ?, price_6 = ?,
-          unit_id = ?, weight = ?, show_in_online_store = ?, is_featured = ?, tax_id = ?,
-          image = ?, is_active = ?,
-          updated_by = ?, updated_at = NOW()
-        WHERE id = ?
-      `;
+      const currentProduct = existing[0];
 
-      await db.execute(updateQuery, [
-        name, short_name, category_id, subcategory_id, brand_id, supplier_id,
-        description, cost, price_1, price_2, price_3, price_4, price_5, price_6,
-        unit_id, weight, show_in_online_store, is_featured, tax_id, image_url, is_active, updated_by, id
-      ]);
+      // Merge: usar valores nuevos si están definidos, sino mantener los actuales
+      const code = productData.code !== undefined ? productData.code : currentProduct.code;
+      const name = productData.name !== undefined ? productData.name : currentProduct.name;
+      const short_name = productData.short_name !== undefined ? productData.short_name : currentProduct.short_name;
+      const category_id = productData.category_id !== undefined ? productData.category_id : currentProduct.category_id;
+      const subcategory_id = productData.subcategory_id !== undefined ? productData.subcategory_id : currentProduct.subcategory_id;
+      const brand_id = productData.brand_id !== undefined ? productData.brand_id : currentProduct.brand_id;
+      const supplier_id = productData.supplier_id !== undefined ? productData.supplier_id : currentProduct.supplier_id;
+      const description = productData.description !== undefined ? productData.description : currentProduct.description;
+      const cost = productData.cost !== undefined ? productData.cost : currentProduct.cost;
+      const price_1 = productData.price_1 !== undefined ? productData.price_1 : currentProduct.price_1;
+      const price_2 = productData.price_2 !== undefined ? productData.price_2 : currentProduct.price_2;
+      const price_3 = productData.price_3 !== undefined ? productData.price_3 : currentProduct.price_3;
+      const price_4 = productData.price_4 !== undefined ? productData.price_4 : currentProduct.price_4;
+      const price_5 = productData.price_5 !== undefined ? productData.price_5 : currentProduct.price_5;
+      const price_6 = productData.price_6 !== undefined ? productData.price_6 : currentProduct.price_6;
+      const unit_id = productData.unit_id !== undefined ? productData.unit_id : currentProduct.unit_id;
+      const weight = productData.weight !== undefined ? productData.weight : currentProduct.weight;
+      const show_in_online_store = productData.show_in_online_store !== undefined ? productData.show_in_online_store : currentProduct.show_in_online_store;
+      const is_featured = productData.is_featured !== undefined ? productData.is_featured : currentProduct.is_featured;
+      const tax_id = productData.tax_id !== undefined ? productData.tax_id : currentProduct.tax_id;
+      const image_url = productData.image_url;
+      const is_active = productData.is_active !== undefined ? productData.is_active : currentProduct.is_active;
+      const color = productData.color !== undefined ? productData.color : currentProduct.color;
+      const acabado = productData.acabado !== undefined ? productData.acabado : currentProduct.acabado;
+      const estilo = productData.estilo !== undefined ? productData.estilo : currentProduct.estilo;
+      const updated_by = productData.updated_by;
+
+      // Actualizar
+      // Solo actualizar el campo image si se proporcionó un nuevo image_url
+      let updateQuery;
+      let updateParams;
+
+      if (image_url !== undefined) {
+        // Actualizar incluyendo la imagen
+        updateQuery = `
+          UPDATE products SET
+            code = ?, name = ?, short_name = ?, category_id = ?, subcategory_id = ?,
+            brand_id = ?, supplier_id = ?, description = ?, cost = ?, price_1 = ?, price_2 = ?,
+            price_3 = ?, price_4 = ?, price_5 = ?, price_6 = ?,
+            unit_id = ?, weight = ?, show_in_online_store = ?, is_featured = ?, tax_id = ?,
+            image = ?, is_active = ?,
+            color = ?, acabado = ?, estilo = ?,
+            updated_by = ?, updated_at = NOW()
+          WHERE id = ?
+        `;
+
+        updateParams = [
+          code, name, short_name, category_id, subcategory_id, brand_id, supplier_id,
+          description, cost, price_1, price_2, price_3, price_4, price_5, price_6,
+          unit_id, weight, show_in_online_store, is_featured, tax_id, image_url, is_active,
+          color, acabado, estilo,
+          updated_by, id
+        ];
+      } else {
+        // Actualizar sin modificar la imagen existente
+        updateQuery = `
+          UPDATE products SET
+            code = ?, name = ?, short_name = ?, category_id = ?, subcategory_id = ?,
+            brand_id = ?, supplier_id = ?, description = ?, cost = ?, price_1 = ?, price_2 = ?,
+            price_3 = ?, price_4 = ?, price_5 = ?, price_6 = ?,
+            unit_id = ?, weight = ?, show_in_online_store = ?, is_featured = ?, tax_id = ?,
+            is_active = ?,
+            color = ?, acabado = ?, estilo = ?,
+            updated_by = ?, updated_at = NOW()
+          WHERE id = ?
+        `;
+
+        updateParams = [
+          code, name, short_name, category_id, subcategory_id, brand_id, supplier_id,
+          description, cost, price_1, price_2, price_3, price_4, price_5, price_6,
+          unit_id, weight, show_in_online_store, is_featured, tax_id, is_active,
+          color, acabado, estilo,
+          updated_by, id
+        ];
+      }
+
+      await db.execute(updateQuery, updateParams);
+
+      // Actualizar min_stock y max_stock por bodega si se proporcionaron
+      if (productData.warehouse_stock) {
+        const warehouseStock = typeof productData.warehouse_stock === 'string'
+          ? JSON.parse(productData.warehouse_stock)
+          : productData.warehouse_stock;
+
+        for (const [warehouseId, stockData] of Object.entries(warehouseStock)) {
+          // Verificar si existe el registro en la tabla stock - incluir store_id en la búsqueda
+          const existingStock = await db.execute(
+            'SELECT id FROM stock WHERE product_id = ? AND warehouse_id = ? AND store_id = ?',
+            [id, warehouseId, productData.store_id || 1]
+          );
+
+          if (existingStock.length > 0) {
+            // Actualizar solo min_stock y max_stock, NO la cantidad
+            await db.execute(
+              `UPDATE stock
+               SET min_stock = ?, max_stock = ?, updated_at = NOW()
+               WHERE product_id = ? AND warehouse_id = ? AND store_id = ?`,
+              [stockData.min || 0, stockData.max || 1000, id, warehouseId, productData.store_id || 1]
+            );
+          } else {
+            // Crear nuevo registro si no existe - incluir store_id
+            await db.execute(
+              `INSERT INTO stock (product_id, warehouse_id, store_id, quantity, min_stock, max_stock, created_at, updated_at)
+               VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())`,
+              [id, warehouseId, productData.store_id || 1, stockData.current || 0, stockData.min || 0, stockData.max || 1000]
+            );
+          }
+        }
+      }
 
       return { id, name };
 
@@ -742,8 +825,8 @@ class ProductService {
         );
       } else {
         await connection.execute(
-          'INSERT INTO stock (product_id, warehouse_id, quantity, created_at) VALUES (?, ?, ?, NOW())',
-          [product_id, warehouse_id, new_quantity]
+          'INSERT INTO stock (product_id, warehouse_id, store_id, quantity, min_stock, max_stock, created_at, updated_at) VALUES (?, ?, ?, ?, 0, 1000, NOW(), NOW())',
+          [product_id, warehouse_id, store_id, new_quantity]
         );
       }
 
@@ -824,8 +907,8 @@ class ProductService {
         );
       } else {
         await connection.execute(
-          'INSERT INTO stock (product_id, warehouse_id, quantity, created_at) VALUES (?, ?, ?, NOW())',
-          [product_id, to_warehouse_id, quantity]
+          'INSERT INTO stock (product_id, warehouse_id, store_id, quantity, min_stock, max_stock, created_at, updated_at) VALUES (?, ?, ?, ?, 0, 1000, NOW(), NOW())',
+          [product_id, to_warehouse_id, store_id, quantity]
         );
       }
 
@@ -1058,13 +1141,9 @@ class ProductService {
    */
   static async saveProductGalleryImages(product_id, images) {
     try {
-      // Primero eliminar imágenes existentes (soft delete)
-      await db.query(
-        'UPDATE product_images SET deleted_at = NOW() WHERE product_id = ? AND deleted_at IS NULL',
-        [product_id]
-      );
+      // NO eliminar imágenes existentes aquí - eso ya se hizo en cleanupGalleryImages
 
-      // Insertar nuevas imágenes
+      // Solo insertar nuevas imágenes
       if (images && images.length > 0) {
         const insertQuery = `
           INSERT INTO product_images (product_id, image_url, image_order, is_primary, created_at)
@@ -1072,7 +1151,7 @@ class ProductService {
         `;
 
         for (const img of images) {
-          await db.query(insertQuery, [
+          await db.execute(insertQuery, [
             product_id,
             img.image_url,
             img.image_order || 0,
@@ -1098,7 +1177,7 @@ class ProductService {
    */
   static async getProductGalleryImages(product_id) {
     try {
-      const [images] = await db.query(
+      const images = await db.query(
         `SELECT id, image_url, image_order, is_primary, created_at
          FROM product_images
          WHERE product_id = ? AND deleted_at IS NULL
@@ -1106,9 +1185,83 @@ class ProductService {
         [product_id]
       );
 
+      logger.info('Gallery images query result:', {
+        type: typeof images,
+        isArray: Array.isArray(images),
+        length: images?.length,
+        keys: images ? Object.keys(images) : null,
+        firstItem: images?.[0]
+      });
+
       return images;
     } catch (error) {
       logger.error('Error getting product gallery images:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Limpiar imágenes de galería - eliminar las que no están en la lista de IDs a mantener
+   */
+  static async cleanupGalleryImages(productId, idsToKeep) {
+    try {
+      if (idsToKeep.length === 0) {
+        // Si no hay IDs para mantener, eliminar todas las imágenes del producto
+        await db.execute(
+          `UPDATE product_images
+           SET deleted_at = NOW()
+           WHERE product_id = ? AND deleted_at IS NULL`,
+          [productId]
+        );
+        logger.info(`All gallery images soft-deleted for product ${productId}`);
+      } else {
+        // Eliminar solo las que NO están en la lista
+        const placeholders = idsToKeep.map(() => '?').join(',');
+        await db.execute(
+          `UPDATE product_images
+           SET deleted_at = NOW()
+           WHERE product_id = ? AND id NOT IN (${placeholders}) AND deleted_at IS NULL`,
+          [productId, ...idsToKeep]
+        );
+        logger.info(`Gallery images cleaned for product ${productId}, kept ${idsToKeep.length} images`);
+      }
+
+      return { success: true };
+    } catch (error) {
+      logger.error('Error cleaning up gallery images:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Eliminar imagen de galería
+   */
+  static async deleteGalleryImage(productId, imageId) {
+    try {
+      // Verificar que la imagen pertenece al producto
+      const [image] = await db.query(
+        `SELECT id, image_url FROM product_images
+         WHERE id = ? AND product_id = ? AND deleted_at IS NULL`,
+        [imageId, productId]
+      );
+
+      if (!image) {
+        throw new Error('Imagen no encontrada o no pertenece a este producto');
+      }
+
+      // Soft delete de la imagen
+      await db.execute(
+        `UPDATE product_images
+         SET deleted_at = NOW()
+         WHERE id = ? AND product_id = ?`,
+        [imageId, productId]
+      );
+
+      logger.info(`Gallery image deleted: ${imageId} from product ${productId}`);
+
+      return { success: true, message: 'Imagen eliminada exitosamente' };
+    } catch (error) {
+      logger.error('Error deleting gallery image:', error);
       throw error;
     }
   }

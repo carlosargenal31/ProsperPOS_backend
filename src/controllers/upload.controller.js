@@ -315,6 +315,52 @@ class UploadController {
   }
 
   /**
+   * Subir archivo genérico a Google Cloud Storage
+   */
+  static async uploadGenericFile(req, res) {
+    try {
+      if (!req.file) {
+        return sendErrorResponse(res, 400, 'No se proporcionó ningún archivo');
+      }
+
+      const { folder = 'uploads' } = req.body;
+
+      const gcs = getInstance();
+
+      // Generar nombre de archivo único
+      const timestamp = Date.now();
+      const extension = req.file.mimetype.split('/')[1] || 'bin';
+      const fileName = `${req.file.originalname.replace(/\.[^/.]+$/, '')}-${timestamp}.${extension}`;
+
+      // Subir archivo
+      const result = await gcs.uploadFile(
+        req.file.buffer,
+        fileName,
+        folder,
+        {
+          contentType: req.file.mimetype,
+          originalName: req.file.originalname,
+          uploadedBy: req.user?.id,
+          size: req.file.size
+        }
+      );
+
+      logger.info('Generic file uploaded successfully', {
+        fileName,
+        folder,
+        url: result.url,
+        userId: req.user?.id
+      });
+
+      return sendSuccessResponse(res, result, 'Archivo subido exitosamente');
+
+    } catch (error) {
+      logger.error('Error uploading generic file:', error);
+      return sendErrorResponse(res, 500, 'Error al subir archivo: ' + error.message);
+    }
+  }
+
+  /**
    * Obtener URL firmada temporal para imagen privada
    */
   static async getSignedUrl(req, res) {

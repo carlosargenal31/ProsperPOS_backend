@@ -38,27 +38,44 @@ router.get('/',
  * @route   GET /api/v1/resolutions/active
  * @desc    Obtener la resolución activa actual
  * @access  Private
+ * @query   store_id - ID de la tienda (opcional)
  */
 router.get('/active',
   requirePermission('resolutions.read'),
   async (req, res) => {
     try {
+      // Nota: store_id se ignora por ahora ya que la tabla no tiene esa columna
+      // const { store_id } = req.query;
+
       const query = `
         SELECT * FROM resolutions
         WHERE is_active = 1
         AND deleted_at IS NULL
-        AND fecha_inicio <= CURDATE()
-        AND fecha_fin >= CURDATE()
         ORDER BY created_at DESC
         LIMIT 1
       `;
+
       const resolutions = await db.query(query);
 
       if (!resolutions || resolutions.length === 0) {
         return sendErrorResponse(res, 404, 'No hay resolución activa disponible');
       }
 
-      return sendSuccessResponse(res, resolutions[0], 'Resolución activa obtenida exitosamente');
+      const resolution = resolutions[0];
+
+      // Verificar si la resolución está vencida
+      const currentDate = new Date();
+      const endDate = new Date(resolution.fecha_fin);
+      const isExpired = currentDate > endDate;
+
+      // Agregar información de estado de vencimiento
+      const responseData = {
+        ...resolution,
+        is_expired: isExpired,
+        days_until_expiration: isExpired ? 0 : Math.ceil((endDate - currentDate) / (1000 * 60 * 60 * 24))
+      };
+
+      return sendSuccessResponse(res, responseData, 'Resolución activa obtenida exitosamente');
 
     } catch (error) {
       logger.error('Error getting active resolution:', error);
