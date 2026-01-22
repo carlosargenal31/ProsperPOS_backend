@@ -1,0 +1,18 @@
+🧪 PROBANDO RESPUESTA DE OPINIÓN CON ENVÍO DE EMAIL
+
+1️⃣ Obteniendo token...
+✅ Token obtenido
+
+2️⃣ Buscando opinión pendiente...
+✅ Opinión encontrada: Daniel Emanuel Argeñal Bonilla (gamaboy3101@gmail.com)
+
+3️⃣ Enviando respuesta (esto también enviará el email)...
+
+📊 Resultado de la respuesta:
+   Success: true
+   Email enviado: ❌ NO
+   Message: Opinión respondida exitosamente
+
+⚠️  La respuesta se guardó pero el email NO se envió
+Revisa los logs del servidor para más detalles
+

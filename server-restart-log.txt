@@ -1,0 +1,53 @@
+
+📋 ProsperPOS - Sistema de Punto de Venta
+   Version: 1.0.0
+   Autor: Tu nombre
+   Descripción: Backend API con migraciones automáticas
+
+🚀 Iniciando ProsperPOS Backend...
+15:41:17 [[32minfo[39m]: 🚀 Iniciando ProsperPOS Backend...
+Ignoring invalid configuration option passed to Connection: acquireTimeout. This is currently a warning, but in future versions of MySQL2, an error will be thrown if you pass an invalid configuration option to a Connection
+Ignoring invalid configuration option passed to Connection: timeout. This is currently a warning, but in future versions of MySQL2, an error will be thrown if you pass an invalid configuration option to a Connection
+Ignoring invalid configuration option passed to Connection: reconnect. This is currently a warning, but in future versions of MySQL2, an error will be thrown if you pass an invalid configuration option to a Connection
+(node:8820) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+15:41:17 [[32minfo[39m]: Pool de conexiones MySQL creado exitosamente
+15:41:17 [[32minfo[39m]: Base de datos: prosperpos
+15:41:17 [[32minfo[39m]: Host: localhost:3306
+15:41:17 [[32minfo[39m]: ✅ Conexión a base de datos verificada
+15:41:17 [[32minfo[39m]: 🔄 Iniciando migraciones automáticas de base de datos...
+15:41:17 [[32minfo[39m]: ✅ Todas las tablas creadas exitosamente
+15:41:17 [[32minfo[39m]: ✅ Índices creados automáticamente
+15:41:17 [[32minfo[39m]: ✅ Datos por defecto insertados
+15:41:17 [[32minfo[39m]: ✅ Columna branch_id ya existe en invoices
+15:41:17 [[32minfo[39m]: 📦 Creando tablas de ajuste de inventario...
+15:41:17 [[32minfo[39m]: ✅ Tabla inventory_adjustments creada/verificada
+15:41:17 [[32minfo[39m]: ✅ Tabla inventory_adjustment_details creada/verificada
+15:41:17 [[32minfo[39m]: ✅ Tablas de ajuste de inventario listas
+15:41:17 [[32minfo[39m]: 📦 Migrando min_stock y max_stock a la tabla stock...
+15:41:17 [[32minfo[39m]: ✅ Columnas min_stock y max_stock ya existen en stock
+15:41:17 [[32minfo[39m]: ✅ Columnas min_stock y max_stock ya fueron eliminadas de products
+15:41:17 [[32minfo[39m]: ✅ Migración de min_stock y max_stock completada
+15:41:17 [[32minfo[39m]: 📍 Verificando tablas de ubicaciones...
+15:41:17 [[32minfo[39m]: ✅ Tablas de ubicaciones creadas/verificadas
+15:41:17 [[32minfo[39m]: ✅ Departamentos ya poblados
+15:41:17 [[32minfo[39m]: 📝 Verificando columnas de clientes ecommerce...
+15:41:17 [[32minfo[39m]: ✅ Columna DNI ya existe en ecommerce_customers
+15:41:17 [[32minfo[39m]: ✅ Columna additional_notes ya existe en customer_addresses
+15:41:17 [[32minfo[39m]: ✅ Foreign key ya apunta correctamente a ecommerce_customers
+15:41:17 [[32minfo[39m]: 📝 Creando tabla de información de facturación...
+15:41:17 [[32minfo[39m]: ✅ Tabla customer_billing_info creada/verificada
+15:41:17 [[32minfo[39m]: ⭐ Creando tabla de productos favoritos...
+15:41:17 [[32minfo[39m]: 🗑️ Tabla customer_favorites eliminada si existía
+15:41:17 [[32minfo[39m]: ✅ Tabla customer_favorites creada/verificada
+15:41:17 [[32minfo[39m]: 📦 Creando tablas de pedidos en línea...
+15:41:17 [[32minfo[39m]: ✅ Tabla orders ya existe
+15:41:17 [[32minfo[39m]: ✅ Tabla order_items ya existe
+15:41:17 [[32minfo[39m]: ✅ Tablas de pedidos creadas/verificadas exitosamente
+15:41:17 [[32minfo[39m]: ⚙️ Creando tabla de configuración del ecommerce...
+15:41:17 [[32minfo[39m]: ✅ Tabla ecommerce_settings ya existe
+15:41:17 [[32minfo[39m]: ✅ Migraciones completadas exitosamente
+15:41:17 [[32minfo[39m]: 📊 Base de datos inicializada correctamente
+15:41:17 [[32minfo[39m]: ✅ Aplicación inicializada correctamente con base de datos
+15:41:17 [[31merror[39m]: Uncaught Exception: listen EADDRINUSE: address already in use :::3000 {"code":"EADDRINUSE","errno":-4091,"syscall":"listen","address":"::","port":3000,"stack":"Error: listen EADDRINUSE: address already in use :::3000\n    at Server.setupListenHandle [as _listen2] (node:net:1872:16)\n    at listenInCluster (node:net:1920:12)\n    at Server.listen (node:net:2008:7)\n    at Function.listen (C:\\Users\\carlo\\OneDrive\\Escritorio\\ProsperPOS\\backend\\node_modules\\express\\lib\\application.js:635:24)\n    at startServer (C:\\Users\\carlo\\OneDrive\\Escritorio\\ProsperPOS\\backend\\server.js:52:35)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)"}
+💥 Uncaught Exception! Shutting down...
