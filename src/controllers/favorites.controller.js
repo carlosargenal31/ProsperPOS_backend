@@ -23,13 +23,15 @@ exports.getFavorites = async (req, res) => {
         s.name as subcategory_name,
         p.tax_id,
         tr.rate as tax_rate,
-        p.image
+        p.image,
+        COALESCE(u.name, 'UNIDAD') as unit
        FROM customer_favorites f
        INNER JOIN products p ON f.product_id = p.id
        LEFT JOIN brands b ON p.brand_id = b.id
        LEFT JOIN categories c ON p.category_id = c.id
        LEFT JOIN subcategories s ON p.subcategory_id = s.id
        LEFT JOIN tax_rates tr ON p.tax_id = tr.id
+       LEFT JOIN units u ON p.unit_id = u.id
        WHERE f.customer_id = ?
        ORDER BY f.created_at DESC`,
       [customerId]

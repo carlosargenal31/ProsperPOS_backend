@@ -137,7 +137,7 @@ class CompanyService {
         'name', 'commercial_name', 'rtn', 'address', 'phone', 'email', 'website',
         'country', 'state', 'city',
         'facebook', 'instagram', 'whatsapp', 'tiktok',
-        'logo_url',
+        'logo_url', 'allow_order_without_stock',
         'timezone', 'date_format', 'time_format', 'financial_year', 'starting_month',
         'is_active', 'is_default'
       ];
@@ -215,6 +215,75 @@ class CompanyService {
       return { message: 'Empresa establecida como predeterminada' };
     } catch (error) {
       logger.error('Error in CompanyService.setAsDefault:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Obtener configuración de e-commerce
+   */
+  static async getEcommerceConfig() {
+    try {
+      const companies = await db.execute(
+        `SELECT
+          allow_order_without_stock,
+          name,
+          commercial_name
+        FROM companies
+        WHERE is_default = 1 AND deleted_at IS NULL
+        LIMIT 1`
+      );
+
+      if (!companies || companies.length === 0) {
+        // Si no hay empresa por defecto, obtener la primera activa
+        const firstCompany = await db.execute(
+          `SELECT
+            allow_order_without_stock,
+            name,
+            commercial_name
+          FROM companies
+          WHERE is_active = 1 AND deleted_at IS NULL
+          ORDER BY id ASC
+          LIMIT 1`
+        );
+
+        if (!firstCompany || firstCompany.length === 0) {
+          throw new Error('No hay empresas registradas');
+        }
+
+        return firstCompany[0];
+      }
+
+      return companies[0];
+    } catch (error) {
+      logger.error('Error in CompanyService.getEcommerceConfig:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Actualizar configuración de e-commerce
+   */
+  static async updateEcommerceConfig(configData, userId) {
+    try {
+      // Obtener empresa por defecto
+      const company = await this.getDefaultCompany();
+
+      // Actualizar solo la configuración de e-commerce
+      await db.execute(
+        `UPDATE companies
+        SET allow_order_without_stock = ?,
+            updated_by = ?
+        WHERE id = ? AND deleted_at IS NULL`,
+        [configData.allow_order_without_stock || 0, userId, company.id]
+      );
+
+      return {
+        message: 'Configuración de tienda actualizada exitosamente',
+        allow_order_without_stock: configData.allow_order_without_stock || 0
+      };
+    } catch (error) {
+      logger.error('Error in CompanyService.updateEcommerceConfig:', error);
       throw error;
     }
   }

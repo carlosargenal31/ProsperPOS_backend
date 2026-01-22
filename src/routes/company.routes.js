@@ -94,4 +94,26 @@ router.put(
   CompanyController.setAsDefault
 );
 
+/**
+ * @route   GET /api/v1/companies/ecommerce/config
+ * @desc    Obtener configuración de e-commerce
+ * @access  Private (requiere permiso settings.access)
+ */
+router.get(
+  '/ecommerce/config',
+  requirePermission('settings.access'),
+  CompanyController.getEcommerceConfig
+);
+
+/**
+ * @route   PUT /api/v1/companies/ecommerce/config
+ * @desc    Actualizar configuración de e-commerce
+ * @access  Private (requiere permiso settings.access)
+ */
+router.put(
+  '/ecommerce/config',
+  requirePermission('settings.access'),
+  CompanyController.updateEcommerceConfig
+);
+
 module.exports = router;

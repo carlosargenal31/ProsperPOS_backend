@@ -271,6 +271,46 @@ class SalesReturnsController {
       const updateInvoiceSql = `UPDATE invoices SET payment_status = 'returned' WHERE id = ?`;
       await db.query(updateInvoiceSql, [invoice_id]);
 
+      // 7. Si return_money = 1, crear transacción de caja tipo DEVOLUCION
+      if (return_money) {
+        // Buscar la sesión de caja abierta del usuario
+        const openSessionSql = `
+          SELECT id FROM cash_register_sessions
+          WHERE user_id = ? AND status = 'ABIERTA'
+          ORDER BY created_at DESC LIMIT 1
+        `;
+        const openSessions = await db.query(openSessionSql, [userId]);
+
+        if (openSessions.length > 0) {
+          const sessionId = openSessions[0].id;
+
+          // Crear transacción de devolución
+          const transactionSql = `
+            INSERT INTO cash_register_transactions (
+              session_id, transaction_type, amount, description,
+              payment_method, beneficiary, beneficiary_type, user_id
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          `;
+
+          await db.query(transactionSql, [
+            sessionId,
+            'DEVOLUCION',
+            totals.total,
+            `Devolución de venta ${correlative} - Factura ${invoice.invoice_number}`,
+            'EFECTIVO',
+            invoice.customer_name,
+            'CLIENTE',
+            userId
+          ]);
+
+          logger.info('Transacción de devolución registrada en caja', {
+            sessionId,
+            amount: totals.total,
+            returnId
+          });
+        }
+      }
+
       logger.info('Devolución de venta procesada exitosamente', { returnId, creditNoteId, userId });
 
       res.json({

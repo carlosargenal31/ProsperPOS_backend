@@ -18,13 +18,25 @@ class EcommerceOrdersController {
         delivery_address,
         department,
         city,
+        receiver_name,
+        receiver_phone,
+        receiver_phone_country,
+        customer_phone_country,
         items,
         notes,
+        additional_comments,
         customer_dni,
         invoice_type,
         rtn,
         business_name,
-        payment_method
+        payment_method,
+        coupon_code,
+        coupon_name,
+        coupon_discount,
+        offers_discount,
+        subtotal_before_discount,
+        subtotal_after_discount,
+        tax_amount
       } = req.body;
 
       // Validar dirección de envío
@@ -58,21 +70,29 @@ class EcommerceOrdersController {
 
       const customer = customers[0];
 
-      // Calcular total
-      let totalAmount = 0;
+      // Calcular total (precios base + 15% impuesto)
+      let subtotalAmount = 0;
       const orderItems = items.map(item => {
-        const subtotal = parseFloat(item.unit_price) * parseInt(item.quantity);
-        totalAmount += subtotal;
+        const subtotal = parseFloat(item.unit_price) * parseFloat(item.quantity);
+        subtotalAmount += subtotal;
 
         return {
           product_id: item.product_id,
           product_name: item.product_name,
           product_code: item.product_code || null,
-          quantity: parseInt(item.quantity),
+          quantity: parseFloat(item.quantity),
           unit_price: parseFloat(item.unit_price),
           subtotal: subtotal
         };
       });
+
+      // Usar descuentos e impuesto del frontend si están presentes, o calcular
+      const finalSubtotalBeforeDiscount = subtotal_before_discount || subtotalAmount;
+      const finalCouponDiscount = parseFloat(coupon_discount) || 0;
+      const finalOffersDiscount = parseFloat(offers_discount) || 0;
+      const finalSubtotalAfterDiscount = subtotal_after_discount || (subtotalAmount - finalCouponDiscount - finalOffersDiscount);
+      const finalTaxAmount = tax_amount || (finalSubtotalAfterDiscount * 0.15);
+      const totalAmount = finalSubtotalAfterDiscount + finalTaxAmount;
 
       // Crear pedido
       const orderData = {
@@ -80,6 +100,8 @@ class EcommerceOrdersController {
         customer_name: `${customer.first_name || ''} ${customer.last_name || ''}`.trim(),
         customer_email: customer.email || null,
         customer_phone: customer.phone || null,
+        receiver_name: receiver_name || null,
+        receiver_phone: receiver_phone || null,
         customer_dni: customer_dni || customer.dni || null,
         delivery_address: delivery_address || null,
         department: department || null,
@@ -89,8 +111,16 @@ class EcommerceOrdersController {
         business_name: business_name || null,
         payment_method: payment_method || 'Efectivo',
         total_amount: totalAmount,
+        coupon_code: coupon_code || null,
+        coupon_name: coupon_name || null,
+        coupon_discount: finalCouponDiscount,
+        offers_discount: finalOffersDiscount,
+        subtotal_before_discount: finalSubtotalBeforeDiscount,
+        subtotal_after_discount: finalSubtotalAfterDiscount,
+        tax_amount: finalTaxAmount,
         items: orderItems,
-        notes: notes || null
+        notes: notes || null,
+        additional_comments: additional_comments || null
       };
 
       logger.info('Order data to create:', JSON.stringify(orderData, null, 2));
@@ -362,6 +392,107 @@ class EcommerceOrdersController {
       res.status(500).json({
         success: false,
         message: 'Error al generar URL de WhatsApp'
+      });
+    }
+  }
+
+  /**
+   * Obtener historial de cambios de estado de un pedido
+   */
+  static async getOrderStatusHistory(req, res) {
+    try {
+      const customerId = req.customer.id;
+      const orderId = req.params.id;
+
+      // Verificar que el pedido existe y pertenece al cliente
+      const orders = await db.query(
+        'SELECT id FROM orders WHERE id = ? AND customer_id = ?',
+        [orderId, customerId]
+      );
+
+      if (orders.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: 'Pedido no encontrado'
+        });
+      }
+
+      // Obtener el historial
+      const history = await OrderService.getOrderStatusHistory(orderId);
+
+      res.json({
+        success: true,
+        data: history
+      });
+
+    } catch (error) {
+      logger.error('Error in getOrderStatusHistory:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error al obtener historial de cambios de estado'
+      });
+    }
+  }
+
+  /**
+   * Cancelar pedido por el cliente
+   */
+  static async cancelOrder(req, res) {
+    try {
+      const customerId = req.customer.id;
+      const { order_number } = req.params;
+      const { cancellation_reason } = req.body;
+
+      // Obtener el ID del pedido por el order_number
+      const orders = await db.query(
+        'SELECT id FROM orders WHERE order_number = ?',
+        [order_number]
+      );
+
+      if (!orders || orders.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: 'Pedido no encontrado'
+        });
+      }
+
+      const orderId = orders[0].id;
+
+      // Validar motivo de cancelación
+      if (!cancellation_reason || cancellation_reason.trim() === '') {
+        return res.status(400).json({
+          success: false,
+          message: 'Debe proporcionar un motivo de cancelación'
+        });
+      }
+
+      // Cancelar el pedido
+      const result = await OrderService.cancelOrderByCustomer(
+        orderId,
+        customerId,
+        cancellation_reason.trim()
+      );
+
+      res.json({
+        success: true,
+        message: result.message
+      });
+
+    } catch (error) {
+      logger.error('Error in cancelOrder:', error);
+
+      if (error.message.includes('No tienes permiso') ||
+          error.message.includes('Solo se pueden cancelar') ||
+          error.message.includes('no encontrado')) {
+        return res.status(400).json({
+          success: false,
+          message: error.message
+        });
+      }
+
+      res.status(500).json({
+        success: false,
+        message: 'Error al cancelar el pedido'
       });
     }
   }

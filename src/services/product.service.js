@@ -46,13 +46,28 @@ class ProductService {
           p.code,
           p.name,
           p.is_active,
+          p.image,
+          p.price_1,
+          p.cost,
+          p.category_id,
+          p.subcategory_id,
+          p.brand_id,
+          p.tax_id,
           c.name as category_name,
           sc.name as subcategory_name,
-          b.name as brand_name
+          b.name as brand_name,
+          t.rate as tax_rate,
+          ROUND(COALESCE(stock_totals.total_stock, 0), 2) as stock
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
         LEFT JOIN subcategories sc ON p.subcategory_id = sc.id
         LEFT JOIN brands b ON p.brand_id = b.id
+        LEFT JOIN tax_rates t ON p.tax_id = t.id
+        LEFT JOIN (
+          SELECT product_id, ROUND(SUM(quantity), 2) as total_stock
+          FROM stock
+          GROUP BY product_id
+        ) stock_totals ON p.id = stock_totals.product_id
         ${whereClause}
         ORDER BY p.name ASC
         LIMIT 10000

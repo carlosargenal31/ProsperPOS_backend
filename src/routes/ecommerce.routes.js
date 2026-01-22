@@ -14,6 +14,7 @@ const EcommerceCustomersController = require('../controllers/ecommerce-customers
 const CustomerAddressesController = require('../controllers/customer-addresses.controller');
 const BillingInfoController = require('../controllers/billing-info.controller');
 const FavoritesController = require('../controllers/favorites.controller');
+const EcommerceCouponController = require('../controllers/ecommerce-coupon.controller');
 
 // Middleware
 const { verifyCustomerToken, optionalCustomerAuth } = require('../middleware/ecommerce-auth.middleware');
@@ -34,6 +35,7 @@ router.post('/customers/login', EcommerceCustomersController.login);
 router.get('/products/catalog', EcommerceProductsController.getCatalog);
 router.get('/products/featured', EcommerceProductsController.getFeaturedProducts);
 router.get('/products/search', EcommerceProductsController.search);
+router.get('/products/:id/related', EcommerceProductsController.getRelatedProducts);
 router.get('/products', EcommerceProductsController.getCatalog); // Para búsqueda autocompletada
 router.get('/products/:id', EcommerceProductsController.getProductDetails);
 
@@ -87,11 +89,18 @@ router.delete('/cart/item/:product_id', verifyCustomerToken, EcommerceCartContro
 router.delete('/cart/clear', verifyCustomerToken, EcommerceCartController.clearCart);
 router.get('/cart/count', verifyCustomerToken, EcommerceCartController.getItemCount);
 
+// Cupones y ofertas
+router.post('/cart/validate-coupon', EcommerceCouponController.validateCoupon);
+router.post('/cart/active-offers', EcommerceCouponController.getActiveOffers);
+
 // Pedidos
 router.post('/orders', verifyCustomerToken, EcommerceOrdersController.createOrder);
 router.get('/orders', verifyCustomerToken, EcommerceOrdersController.getMyOrders);
 router.get('/orders/:order_number', verifyCustomerToken, EcommerceOrdersController.getOrderByNumber);
 router.post('/orders/:order_number/cancel', verifyCustomerToken, EcommerceOrdersController.cancelOrder);
 router.get('/orders/:order_number/whatsapp', verifyCustomerToken, EcommerceOrdersController.getWhatsAppUrl);
+
+// Historial de cambios de estado (por ID numérico)
+router.get('/orders/:id/status-history', verifyCustomerToken, EcommerceOrdersController.getOrderStatusHistory);
 
 module.exports = router;

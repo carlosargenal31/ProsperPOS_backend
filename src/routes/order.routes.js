@@ -33,6 +33,9 @@ router.post('/', authenticateToken, OrderController.createOrder);
 // Actualizar estado del pedido
 router.patch('/:id/status', authenticateToken, OrderController.updateOrderStatus);
 
+// Obtener historial de cambios de estado
+router.get('/:id/status-history', authenticateToken, OrderController.getOrderStatusHistory);
+
 // Actualizar notas del pedido
 router.patch('/:id/notes', authenticateToken, OrderController.updateOrderNotes);
 

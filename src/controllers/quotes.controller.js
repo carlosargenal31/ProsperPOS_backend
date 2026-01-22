@@ -30,16 +30,19 @@ class QuotesController {
         quote_date,
         valid_until,
         notes,
-        terms_conditions
+        terms_conditions,
+        orden_compra,
+        constancia_exonerado,
+        registro_sag
       } = req.body;
 
       const userId = req.user.id;
 
-      // Generar número de cotización
-      const countSql = 'SELECT COUNT(*) as total FROM quotes';
-      const countResult = await db.query(countSql);
-      const quoteCount = countResult[0].total + 1;
-      const quoteNumber = String(quoteCount).padStart(10, '0');
+      // Generar número de cotización (usar el ID que se va a generar)
+      const maxIdSql = 'SELECT COALESCE(MAX(id), 0) as max_id FROM quotes';
+      const maxIdResult = await db.query(maxIdSql);
+      const nextId = maxIdResult[0].max_id + 1;
+      const quoteNumber = String(nextId).padStart(10, '0');
 
       // Insertar cotización
       const insertSql = `
@@ -47,15 +50,15 @@ class QuotesController {
           quote_number, customer_id, customer_name, customer_rtn, customer_phone,
           customer_email, branch_id, warehouse_id, seller_id, seller_name,
           subtotal, discount, tax, total, surcharge, quote_date, valid_until,
-          notes, terms_conditions, created_by
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          notes, terms_conditions, orden_compra, constancia_exonerado, registro_sag, created_by
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
       const result = await db.query(insertSql, [
         quoteNumber, customer_id, customer_name, customer_rtn, customer_phone,
         customer_email, branch_id, warehouse_id, seller_id, seller_name,
         subtotal, discount, tax, total, surcharge || 0, quote_date, valid_until,
-        notes, terms_conditions, userId
+        notes, terms_conditions, orden_compra || null, constancia_exonerado || null, registro_sag || null, userId
       ]);
 
       const quoteId = result.insertId;

@@ -24,16 +24,21 @@ class OrderService {
       const [orderResult] = await connection.execute(
         `INSERT INTO orders (
           order_number, customer_id, customer_name, customer_email,
-          customer_phone, customer_dni, delivery_address, department, city,
+          customer_phone, receiver_name, receiver_phone, customer_dni,
+          delivery_address, department, city,
           invoice_type, rtn, business_name, payment_method,
-          total_amount, status, notes
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          total_amount, coupon_code, coupon_name, coupon_discount,
+          offers_discount, subtotal_before_discount, subtotal_after_discount,
+          tax_amount, status, notes, additional_comments
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           orderNumber,
           orderData.customer_id || null,
           orderData.customer_name || 'Cliente',
           orderData.customer_email || null,
           orderData.customer_phone || null,
+          orderData.receiver_name || null,
+          orderData.receiver_phone || null,
           orderData.customer_dni || null,
           orderData.delivery_address || null,
           orderData.department || null,
@@ -43,8 +48,16 @@ class OrderService {
           orderData.business_name || null,
           orderData.payment_method || 'Efectivo',
           orderData.total_amount || 0,
+          orderData.coupon_code || null,
+          orderData.coupon_name || null,
+          orderData.coupon_discount || 0,
+          orderData.offers_discount || 0,
+          orderData.subtotal_before_discount || 0,
+          orderData.subtotal_after_discount || 0,
+          orderData.tax_amount || 0,
           'pendiente',
-          orderData.notes || null
+          orderData.notes || null,
+          orderData.additional_comments || null
         ]
       );
 
@@ -221,9 +234,11 @@ class OrderService {
       const items = await db.query(
         `SELECT
           oi.*,
-          p.image as product_image
+          p.image as product_image,
+          COALESCE(u.name, 'UNIDAD') as unit
         FROM order_items oi
         LEFT JOIN products p ON oi.product_id = p.id
+        LEFT JOIN units u ON p.unit_id = u.id
         WHERE oi.order_id = ?`,
         [orderId]
       );
@@ -258,7 +273,14 @@ class OrderService {
       // Obtener items para cada pedido
       for (const order of orders) {
         const items = await db.query(
-          `SELECT * FROM order_items WHERE order_id = ?`,
+          `SELECT
+            oi.*,
+            p.image as product_image,
+            COALESCE(u.name, 'UNIDAD') as unit
+          FROM order_items oi
+          LEFT JOIN products p ON oi.product_id = p.id
+          LEFT JOIN units u ON p.unit_id = u.id
+          WHERE oi.order_id = ?`,
           [order.id]
         );
         order.items = items;
@@ -275,37 +297,54 @@ class OrderService {
   // =================================================================
   // ACTUALIZAR ESTADO DEL PEDIDO
   // =================================================================
-  static async updateOrderStatus(orderId, newStatus, notes = null) {
+  static async updateOrderStatus(orderId, newStatus, processNotes = null, userId = null) {
+    const connection = await db.getConnection();
+
     try {
-      const validStatuses = ['pendiente', 'cotizado', 'cobrado'];
+      await connection.beginTransaction();
+
+      const validStatuses = ['pendiente', 'cotizado', 'cobrado', 'cancelado'];
 
       if (!validStatuses.includes(newStatus)) {
         throw new Error('Estado de pedido inválido');
       }
 
-      let sql = 'UPDATE orders SET status = ?';
-      const params = [newStatus];
+      // Obtener el estado actual del pedido
+      const [currentOrder] = await connection.execute(
+        'SELECT status FROM orders WHERE id = ?',
+        [orderId]
+      );
 
-      if (notes !== null) {
-        sql += ', notes = ?';
-        params.push(notes);
-      }
-
-      sql += ' WHERE id = ?';
-      params.push(orderId);
-
-      const result = await db.query(sql, params);
-
-      if (result.affectedRows === 0) {
+      if (!currentOrder || currentOrder.length === 0) {
         throw new Error('Pedido no encontrado');
       }
 
-      logger.info(`Pedido ${orderId} actualizado a estado: ${newStatus}`);
+      const previousStatus = currentOrder[0].status;
+
+      // Actualizar el estado del pedido
+      await connection.execute(
+        'UPDATE orders SET status = ? WHERE id = ?',
+        [newStatus, orderId]
+      );
+
+      // Guardar en el historial de cambios de estado
+      if (userId) {
+        await connection.execute(
+          `INSERT INTO order_status_history
+          (order_id, previous_status, new_status, notes, changed_by)
+          VALUES (?, ?, ?, ?, ?)`,
+          [orderId, previousStatus, newStatus, processNotes, userId]
+        );
+      }
+
+      await connection.commit();
+
+      logger.info(`Pedido ${orderId} actualizado de ${previousStatus} a ${newStatus}`);
 
       // Enviar notificación por email al cliente (no bloquear si falla)
       try {
         const order = await this.getOrderById(orderId);
-        await EmailService.sendOrderStatusUpdate(order, newStatus, notes);
+        await EmailService.sendOrderStatusUpdate(order, newStatus, processNotes);
       } catch (emailError) {
         logger.error('Error enviando email de actualización al cliente:', emailError);
         // No lanzar el error, el estado ya fue actualizado
@@ -314,11 +353,39 @@ class OrderService {
       return {
         success: true,
         order_id: orderId,
+        previous_status: previousStatus,
         new_status: newStatus
       };
 
     } catch (error) {
+      await connection.rollback();
       logger.error('Error al actualizar estado del pedido:', error);
+      throw error;
+    } finally {
+      connection.release();
+    }
+  }
+
+  // =================================================================
+  // OBTENER HISTORIAL DE CAMBIOS DE ESTADO
+  // =================================================================
+  static async getOrderStatusHistory(orderId) {
+    try {
+      const history = await db.query(
+        `SELECT
+          osh.*,
+          CONCAT(u.first_name, ' ', u.last_name) as changed_by_name
+        FROM order_status_history osh
+        LEFT JOIN users u ON osh.changed_by = u.id
+        WHERE osh.order_id = ?
+        ORDER BY osh.changed_at DESC`,
+        [orderId]
+      );
+
+      return history;
+
+    } catch (error) {
+      logger.error('Error al obtener historial de estados:', error);
       throw error;
     }
   }
@@ -362,6 +429,7 @@ class OrderService {
           SUM(CASE WHEN status = 'pendiente' THEN 1 ELSE 0 END) as pendientes,
           SUM(CASE WHEN status = 'cotizado' THEN 1 ELSE 0 END) as cotizados,
           SUM(CASE WHEN status = 'cobrado' THEN 1 ELSE 0 END) as cobrados,
+          SUM(CASE WHEN status = 'cancelado' THEN 1 ELSE 0 END) as cancelados,
           SUM(CASE WHEN status = 'cobrado' THEN total_amount ELSE 0 END) as total_cobrado
         FROM orders
       `);
@@ -482,6 +550,69 @@ class OrderService {
     } catch (error) {
       await connection.rollback();
       logger.error('Error al convertir pedido a factura:', error);
+      throw error;
+    } finally {
+      connection.release();
+    }
+  }
+
+  // =================================================================
+  // CANCELAR PEDIDO POR CLIENTE
+  // =================================================================
+  static async cancelOrderByCustomer(orderId, customerId, cancellationReason) {
+    const connection = await db.getConnection();
+
+    try {
+      await connection.beginTransaction();
+
+      // Verificar que el pedido existe y pertenece al cliente
+      const [order] = await connection.execute(
+        'SELECT id, status, customer_id FROM orders WHERE id = ?',
+        [orderId]
+      );
+
+      if (!order || order.length === 0) {
+        throw new Error('Pedido no encontrado');
+      }
+
+      if (order[0].customer_id !== customerId) {
+        throw new Error('No tienes permiso para cancelar este pedido');
+      }
+
+      // Solo se pueden cancelar pedidos pendientes
+      if (order[0].status !== 'pendiente') {
+        throw new Error('Solo se pueden cancelar pedidos en estado pendiente');
+      }
+
+      // Actualizar el pedido a cancelado
+      await connection.execute(
+        `UPDATE orders
+         SET status = 'cancelado',
+             cancellation_reason = ?,
+             cancelled_by = 'cliente',
+             cancelled_at = NOW()
+         WHERE id = ?`,
+        [cancellationReason, orderId]
+      );
+
+      // Registrar en el historial de cambios de estado
+      await connection.execute(
+        `INSERT INTO order_status_history
+         (order_id, previous_status, new_status, notes, changed_by)
+         VALUES (?, 'pendiente', 'cancelado', ?, ?)`,
+        [orderId, `Cancelado por cliente: ${cancellationReason}`, customerId]
+      );
+
+      await connection.commit();
+
+      return {
+        success: true,
+        message: 'Pedido cancelado exitosamente'
+      };
+
+    } catch (error) {
+      await connection.rollback();
+      logger.error('Error al cancelar pedido:', error);
       throw error;
     } finally {
       connection.release();

@@ -176,9 +176,10 @@ class Invoice {
           ii.*,
           p.name as product_full_name,
           p.image as product_image,
-          p.unit as product_unit
+          COALESCE(u.name, 'UNIDAD') as product_unit
         FROM invoice_items ii
         LEFT JOIN products p ON ii.product_id = p.id
+        LEFT JOIN units u ON p.unit_id = u.id
         WHERE ii.invoice_id = ?
         ORDER BY ii.id`,
         [id]
@@ -272,10 +273,13 @@ class Invoice {
           payment_terms_days,
           resolution_id,
           resolution_number,
+          orden_compra,
+          constancia_exonerado,
+          registro_sag,
           status,
           created_by,
           updated_by
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           invoiceNumber,
           invoiceData.invoice_type || 'factura',
@@ -301,6 +305,9 @@ class Invoice {
           invoiceData.payment_terms_days || 0,
           resolutionId,
           resolutionNumber,
+          invoiceData.orden_compra || null,
+          invoiceData.constancia_exonerado || null,
+          invoiceData.registro_sag || null,
           invoiceData.status || 'issued',
           invoiceData.created_by,
           invoiceData.updated_by

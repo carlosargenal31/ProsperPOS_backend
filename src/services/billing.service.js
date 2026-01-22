@@ -50,9 +50,11 @@ class BillingService {
         `SELECT
           si.*,
           p.name as product_name,
-          p.sku as product_sku
+          p.sku as product_sku,
+          COALESCE(u.name, 'UNIDAD') as unit
         FROM sale_items si
         LEFT JOIN products p ON si.product_id = p.id
+        LEFT JOIN units u ON p.unit_id = u.id
         WHERE si.sale_id = ?`,
         [saleId]
       );

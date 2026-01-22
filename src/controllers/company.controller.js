@@ -151,6 +151,49 @@ class CompanyController {
       sendErrorResponse(res, 500, 'Error al establecer empresa como predeterminada', error.message);
     }
   }
+
+  /**
+   * GET /api/v1/companies/ecommerce/config
+   * Obtener configuración de e-commerce
+   */
+  static async getEcommerceConfig(req, res) {
+    try {
+      const config = await CompanyService.getEcommerceConfig();
+
+      sendSuccessResponse(res, config, 'Configuración de e-commerce obtenida exitosamente');
+    } catch (error) {
+      logger.error('Error in CompanyController.getEcommerceConfig:', error);
+
+      if (error.message === 'No hay empresas registradas') {
+        return sendErrorResponse(res, 404, error.message);
+      }
+
+      sendErrorResponse(res, 500, 'Error al obtener configuración de e-commerce', error.message);
+    }
+  }
+
+  /**
+   * PUT /api/v1/companies/ecommerce/config
+   * Actualizar configuración de e-commerce
+   */
+  static async updateEcommerceConfig(req, res) {
+    try {
+      const configData = req.body;
+      const userId = req.user.userId;
+
+      const result = await CompanyService.updateEcommerceConfig(configData, userId);
+
+      sendSuccessResponse(res, result, 'Configuración de tienda actualizada exitosamente');
+    } catch (error) {
+      logger.error('Error in CompanyController.updateEcommerceConfig:', error);
+
+      if (error.message === 'No hay empresas registradas') {
+        return sendErrorResponse(res, 404, error.message);
+      }
+
+      sendErrorResponse(res, 500, 'Error al actualizar configuración de e-commerce', error.message);
+    }
+  }
 }
 
 module.exports = CompanyController;

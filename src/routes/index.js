@@ -68,6 +68,9 @@ const bannerRoutes = require('./banner.routes');
 const companyRoutes = require('./company.routes');
 const locationRoutes = require('./location.routes');
 const orderRoutes = require('./order.routes');
+const opinionRoutes = require('./opinion.routes');
+const imageProxyRoutes = require('./image-proxy.routes');
+const cashRegisterRoutes = require('./cash-register.routes');
 
 
 // ===================================================================
@@ -133,6 +136,9 @@ router.use('/v1/banners', bannerRoutes);
 router.use('/v1/companies', companyRoutes);
 router.use('/v1/locations', locationRoutes);
 router.use('/v1/orders', orderRoutes);
+router.use('/v1/opinions', opinionRoutes);
+router.use('/v1/image-proxy', imageProxyRoutes);
+router.use('/v1/cash-register', cashRegisterRoutes);
 
 // ===================================================================
 // RUTAS FUTURAS (Comentadas)

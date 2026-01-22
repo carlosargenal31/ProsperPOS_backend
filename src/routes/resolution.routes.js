@@ -63,6 +63,13 @@ router.get('/active',
 
       const resolution = resolutions[0];
 
+      // Formatear fecha_fin a string sin timezone y SUMAR +1 día
+      if (resolution.fecha_fin) {
+        const d = new Date(resolution.fecha_fin);
+        d.setUTCDate(d.getUTCDate() + 1); // +1 día para compensar timezone
+        resolution.fecha_fin = `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`;
+      }
+
       // Verificar si la resolución está vencida
       const currentDate = new Date();
       const endDate = new Date(resolution.fecha_fin);

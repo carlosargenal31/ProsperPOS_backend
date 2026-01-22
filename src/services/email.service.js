@@ -250,7 +250,7 @@ ${notes ? 'NOTAS:\n' + notes + '\n\n' : ''}
 Gracias por tu preferencia.
 
 Saludos,
-El equipo de nuestra tienda
+El equipo de Ceramicas Universal
         `,
         html: `
 <!DOCTYPE html>
@@ -317,6 +317,148 @@ El equipo de nuestra tienda
 
     } catch (error) {
       logger.error('Error enviando email de actualización:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  // =================================================================
+  // ENVIAR EMAIL DE RESPUESTA A OPINIÓN DEL CLIENTE
+  // =================================================================
+  static async sendOpinionResponse(responseData) {
+    try {
+      logger.info('📧 Iniciando envío de email de respuesta de opinión...');
+
+      const {
+        customer_name,
+        customer_email,
+        inquiry_type,
+        original_message,
+        admin_response
+      } = responseData;
+
+      logger.info(`Datos: ${customer_name} <${customer_email}>`);
+
+      if (!customer_email) {
+        logger.warn('No hay email de cliente para enviar respuesta');
+        return { success: false, message: 'No hay email de cliente' };
+      }
+
+      const settings = await db.query(
+        'SELECT setting_value FROM ecommerce_settings WHERE setting_key = ?',
+        ['store_email']
+      );
+
+      const storeEmail = settings[0]?.setting_value || 'noreply@prosperpos.com';
+      logger.info(`Store email: ${storeEmail}`);
+
+      logger.info('Obteniendo transporter SMTP...');
+      const transporter = await this.getTransporter();
+      logger.info('✅ Transporter obtenido');
+
+      // Mapeo de tipos de consulta a texto legible
+      const inquiryTypeLabels = {
+        'Seguimiento con Asesor': 'Seguimiento con Asesor',
+        'Cotización no fue recibida/enviada': 'Cotización no recibida/enviada',
+        'Factura - no fue recibida/enviada': 'Factura no recibida/enviada',
+        'Factura - incorrecta': 'Factura incorrecta',
+        'Servicio - Asesor no responde': 'Servicio - Asesor no responde',
+        'Servicio - Asesor no da seguimiento': 'Servicio - Asesor no da seguimiento',
+        'Servicio - Tiempo de entrega en bodega': 'Servicio - Tiempo de entrega en bodega',
+        'Servicio - No atienden en Tienda': 'Servicio - No atienden en Tienda',
+        'Otra': 'Otra consulta'
+      };
+
+      const inquiryLabel = inquiryTypeLabels[inquiry_type] || inquiry_type;
+
+      const mailOptions = {
+        from: storeEmail,
+        to: customer_email,
+        subject: `Respuesta a tu consulta: ${inquiryLabel}`,
+        text: `
+Hola ${customer_name},
+
+Gracias por ponerte en contacto con nosotros. Hemos recibido tu mensaje y queremos responderte:
+
+TU MENSAJE:
+"${original_message}"
+
+NUESTRA RESPUESTA:
+${admin_response}
+
+Si tienes alguna otra pregunta o necesitas más información, no dudes en contactarnos nuevamente.
+
+Saludos cordiales,
+Equipo de Cerámicas Universal
+        `,
+        html: `
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 20px; border-radius: 8px 8px 0 0; text-align: center; }
+    .content { background: #f8f9fa; padding: 30px 20px; }
+    .message-box { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #667eea; }
+    .response-box { background: #e7f3ff; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #0066cc; }
+    .label { font-weight: bold; color: #667eea; text-transform: uppercase; font-size: 0.85em; margin-bottom: 10px; }
+    .footer { background: #333; color: white; padding: 20px; text-align: center; border-radius: 0 0 8px 8px; font-size: 0.9em; }
+    .inquiry-type { display: inline-block; background: #667eea; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.85em; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 style="margin: 0; font-size: 24px;">✉️ Respuesta a tu Consulta</h1>
+      <p style="margin: 10px 0 0 0; opacity: 0.9;">Gracias por contactarnos</p>
+    </div>
+
+    <div class="content">
+      <p>Hola <strong>${customer_name}</strong>,</p>
+
+      <p>Hemos recibido tu consulta sobre: <span class="inquiry-type">${inquiryLabel}</span></p>
+
+      <div class="message-box">
+        <div class="label">Tu mensaje:</div>
+        <p style="margin: 10px 0 0 0; color: #555;">"${original_message}"</p>
+      </div>
+
+      <div class="response-box">
+        <div class="label" style="color: #0066cc;">Nuestra respuesta:</div>
+        <p style="margin: 10px 0 0 0; color: #333;">${admin_response.replace(/\n/g, '<br>')}</p>
+      </div>
+
+      <p>Si tienes alguna otra pregunta o necesitas más información, no dudes en contactarnos nuevamente.</p>
+
+      <p style="margin-top: 30px;">
+        Saludos cordiales,<br>
+        <strong>Equipo de Cerámicas Universal</strong>
+      </p>
+    </div>
+
+    <div class="footer">
+      <p style="margin: 0;">Cerámicas Universal</p>
+      <p style="margin: 10px 0 0 0; font-size: 0.85em; opacity: 0.8;">
+        Este mensaje fue enviado en respuesta a tu consulta.
+      </p>
+    </div>
+  </div>
+</body>
+</html>
+        `
+      };
+
+      const info = await transporter.sendMail(mailOptions);
+
+      logger.info('Email de respuesta de opinión enviado:', info.messageId);
+
+      return {
+        success: true,
+        message_id: info.messageId
+      };
+
+    } catch (error) {
+      logger.error('Error enviando email de respuesta de opinión:', error);
       return { success: false, error: error.message };
     }
   }

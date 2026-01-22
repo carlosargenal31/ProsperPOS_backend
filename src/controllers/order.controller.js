@@ -153,7 +153,8 @@ class OrderController {
   static async updateOrderStatus(req, res) {
     try {
       const { id } = req.params;
-      const { status, notes } = req.body;
+      const { status, notes } = req.body; // notes = notas del proceso
+      const userId = req.user?.id; // Usuario autenticado
 
       if (!status) {
         return res.status(400).json({
@@ -162,7 +163,7 @@ class OrderController {
         });
       }
 
-      const result = await OrderService.updateOrderStatus(id, status, notes);
+      const result = await OrderService.updateOrderStatus(id, status, notes, userId);
 
       res.json({
         success: true,
@@ -175,6 +176,30 @@ class OrderController {
       res.status(500).json({
         success: false,
         message: 'Error al actualizar el estado del pedido',
+        error: error.message
+      });
+    }
+  }
+
+  // =================================================================
+  // OBTENER HISTORIAL DE CAMBIOS DE ESTADO
+  // =================================================================
+  static async getOrderStatusHistory(req, res) {
+    try {
+      const { id } = req.params;
+
+      const history = await OrderService.getOrderStatusHistory(id);
+
+      res.json({
+        success: true,
+        data: history
+      });
+
+    } catch (error) {
+      logger.error('Error en getOrderStatusHistory:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error al obtener historial de cambios de estado',
         error: error.message
       });
     }

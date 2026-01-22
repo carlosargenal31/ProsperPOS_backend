@@ -511,6 +511,20 @@ class AccountStatementController {
         return new Date(b.emission_date) - new Date(a.emission_date);
       });
 
+      // Formatear fechas - SUMAR 6 horas para compensar timezone
+      allDocuments.forEach(doc => {
+        if (doc.emission_date) {
+          const d = new Date(doc.emission_date);
+          d.setHours(d.getHours() + 6); // Sumar 6 horas
+          doc.emission_date = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+        }
+        if (doc.issue_date) {
+          const d = new Date(doc.issue_date);
+          d.setHours(d.getHours() + 6); // Sumar 6 horas
+          doc.issue_date = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+        }
+      });
+
       console.log('✅ Enviando respuesta\n');
 
       return res.json({
@@ -557,9 +571,19 @@ class AccountStatementController {
             inv.subtotal,
             inv.discount_amount as discount,
             inv.tax_amount as tax,
-            inv.payment_status as status
+            inv.payment_status as status,
+            inv.orden_compra,
+            inv.constancia_exonerado,
+            inv.registro_sag,
+            r.cai,
+            r.numero_resolucion,
+            r.nro_inicial_control,
+            r.nro_final_control,
+            r.fecha_fin,
+            r.prefijo_control
           FROM invoices inv
           LEFT JOIN branches b ON inv.warehouse_id = b.id
+          LEFT JOIN resolutions r ON inv.resolution_id = r.id
           WHERE inv.id = ?
         `, [id]);
 
@@ -574,12 +598,14 @@ class AccountStatementController {
               ii.product_id,
               p.code as product_code,
               p.name as product_name,
+              u.name as unit_name,
               ii.quantity,
               ii.unit_price,
               ii.discount_value,
               ii.tax_rate
             FROM invoice_items ii
             LEFT JOIN products p ON ii.product_id = p.id
+            LEFT JOIN units u ON p.unit_id = u.id
             WHERE ii.invoice_id = ?
           `, [id]);
 
@@ -604,7 +630,10 @@ class AccountStatementController {
             q.subtotal,
             q.discount,
             q.tax,
-            q.status
+            q.status,
+            q.orden_compra,
+            q.constancia_exonerado,
+            q.registro_sag
           FROM quotes q
           LEFT JOIN branches b ON q.branch_id = b.id
           WHERE q.id = ?
@@ -621,12 +650,14 @@ class AccountStatementController {
               qi.product_id,
               p.code as product_code,
               p.name as product_name,
+              u.name as unit_name,
               qi.quantity,
               qi.unit_price,
               qi.discount_value,
               qi.tax_rate
             FROM quote_items qi
             LEFT JOIN products p ON qi.product_id = p.id
+            LEFT JOIN units u ON p.unit_id = u.id
             WHERE qi.quote_id = ?
           `, [id]);
 
@@ -651,7 +682,10 @@ class AccountStatementController {
             p.subtotal,
             p.discount,
             p.tax,
-            p.status
+            p.status,
+            p.orden_compra,
+            p.constancia_exonerado,
+            p.registro_sag
           FROM pending_invoices p
           LEFT JOIN branches b ON p.branch_id = b.id
           WHERE p.id = ?
@@ -668,12 +702,14 @@ class AccountStatementController {
               pi.product_id,
               p.code as product_code,
               p.name as product_name,
+              u.name as unit_name,
               pi.quantity,
               pi.unit_price,
               pi.discount_value,
               pi.tax_rate
             FROM pending_invoice_items pi
             LEFT JOIN products p ON pi.product_id = p.id
+            LEFT JOIN units u ON p.unit_id = u.id
             WHERE pi.pending_invoice_id = ?
           `, [id]);
 
@@ -715,12 +751,14 @@ class AccountStatementController {
               si.product_id,
               p.code as product_code,
               p.name as product_name,
+              u.name as unit_name,
               si.quantity,
               0 as unit_price,
               0 as discount_value,
               0 as tax_rate
             FROM shipment_items si
             LEFT JOIN products p ON si.product_id = p.id
+            LEFT JOIN units u ON p.unit_id = u.id
             WHERE si.shipment_id = ?
           `, [id]);
 
@@ -776,12 +814,14 @@ class AccountStatementController {
               sri.product_id,
               p.code as product_code,
               p.name as product_name,
+              u.name as unit_name,
               sri.quantity,
               sri.unit_price,
               sri.discount_value,
               sri.tax_rate
             FROM sales_return_items sri
             LEFT JOIN products p ON sri.product_id = p.id
+            LEFT JOIN units u ON p.unit_id = u.id
             WHERE sri.sales_return_id = ?
           `, [id]);
 
@@ -795,6 +835,18 @@ class AccountStatementController {
           success: false,
           message: 'Documento no encontrado'
         });
+      }
+
+      // Formatear fechas - SUMAR 6 horas para compensar timezone
+      if (document.emission_date) {
+        const d = new Date(document.emission_date);
+        d.setHours(d.getHours() + 6);
+        document.emission_date = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+      }
+      if (document.issue_date) {
+        const d = new Date(document.issue_date);
+        d.setHours(d.getHours() + 6);
+        document.issue_date = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
       }
 
       return res.json({

@@ -77,7 +77,8 @@ class OfferModel {
           b.nombre as agencia_nombre,
           c.name as categoria_nombre,
           sc.name as subcategoria_nombre,
-          p.name as producto_nombre
+          p.name as producto_nombre,
+          (SELECT COUNT(*) FROM offer_items WHERE offer_id = o.id) as items_count
         FROM offers o
         LEFT JOIN branches b ON o.agencia_id = b.id
         LEFT JOIN categories c ON o.categoria_id = c.id
