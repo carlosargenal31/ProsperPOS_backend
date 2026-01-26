@@ -7,6 +7,15 @@ const logger = require('../utils/logger');
 
 class PhysicalInventoryService {
   /**
+   * Exportar inventario físico (simplemente reutiliza getPhysicalInventory)
+   * @param {Object} filters - Filtros de búsqueda
+   * @returns {Promise<Object>} Datos del inventario físico para exportar
+   */
+  static async exportPhysicalInventory(filters = {}) {
+    return this.getPhysicalInventory(filters);
+  }
+
+  /**
    * Obtener reporte de inventario físico con filtros
    * @param {Object} filters - Filtros de búsqueda
    * @returns {Promise<Object>} Datos del inventario físico
@@ -75,8 +84,8 @@ class PhysicalInventoryService {
 
       // Filtro de suspendidos
       if (!include_suspended) {
-        whereConditions.push('p.status = ?');
-        params.push('active');
+        whereConditions.push('p.is_active = ?');
+        params.push(1);
       }
 
       const whereClause = whereConditions.join(' AND ');
@@ -92,7 +101,7 @@ class PhysicalInventoryService {
         c.name as categoria,
         sc.name as subcategoria,
         b.name as marca,
-        p.unit as unidad_medida,
+        u.name as unidad_medida,
         w.id as warehouse_id,
         w.nombre as almacen,
         COALESCE(stock_data.stock_quantity, 0) as cantidad,
@@ -123,6 +132,7 @@ class PhysicalInventoryService {
         LEFT JOIN categories c ON p.category_id = c.id
         LEFT JOIN subcategories sc ON p.subcategory_id = sc.id
         LEFT JOIN brands b ON p.brand_id = b.id
+        LEFT JOIN units u ON p.unit_id = u.id
         CROSS JOIN warehouses w
         LEFT JOIN (${stockSubquery}) stock_data ON stock_data.product_id = p.id AND stock_data.warehouse_id = w.id
         WHERE ${whereClause} AND w.deleted_at IS NULL
@@ -266,3 +276,4 @@ class PhysicalInventoryService {
 }
 
 module.exports = PhysicalInventoryService;
+

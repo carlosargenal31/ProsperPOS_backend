@@ -15,9 +15,17 @@ class OfferController {
     try {
       const { search = '', is_active, agencia_id, tipo_aplicacion } = req.query;
 
+      // Parse is_active - acepta 'true'/'false', '1'/'0', 1/0
+      let isActiveFilter = null;
+      if (is_active === 'true' || is_active === '1' || is_active === 1) {
+        isActiveFilter = true;
+      } else if (is_active === 'false' || is_active === '0' || is_active === 0) {
+        isActiveFilter = false;
+      }
+
       const filters = {
         search,
-        is_active: is_active === 'true' ? true : is_active === 'false' ? false : null,
+        is_active: isActiveFilter,
         agencia_id: agencia_id || null,
         tipo_aplicacion: tipo_aplicacion || null
       };

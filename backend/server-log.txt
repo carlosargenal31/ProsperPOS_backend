@@ -1,0 +1,307 @@
+
+> prosperpos-backend@1.0.0 start
+> node server.js
+
+
+📋 ProsperPOS - Sistema de Punto de Venta
+   Version: 1.0.0
+   Autor: Tu nombre
+   Descripción: Backend API con migraciones automáticas
+
+🚀 Iniciando ProsperPOS Backend...
+14:36:23 [[32minfo[39m]: 🚀 Iniciando ProsperPOS Backend...
+Ignoring invalid configuration option passed to Connection: acquireTimeout. This is currently a warning, but in future versions of MySQL2, an error will be thrown if you pass an invalid configuration option to a Connection
+Ignoring invalid configuration option passed to Connection: timeout. This is currently a warning, but in future versions of MySQL2, an error will be thrown if you pass an invalid configuration option to a Connection
+Ignoring invalid configuration option passed to Connection: reconnect. This is currently a warning, but in future versions of MySQL2, an error will be thrown if you pass an invalid configuration option to a Connection
+(node:58092) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+14:36:23 [[32minfo[39m]: Pool de conexiones MySQL creado exitosamente
+14:36:23 [[32minfo[39m]: Base de datos: prosperpos
+14:36:23 [[32minfo[39m]: Host: localhost:3306
+14:36:23 [[32minfo[39m]: ✅ Conexión a base de datos verificada
+14:36:23 [[32minfo[39m]: 🔄 Iniciando migraciones automáticas de base de datos...
+14:36:23 [[32minfo[39m]: ✅ Todas las tablas creadas exitosamente
+14:36:23 [[32minfo[39m]: ✅ Índices creados automáticamente
+14:36:24 [[32minfo[39m]: ✅ Datos por defecto insertados
+14:36:24 [[32minfo[39m]: ✅ Columna branch_id ya existe en invoices
+14:36:24 [[32minfo[39m]: 📦 Creando tablas de ajuste de inventario...
+14:36:24 [[32minfo[39m]: ✅ Tabla inventory_adjustments creada/verificada
+14:36:24 [[32minfo[39m]: ✅ Tabla inventory_adjustment_details creada/verificada
+14:36:24 [[32minfo[39m]: ✅ Tablas de ajuste de inventario listas
+14:36:24 [[32minfo[39m]: 📦 Migrando min_stock y max_stock a la tabla stock...
+14:36:24 [[32minfo[39m]: ✅ Columnas min_stock y max_stock ya existen en stock
+14:36:24 [[32minfo[39m]: ✅ Columnas min_stock y max_stock ya fueron eliminadas de products
+14:36:24 [[32minfo[39m]: ✅ Migración de min_stock y max_stock completada
+14:36:24 [[32minfo[39m]: 📍 Verificando tablas de ubicaciones...
+14:36:24 [[32minfo[39m]: ✅ Tablas de ubicaciones creadas/verificadas
+14:36:24 [[32minfo[39m]: ✅ Departamentos ya poblados
+14:36:24 [[32minfo[39m]: 📝 Verificando columnas de clientes ecommerce...
+14:36:24 [[32minfo[39m]: ✅ Columna DNI ya existe en ecommerce_customers
+14:36:24 [[32minfo[39m]: ✅ Columna additional_notes ya existe en customer_addresses
+14:36:24 [[32minfo[39m]: ✅ Foreign key ya apunta correctamente a ecommerce_customers
+14:36:24 [[32minfo[39m]: 📝 Creando tabla de información de facturación...
+14:36:24 [[32minfo[39m]: ✅ Tabla customer_billing_info creada/verificada
+14:36:24 [[32minfo[39m]: ⭐ Creando tabla de productos favoritos...
+14:36:24 [[32minfo[39m]: 🗑️ Tabla customer_favorites eliminada si existía
+14:36:24 [[32minfo[39m]: ✅ Tabla customer_favorites creada/verificada
+14:36:24 [[32minfo[39m]: 📦 Creando tablas de pedidos en línea...
+14:36:24 [[32minfo[39m]: ✅ Tabla orders ya existe
+14:36:24 [[32minfo[39m]: ✅ Tabla order_items ya existe
+14:36:24 [[32minfo[39m]: ✅ Tablas de pedidos creadas/verificadas exitosamente
+14:36:24 [[32minfo[39m]: ⚙️ Creando tabla de configuración del ecommerce...
+14:36:24 [[32minfo[39m]: ✅ Tabla ecommerce_settings ya existe
+14:36:24 [[32minfo[39m]: ✅ Migraciones completadas exitosamente
+14:36:24 [[32minfo[39m]: 📊 Base de datos inicializada correctamente
+14:36:24 [[32minfo[39m]: ✅ Aplicación inicializada correctamente con base de datos
+
+🚀 ===============================================
+📊 ProsperPOS Backend iniciado correctamente
+🌐 Servidor corriendo en: http://localhost:3000
+📖 API Info: http://localhost:3000/api
+🏥 Health Check: http://localhost:3000/health
+⚙️ Entorno: development
+🕐 Hora de inicio: 23/1/2026, 14:36:24
+🚀 ===============================================
+
+🛠️ MODO DESARROLLO - Información útil:
+   📁 Logs: ./logs/
+   📁 Uploads: ./uploads/
+   🔧 Variables: .env
+   🔍 Endpoints principales:
+      POST /api/v1/auth/login - Iniciar sesión
+      GET  /api/v1/users - Listar usuarios
+      GET  /api/v1/products - Listar productos
+      GET  /api/v1/categories - Listar categorías
+      GET  /api/v1/customers - Listar clientes
+      GET  /api/v1/suppliers - Listar proveedores
+   📝 Credenciales por defecto:
+      Username: admin@prosperpos.com
+      Password: Admin1234
+
+14:36:24 [[32minfo[39m]: Servidor iniciado exitosamente en puerto 3000 {"environment":"development","port":"3000"}
+14:36:31 [[32minfo[39m]: GET /api/health {"ip":"::1","userAgent":"curl/8.10.1","requestId":"no-id"}
+[0mGET /api/health [32m200[0m 6.526 ms - 100[0m
+14:38:36 [[32minfo[39m]: GET /api/v1/companies/default {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:38:36 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/companies/default","ip":"::1"},"type":"USER_ACTIVITY"}
+14:38:36 [[32minfo[39m]: GET /api/v1/branches {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:38:36 [[32minfo[39m]: GET /api/v1/users {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:38:36 [[32minfo[39m]: GET /api/v1/bank-accounts {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+[0mGET /api/v1/companies/default [32m200[0m 66.915 ms - -[0m
+14:38:36 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/branches","ip":"::1"},"type":"USER_ACTIVITY"}
+14:38:36 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/bank-accounts","ip":"::1"},"type":"USER_ACTIVITY"}
+14:38:36 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/users","ip":"::1"},"type":"USER_ACTIVITY"}
+14:38:36 [[32minfo[39m]: Listando usuarios {"userId":1,"filters":{"search":"","role":"","status":""},"pagination":{"page":1,"limit":10}}
+14:38:36 [[32minfo[39m]: Obteniendo usuarios con filtros {"filters":{"page":1,"limit":10,"search":"","role":"","status":"","sortBy":"created_at","sortOrder":"DESC"}}
+[0mGET /api/v1/branches [36m304[0m 88.003 ms - -[0m
+14:38:36 [[32minfo[39m]: Usuarios obtenidos exitosamente {"total":7,"page":1}
+[0mGET /api/v1/bank-accounts [32m200[0m 62.792 ms - -[0m
+[0mGET /api/v1/users [32m200[0m 85.366 ms - -[0m
+14:38:42 [[32minfo[39m]: GET /api/v1/reprint/search?documentType=DEVOLUCION&searchQuery=&dateFrom=2026-01-01&dateTo=2026-01-23&branch= {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:38:42 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/reprint/search?documentType=DEVOLUCION&searchQuery=&dateFrom=2026-01-01&dateTo=2026-01-23&branch=","ip":"::1"},"type":"USER_ACTIVITY"}
+SQL Query: 
+            SELECT
+              sr.id,
+              sr.correlative as document_number,
+              sr.emission_date as issue_date,
+              NULL as expiry_date,
+              sr.customer_name,
+              CONCAT(u.first_name, ' ', u.last_name) as created_by_name,
+              sr.total,
+              sr.invoice_number,
+              'Completada' as status,
+              'DEVOLUCION' as document_type
+            FROM sales_returns sr
+            LEFT JOIN users u ON sr.created_by = u.id
+            WHERE 1=1
+           AND sr.emission_date >= ? AND sr.emission_date <= ? ORDER BY sr.created_at DESC LIMIT 100
+Params: [ '2026-01-01', '2026-01-23' ]
+[0mGET /api/v1/reprint/search?documentType=DEVOLUCION&searchQuery=&dateFrom=2026-01-01&dateTo=2026-01-23&branch= [36m304[0m 23.986 ms - -[0m
+14:38:43 [[32minfo[39m]: GET /api/v1/reprint/DEVOLUCION/6 {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:38:43 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/reprint/DEVOLUCION/6","ip":"::1"},"type":"USER_ACTIVITY"}
+=== ENVIANDO DEVOLUCIÓN AL FRONTEND ===
+Return ID: 6
+subtotal_bruto: 8713
+descuento: 397.6
+recargo: 200
+importe_gravado_15: 8315.4
+isv_15: 1247.31
+total_final: 9762.71
+=======================================
+[0mGET /api/v1/reprint/DEVOLUCION/6 [32m200[0m 49.907 ms - -[0m
+14:38:43 [[32minfo[39m]: GET /api/v1/reprint/DEVOLUCION/6 {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:38:43 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/reprint/DEVOLUCION/6","ip":"::1"},"type":"USER_ACTIVITY"}
+=== ENVIANDO DEVOLUCIÓN AL FRONTEND ===
+Return ID: 6
+subtotal_bruto: 8713
+descuento: 397.6
+recargo: 200
+importe_gravado_15: 8315.4
+isv_15: 1247.31
+total_final: 9762.71
+=======================================
+[0mGET /api/v1/reprint/DEVOLUCION/6 [36m304[0m 17.067 ms - -[0m
+14:38:45 [[32minfo[39m]: GET /api/v1/image-proxy?url=https:%2F%2Fstorage.googleapis.com%2Fprosperpos-images%2Fcompanylogos%2Flogo_ceramicasuniversal-1767382018704.png {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:38:45 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/image-proxy?url=https:%2F%2Fstorage.googleapis.com%2Fprosperpos-images%2Fcompanylogos%2Flogo_ceramicasuniversal-1767382018704.png","ip":"::1"},"type":"USER_ACTIVITY"}
+14:38:45 [[32minfo[39m]: Descargando imagen: https://storage.googleapis.com/prosperpos-images/companylogos/logo_ceramicasuniversal-1767382018704.png
+[0mGET /api/v1/image-proxy?url=https:%2F%2Fstorage.googleapis.com%2Fprosperpos-images%2Fcompanylogos%2Flogo_ceramicasuniversal-1767382018704.png [36m304[0m 891.967 ms - -[0m
+14:39:07 [[32minfo[39m]: GET /api/v1/image-proxy?url=https:%2F%2Fstorage.googleapis.com%2Fprosperpos-images%2Fcompanylogos%2Flogo_ceramicasuniversal-1767382018704.png {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:39:07 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/image-proxy?url=https:%2F%2Fstorage.googleapis.com%2Fprosperpos-images%2Fcompanylogos%2Flogo_ceramicasuniversal-1767382018704.png","ip":"::1"},"type":"USER_ACTIVITY"}
+14:39:07 [[32minfo[39m]: Descargando imagen: https://storage.googleapis.com/prosperpos-images/companylogos/logo_ceramicasuniversal-1767382018704.png
+[0mGET /api/v1/image-proxy?url=https:%2F%2Fstorage.googleapis.com%2Fprosperpos-images%2Fcompanylogos%2Flogo_ceramicasuniversal-1767382018704.png [36m304[0m 429.986 ms - -[0m
+14:40:13 [[32minfo[39m]: GET /api/v1/reprint/search?documentType=NOTA+DE+CREDITO&searchQuery=&dateFrom=2026-01-01&dateTo=2026-01-23&branch= {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:40:13 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/reprint/search?documentType=NOTA+DE+CREDITO&searchQuery=&dateFrom=2026-01-01&dateTo=2026-01-23&branch=","ip":"::1"},"type":"USER_ACTIVITY"}
+SQL Query: 
+            SELECT
+              cn.id,
+              cn.correlative as document_number,
+              cn.credit_note_number as full_number,
+              cn.emission_date as issue_date,
+              NULL as expiry_date,
+              cn.customer_name,
+              CONCAT(u.first_name, ' ', u.last_name) as created_by_name,
+              cn.total,
+              cn.invoice_number,
+              'Completada' as status,
+              'NOTA DE CREDITO' as document_type
+            FROM credit_notes cn
+            LEFT JOIN users u ON cn.created_by = u.id
+            WHERE cn.deleted_at IS NULL
+           AND cn.emission_date >= ? AND cn.emission_date <= ? ORDER BY cn.created_at DESC LIMIT 100
+Params: [ '2026-01-01', '2026-01-23' ]
+[0mGET /api/v1/reprint/search?documentType=NOTA+DE+CREDITO&searchQuery=&dateFrom=2026-01-01&dateTo=2026-01-23&branch= [36m304[0m 21.610 ms - -[0m
+14:40:15 [[32minfo[39m]: GET /api/v1/reprint/NOTA%20DE%20CREDITO/16 {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:40:15 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/reprint/NOTA%20DE%20CREDITO/16","ip":"::1"},"type":"USER_ACTIVITY"}
+[0mGET /api/v1/reprint/NOTA%20DE%20CREDITO/16 [32m200[0m 28.426 ms - -[0m
+14:40:17 [[32minfo[39m]: GET /api/v1/image-proxy?url=https:%2F%2Fstorage.googleapis.com%2Fprosperpos-images%2Fcompanylogos%2Flogo_ceramicasuniversal-1767382018704.png {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:40:17 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/image-proxy?url=https:%2F%2Fstorage.googleapis.com%2Fprosperpos-images%2Fcompanylogos%2Flogo_ceramicasuniversal-1767382018704.png","ip":"::1"},"type":"USER_ACTIVITY"}
+14:40:17 [[32minfo[39m]: Descargando imagen: https://storage.googleapis.com/prosperpos-images/companylogos/logo_ceramicasuniversal-1767382018704.png
+[0mGET /api/v1/image-proxy?url=https:%2F%2Fstorage.googleapis.com%2Fprosperpos-images%2Fcompanylogos%2Flogo_ceramicasuniversal-1767382018704.png [36m304[0m 786.054 ms - -[0m
+14:40:29 [[32minfo[39m]: GET /api/v1/image-proxy?url=https:%2F%2Fstorage.googleapis.com%2Fprosperpos-images%2Fcompanylogos%2Flogo_ceramicasuniversal-1767382018704.png {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:40:29 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/image-proxy?url=https:%2F%2Fstorage.googleapis.com%2Fprosperpos-images%2Fcompanylogos%2Flogo_ceramicasuniversal-1767382018704.png","ip":"::1"},"type":"USER_ACTIVITY"}
+14:40:29 [[32minfo[39m]: Descargando imagen: https://storage.googleapis.com/prosperpos-images/companylogos/logo_ceramicasuniversal-1767382018704.png
+[0mGET /api/v1/image-proxy?url=https:%2F%2Fstorage.googleapis.com%2Fprosperpos-images%2Fcompanylogos%2Flogo_ceramicasuniversal-1767382018704.png [36m304[0m 406.137 ms - -[0m
+14:42:02 [[32minfo[39m]: GET /api/v1/companies/default {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:42:02 [[32minfo[39m]: GET /api/v1/sales-book?date_from=2026-01-01&date_to=2026-01-23 {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:42:02 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/companies/default","ip":"::1"},"type":"USER_ACTIVITY"}
+14:42:02 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/sales-book?date_from=2026-01-01&date_to=2026-01-23","ip":"::1"},"type":"USER_ACTIVITY"}
+[0mGET /api/v1/companies/default [32m200[0m 25.041 ms - -[0m
+[0mGET /api/v1/sales-book?date_from=2026-01-01&date_to=2026-01-23 [32m200[0m 56.977 ms - -[0m
+14:42:04 [[32minfo[39m]: GET /api/v1/sales-book?date_from=2026-01-02&date_to=2026-01-23 {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:42:04 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/sales-book?date_from=2026-01-02&date_to=2026-01-23","ip":"::1"},"type":"USER_ACTIVITY"}
+[0mGET /api/v1/sales-book?date_from=2026-01-02&date_to=2026-01-23 [32m200[0m 32.772 ms - -[0m
+14:42:04 [[32minfo[39m]: GET /api/v1/sales-book?date_from=2026-01-20&date_to=2026-01-23 {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:42:04 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/sales-book?date_from=2026-01-20&date_to=2026-01-23","ip":"::1"},"type":"USER_ACTIVITY"}
+[0mGET /api/v1/sales-book?date_from=2026-01-20&date_to=2026-01-23 [32m200[0m 41.763 ms - -[0m
+14:42:25 [[32minfo[39m]: GET /api/v1/image-proxy?url=https:%2F%2Fstorage.googleapis.com%2Fprosperpos-images%2Fcompanylogos%2Flogo_ceramicasuniversal-1767382018704.png {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:42:25 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/image-proxy?url=https:%2F%2Fstorage.googleapis.com%2Fprosperpos-images%2Fcompanylogos%2Flogo_ceramicasuniversal-1767382018704.png","ip":"::1"},"type":"USER_ACTIVITY"}
+14:42:25 [[32minfo[39m]: Descargando imagen: https://storage.googleapis.com/prosperpos-images/companylogos/logo_ceramicasuniversal-1767382018704.png
+[0mGET /api/v1/image-proxy?url=https:%2F%2Fstorage.googleapis.com%2Fprosperpos-images%2Fcompanylogos%2Flogo_ceramicasuniversal-1767382018704.png [36m304[0m 426.886 ms - -[0m
+14:49:10 [[32minfo[39m]: GET /api/v1/sales-book?date_from=2026-01-01&date_to=2026-01-23 {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:49:10 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/sales-book?date_from=2026-01-01&date_to=2026-01-23","ip":"::1"},"type":"USER_ACTIVITY"}
+14:49:10 [[32minfo[39m]: GET /api/v1/companies/default {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:49:10 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/companies/default","ip":"::1"},"type":"USER_ACTIVITY"}
+[0mGET /api/v1/companies/default [32m200[0m 25.016 ms - -[0m
+[0mGET /api/v1/sales-book?date_from=2026-01-01&date_to=2026-01-23 [32m200[0m 52.654 ms - -[0m
+14:49:10 [[32minfo[39m]: GET /api/v1/companies/default {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:49:10 [[32minfo[39m]: GET /api/v1/sales-book?date_from=2026-01-01&date_to=2026-01-23 {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:49:10 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/companies/default","ip":"::1"},"type":"USER_ACTIVITY"}
+[0mGET /api/v1/companies/default [0m-[0m - ms - -[0m
+14:49:10 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/sales-book?date_from=2026-01-01&date_to=2026-01-23","ip":"::1"},"type":"USER_ACTIVITY"}
+[0mGET /api/v1/sales-book?date_from=2026-01-01&date_to=2026-01-23 [32m200[0m 33.625 ms - -[0m
+14:49:12 [[32minfo[39m]: GET /api/v1/companies/default {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:49:12 [[32minfo[39m]: GET /api/v1/sales-book?date_from=2026-01-01&date_to=2026-01-23 {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:49:12 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/companies/default","ip":"::1"},"type":"USER_ACTIVITY"}
+14:49:12 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/sales-book?date_from=2026-01-01&date_to=2026-01-23","ip":"::1"},"type":"USER_ACTIVITY"}
+[0mGET /api/v1/companies/default [32m200[0m 29.109 ms - -[0m
+[0mGET /api/v1/sales-book?date_from=2026-01-01&date_to=2026-01-23 [32m200[0m 44.525 ms - -[0m
+14:49:26 [[32minfo[39m]: GET /api/v1/sales-book?date_from=2026-01-02&date_to=2026-01-23 {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:49:26 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/sales-book?date_from=2026-01-02&date_to=2026-01-23","ip":"::1"},"type":"USER_ACTIVITY"}
+[0mGET /api/v1/sales-book?date_from=2026-01-02&date_to=2026-01-23 [32m200[0m 25.192 ms - -[0m
+14:49:26 [[32minfo[39m]: GET /api/v1/sales-book?date_from=2026-01-20&date_to=2026-01-23 {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:49:26 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/sales-book?date_from=2026-01-20&date_to=2026-01-23","ip":"::1"},"type":"USER_ACTIVITY"}
+[0mGET /api/v1/sales-book?date_from=2026-01-20&date_to=2026-01-23 [32m200[0m 16.008 ms - -[0m
+14:49:31 [[32minfo[39m]: GET /api/v1/image-proxy?url=https:%2F%2Fstorage.googleapis.com%2Fprosperpos-images%2Fcompanylogos%2Flogo_ceramicasuniversal-1767382018704.png {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:49:31 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/image-proxy?url=https:%2F%2Fstorage.googleapis.com%2Fprosperpos-images%2Fcompanylogos%2Flogo_ceramicasuniversal-1767382018704.png","ip":"::1"},"type":"USER_ACTIVITY"}
+14:49:31 [[32minfo[39m]: Descargando imagen: https://storage.googleapis.com/prosperpos-images/companylogos/logo_ceramicasuniversal-1767382018704.png
+[0mGET /api/v1/image-proxy?url=https:%2F%2Fstorage.googleapis.com%2Fprosperpos-images%2Fcompanylogos%2Flogo_ceramicasuniversal-1767382018704.png [36m304[0m 834.612 ms - -[0m
+14:52:59 [[32minfo[39m]: GET /api/v1/sales-book?date_from=2026-01-01&date_to=2026-01-23 {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:52:59 [[32minfo[39m]: GET /api/v1/companies/default {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:52:59 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/sales-book?date_from=2026-01-01&date_to=2026-01-23","ip":"::1"},"type":"USER_ACTIVITY"}
+14:52:59 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/companies/default","ip":"::1"},"type":"USER_ACTIVITY"}
+[0mGET /api/v1/companies/default [32m200[0m 48.187 ms - -[0m
+[0mGET /api/v1/sales-book?date_from=2026-01-01&date_to=2026-01-23 [32m200[0m 60.634 ms - -[0m
+14:53:01 [[32minfo[39m]: GET /api/v1/sales-book?date_from=2026-01-02&date_to=2026-01-23 {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:53:01 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/sales-book?date_from=2026-01-02&date_to=2026-01-23","ip":"::1"},"type":"USER_ACTIVITY"}
+[0mGET /api/v1/sales-book?date_from=2026-01-02&date_to=2026-01-23 [32m200[0m 25.052 ms - -[0m
+14:53:01 [[32minfo[39m]: GET /api/v1/sales-book?date_from=2026-01-20&date_to=2026-01-23 {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:53:01 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/sales-book?date_from=2026-01-20&date_to=2026-01-23","ip":"::1"},"type":"USER_ACTIVITY"}
+[0mGET /api/v1/sales-book?date_from=2026-01-20&date_to=2026-01-23 [32m200[0m 20.033 ms - -[0m
+14:55:48 [[32minfo[39m]: POST /api/v1/auth/login {"ip":"::1","userAgent":"axios/1.11.0","requestId":"no-id"}
+14:55:49 [[31merror[39m]: Error in login service: Credenciales inválidas {"stack":"Error: Credenciales inválidas\n    at AuthService.login (C:\\Users\\carlo\\OneDrive\\Escritorio\\ProsperPOS\\backend\\src\\services\\auth.service.js:62:15)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async login (C:\\Users\\carlo\\OneDrive\\Escritorio\\ProsperPOS\\backend\\src\\controllers\\auth.controller.js:32:22)"}
+14:55:49 [[31merror[39m]: Error in login controller: Credenciales inválidas {"stack":"Error: Credenciales inválidas\n    at AuthService.login (C:\\Users\\carlo\\OneDrive\\Escritorio\\ProsperPOS\\backend\\src\\services\\auth.service.js:62:15)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async login (C:\\Users\\carlo\\OneDrive\\Escritorio\\ProsperPOS\\backend\\src\\controllers\\auth.controller.js:32:22)"}
+14:55:49 [[33mwarn[39m]: Client Error Response Credenciales inválidas {"statusCode":401,"errors":null}
+[0mPOST /api/v1/auth/login [33m401[0m 299.545 ms - 92[0m
+14:59:29 [[32minfo[39m]: GET /api/v1/companies/default {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:59:29 [[33mwarn[39m]: Security Event {"event":"MISSING_TOKEN","details":{"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","url":"/api/v1/companies/default"},"type":"SECURITY"}
+14:59:29 [[33mwarn[39m]: Client Error Response Token de acceso requerido {"statusCode":401,"errors":null}
+[0mGET /api/v1/companies/default [33m401[0m 9.291 ms - 94[0m
+14:59:29 [[32minfo[39m]: GET /api/v1/sales-book?date_from=2026-01-01&date_to=2026-01-23 {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:59:29 [[33mwarn[39m]: Security Event {"event":"INVALID_TOKEN","details":{"error":"jwt malformed","ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36"},"type":"SECURITY"}
+14:59:29 [[33mwarn[39m]: Client Error Response Token inválido {"statusCode":401,"errors":null}
+[0mGET /api/v1/sales-book?date_from=2026-01-01&date_to=2026-01-23 [33m401[0m 7.392 ms - 84[0m
+14:59:29 [[32minfo[39m]: GET /api/v1/companies/public/default {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+[0mGET /api/v1/companies/public/default [32m200[0m 5.946 ms - -[0m
+14:59:34 [[32minfo[39m]: POST /api/v1/auth/login {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:59:35 [[32minfo[39m]: Authentication {"action":"LOGIN","userId":1,"details":{"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","remember_me":false},"type":"AUTH"}
+[0mPOST /api/v1/auth/login [32m200[0m 290.434 ms - -[0m
+14:59:36 [[32minfo[39m]: GET /api/v1/dashboard/stats?date_from=2026-01-01&date_to=2026-01-23 {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:59:36 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/dashboard/stats?date_from=2026-01-01&date_to=2026-01-23","ip":"::1"},"type":"USER_ACTIVITY"}
+14:59:36 [[32minfo[39m]: GET /api/v1/dashboard/overall-info {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:59:36 [[32minfo[39m]: GET /api/v1/dashboard/top-selling-products?period=week&limit=5 {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:59:36 [[32minfo[39m]: GET /api/v1/dashboard/sales-purchases-chart?period=1M {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:59:36 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/dashboard/overall-info","ip":"::1"},"type":"USER_ACTIVITY"}
+14:59:36 [[32minfo[39m]: GET /api/v1/dashboard/top-categories?period=week&limit=5 {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:59:36 [[32minfo[39m]: GET /api/v1/dashboard/top-customers?limit=5&date_from=2026-01-01&date_to=2026-01-23 {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:59:36 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/dashboard/top-selling-products?period=week&limit=5","ip":"::1"},"type":"USER_ACTIVITY"}
+14:59:36 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/dashboard/sales-purchases-chart?period=1M","ip":"::1"},"type":"USER_ACTIVITY"}
+14:59:36 [[32minfo[39m]: 📅 Period: 1M, GroupBy: DAY
+14:59:36 [[32minfo[39m]: 📅 Date range: 2025-12-24 to 2026-01-23
+14:59:36 [[32minfo[39m]: ✅ Sales query executed successfully, rows:
+[0mGET /api/v1/dashboard/overall-info [32m200[0m 139.118 ms - 137[0m
+14:59:36 [[32minfo[39m]: ✅ Purchases query executed successfully, rows:
+[0mGET /api/v1/dashboard/sales-purchases-chart?period=1M [32m200[0m 129.133 ms - 535[0m
+14:59:37 [[32minfo[39m]: GET /api/v1/dashboard/customers-overview?period=week {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+[0mGET /api/v1/dashboard/stats?date_from=2026-01-01&date_to=2026-01-23 [32m200[0m 185.789 ms - 421[0m
+14:59:37 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/dashboard/top-customers?limit=5&date_from=2026-01-01&date_to=2026-01-23","ip":"::1"},"type":"USER_ACTIVITY"}
+14:59:37 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/dashboard/customers-overview?period=week","ip":"::1"},"type":"USER_ACTIVITY"}
+14:59:37 [[32minfo[39m]: 📊 Resumen de Clientes - Período: week (7 días)
+14:59:37 [[32minfo[39m]: 📊 Actual: 2026-01-16 00:00:00 a 2026-01-23 23:59:59
+14:59:37 [[32minfo[39m]: 📊 Anterior: 2026-01-08 00:00:00 a 2026-01-15 23:59:59
+14:59:37 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/dashboard/top-categories?period=week&limit=5","ip":"::1"},"type":"USER_ACTIVITY"}
+14:59:37 [[32minfo[39m]: 📊 Getting top categories with period: week, limit: 5
+14:59:37 [[32minfo[39m]: ✅ Top customers query returned 1 customers
+[0mGET /api/v1/dashboard/top-customers?limit=5&date_from=2026-01-01&date_to=2026-01-23 [32m200[0m 125.077 ms - 176[0m
+[0mGET /api/v1/dashboard/top-selling-products?period=week&limit=5 [32m200[0m 161.023 ms - -[0m
+14:59:37 [[32minfo[39m]: 📊 Clientes en período actual: 1
+14:59:37 [[32minfo[39m]: 📊 Primera vez: 0, Recurrentes: 1
+14:59:37 [[32minfo[39m]: ✅ Top categories query returned 5 categories
+[0mGET /api/v1/dashboard/top-categories?period=week&limit=5 [32m200[0m 158.407 ms - 574[0m
+14:59:37 [[32minfo[39m]: 📊 Clientes en período anterior: 0
+14:59:37 [[32minfo[39m]: 📊 Anterior - Primera vez: 0, Recurrentes: 0
+[0mGET /api/v1/dashboard/customers-overview?period=week [32m200[0m 82.207 ms - 242[0m
+14:59:40 [[32minfo[39m]: GET /api/v1/companies/default {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:59:40 [[32minfo[39m]: GET /api/v1/sales-book?date_from=2026-01-01&date_to=2026-01-23 {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:59:40 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/companies/default","ip":"::1"},"type":"USER_ACTIVITY"}
+14:59:40 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/sales-book?date_from=2026-01-01&date_to=2026-01-23","ip":"::1"},"type":"USER_ACTIVITY"}
+[0mGET /api/v1/companies/default [32m200[0m 22.587 ms - -[0m
+[0mGET /api/v1/sales-book?date_from=2026-01-01&date_to=2026-01-23 [32m200[0m 25.175 ms - -[0m
+14:59:46 [[32minfo[39m]: GET /api/v1/sales-book?date_from=2026-01-02&date_to=2026-01-23 {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:59:46 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/sales-book?date_from=2026-01-02&date_to=2026-01-23","ip":"::1"},"type":"USER_ACTIVITY"}
+[0mGET /api/v1/sales-book?date_from=2026-01-02&date_to=2026-01-23 [32m200[0m 22.261 ms - -[0m
+14:59:46 [[32minfo[39m]: GET /api/v1/sales-book?date_from=2026-01-20&date_to=2026-01-23 {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:59:46 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/sales-book?date_from=2026-01-20&date_to=2026-01-23","ip":"::1"},"type":"USER_ACTIVITY"}
+[0mGET /api/v1/sales-book?date_from=2026-01-20&date_to=2026-01-23 [32m200[0m 20.886 ms - -[0m
+14:59:58 [[32minfo[39m]: GET /api/v1/image-proxy?url=https:%2F%2Fstorage.googleapis.com%2Fprosperpos-images%2Fcompanylogos%2Flogo_ceramicasuniversal-1767382018704.png {"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36","requestId":"no-id"}
+14:59:58 [[32minfo[39m]: User Activity {"userId":1,"action":"API_ACCESS","details":{"method":"GET","url":"/api/v1/image-proxy?url=https:%2F%2Fstorage.googleapis.com%2Fprosperpos-images%2Fcompanylogos%2Flogo_ceramicasuniversal-1767382018704.png","ip":"::1"},"type":"USER_ACTIVITY"}
+14:59:58 [[32minfo[39m]: Descargando imagen: https://storage.googleapis.com/prosperpos-images/companylogos/logo_ceramicasuniversal-1767382018704.png
+[0mGET /api/v1/image-proxy?url=https:%2F%2Fstorage.googleapis.com%2Fprosperpos-images%2Fcompanylogos%2Flogo_ceramicasuniversal-1767382018704.png [32m200[0m 909.234 ms - -[0m

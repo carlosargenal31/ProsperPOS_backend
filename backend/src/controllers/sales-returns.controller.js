@@ -271,6 +271,46 @@ class SalesReturnsController {
       const updateInvoiceSql = `UPDATE invoices SET payment_status = 'returned' WHERE id = ?`;
       await db.query(updateInvoiceSql, [invoice_id]);
 
+      // 7. Si return_money = 1, crear transacción de caja tipo DEVOLUCION
+      if (return_money) {
+        // Buscar la sesión de caja abierta del usuario
+        const openSessionSql = `
+          SELECT id FROM cash_register_sessions
+          WHERE user_id = ? AND status = 'ABIERTA'
+          ORDER BY created_at DESC LIMIT 1
+        `;
+        const openSessions = await db.query(openSessionSql, [userId]);
+
+        if (openSessions.length > 0) {
+          const sessionId = openSessions[0].id;
+
+          // Crear transacción de devolución
+          const transactionSql = `
+            INSERT INTO cash_register_transactions (
+              session_id, transaction_type, amount, description,
+              payment_method, beneficiary, beneficiary_type, user_id
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          `;
+
+          await db.query(transactionSql, [
+            sessionId,
+            'DEVOLUCION',
+            totals.total,
+            `Devolución de venta ${correlative} - Factura ${invoice.invoice_number}`,
+            'EFECTIVO',
+            invoice.customer_name,
+            'CLIENTE',
+            userId
+          ]);
+
+          logger.info('Transacción de devolución registrada en caja', {
+            sessionId,
+            amount: totals.total,
+            returnId
+          });
+        }
+      }
+
       logger.info('Devolución de venta procesada exitosamente', { returnId, creditNoteId, userId });
 
       res.json({
@@ -362,13 +402,15 @@ class SalesReturnsController {
 
       const returnData = returns[0];
 
-      // Obtener los items de la devolución con códigos de producto
+      // Obtener los items de la devolución con códigos de producto y unidad
       const itemsSql = `
         SELECT
           sri.*,
-          p.code as product_code
+          p.code as product_code,
+          COALESCE(u.name, 'UNIDAD') as product_unit
         FROM sales_return_items sri
         LEFT JOIN products p ON sri.product_id = p.id
+        LEFT JOIN units u ON p.unit_id = u.id
         WHERE sri.sales_return_id = ?
       `;
 
@@ -380,6 +422,7 @@ class SalesReturnsController {
         product_id: item.product_id,
         product_code: item.product_code,
         product_name: item.product_name,
+        product_unit: item.product_unit,
         return_quantity: item.quantity,
         unit_price: item.unit_price,
         discount_value: item.discount_value,

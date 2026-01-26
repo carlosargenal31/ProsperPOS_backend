@@ -24,38 +24,51 @@ class QuotesController {
         items,
         subtotal,
         discount,
+        discount_type,
+        discount_value,
         tax,
         total,
         surcharge,
+        applied_coupons,
+        applied_offers,
         quote_date,
         valid_until,
         notes,
-        terms_conditions
+        terms_conditions,
+        orden_compra,
+        constancia_exonerado,
+        registro_sag
       } = req.body;
 
       const userId = req.user.id;
 
-      // Generar número de cotización
-      const countSql = 'SELECT COUNT(*) as total FROM quotes';
-      const countResult = await db.query(countSql);
-      const quoteCount = countResult[0].total + 1;
-      const quoteNumber = String(quoteCount).padStart(10, '0');
+      // Generar número de cotización (usar el ID que se va a generar)
+      const maxIdSql = 'SELECT COALESCE(MAX(id), 0) as max_id FROM quotes';
+      const maxIdResult = await db.query(maxIdSql);
+      const nextId = maxIdResult[0].max_id + 1;
+      const quoteNumber = String(nextId).padStart(10, '0');
+
+      // Convertir arrays a JSON
+      const appliedCouponsJson = applied_coupons && applied_coupons.length > 0 ? JSON.stringify(applied_coupons) : null;
+      const appliedOffersJson = applied_offers && applied_offers.length > 0 ? JSON.stringify(applied_offers) : null;
 
       // Insertar cotización
       const insertSql = `
         INSERT INTO quotes (
           quote_number, customer_id, customer_name, customer_rtn, customer_phone,
           customer_email, branch_id, warehouse_id, seller_id, seller_name,
-          subtotal, discount, tax, total, surcharge, quote_date, valid_until,
-          notes, terms_conditions, created_by
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          subtotal, discount, discount_type, discount_value, tax, total, surcharge,
+          applied_coupons, applied_offers, quote_date, valid_until,
+          notes, terms_conditions, orden_compra, constancia_exonerado, registro_sag, created_by
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
       const result = await db.query(insertSql, [
         quoteNumber, customer_id, customer_name, customer_rtn, customer_phone,
         customer_email, branch_id, warehouse_id, seller_id, seller_name,
-        subtotal, discount, tax, total, surcharge || 0, quote_date, valid_until,
-        notes, terms_conditions, userId
+        subtotal, discount, discount_type || null, discount_value || 0, tax, total, surcharge || 0,
+        appliedCouponsJson, appliedOffersJson, quote_date, valid_until,
+        notes, terms_conditions, orden_compra || null, constancia_exonerado || null, registro_sag || null, userId
       ]);
 
       const quoteId = result.insertId;
@@ -168,6 +181,16 @@ class QuotesController {
 
       const quote = results[0];
 
+      // MySQL devuelve columnas JSON ya parseadas como objetos
+      // Solo necesitamos asegurarnos de que existan como arrays
+      if (!quote.applied_coupons || !Array.isArray(quote.applied_coupons)) {
+        quote.applied_coupons = [];
+      }
+
+      if (!quote.applied_offers || !Array.isArray(quote.applied_offers)) {
+        quote.applied_offers = [];
+      }
+
       // Obtener items con códigos de producto
       const itemsSql = `
         SELECT
@@ -214,9 +237,13 @@ class QuotesController {
         items,
         subtotal,
         discount,
+        discount_type,
+        discount_value,
         tax,
         total,
         surcharge,
+        applied_coupons,
+        applied_offers,
         quote_date,
         valid_until,
         notes,
@@ -278,12 +305,17 @@ class QuotesController {
           id
         ];
       } else {
+        // Convertir arrays a JSON
+        const appliedCouponsJson = applied_coupons && applied_coupons.length > 0 ? JSON.stringify(applied_coupons) : null;
+        const appliedOffersJson = applied_offers && applied_offers.length > 0 ? JSON.stringify(applied_offers) : null;
+
         // Actualizar cotización completa
         updateSql = `
           UPDATE quotes SET
             customer_id = ?, customer_name = ?, customer_rtn = ?, customer_phone = ?,
             customer_email = ?, branch_id = ?, warehouse_id = ?, seller_id = ?, seller_name = ?,
-            subtotal = ?, discount = ?, tax = ?, total = ?, surcharge = ?, quote_date = ?, valid_until = ?,
+            subtotal = ?, discount = ?, discount_type = ?, discount_value = ?, tax = ?, total = ?, surcharge = ?,
+            applied_coupons = ?, applied_offers = ?, quote_date = ?, valid_until = ?,
             notes = ?, terms_conditions = ?, updated_at = NOW()
           WHERE id = ?
         `;
@@ -291,7 +323,8 @@ class QuotesController {
         params = [
           customer_id, customer_name, customer_rtn, customer_phone,
           customer_email, branch_id, warehouse_id, seller_id, seller_name,
-          subtotal, discount, tax, total, surcharge || 0, quote_date, valid_until,
+          subtotal, discount, discount_type || null, discount_value || 0, tax, total, surcharge || 0,
+          appliedCouponsJson, appliedOffersJson, quote_date, valid_until,
           notes, terms_conditions, id
         ];
       }

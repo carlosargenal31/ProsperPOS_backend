@@ -1,6 +1,7 @@
 // ===================================================================
 // PROSPERPOS - APLICACIÓN EXPRESS PRINCIPAL (CON MIGRACIONES AUTOMÁTICAS)
 // ===================================================================
+// Updated CORS for Google OAuth
 
 const express = require('express');
 const cors = require('cors');
@@ -89,12 +90,33 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false // Para permitir uploads
 }));
 
-// CORS básico
+// CORS - permitir múltiples orígenes (template y ecommerce)
+const allowedOrigins = [
+  'http://localhost:3001', // Template/Admin
+  'http://localhost:3002', // E-commerce
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3001',
+  origin: function (origin, callback) {
+    // Permitir requests sin origin (como mobile apps, curl requests, y Google OAuth)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      // Permitir también orígenes de Google para OAuth
+      if (origin && origin.includes('google.com')) {
+        callback(null, true);
+      } else {
+        callback(new Error('No permitido por CORS'));
+      }
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Access-Control-Allow-Origin'],
+  exposedHeaders: ['Content-Length', 'X-Request-Id']
 }));
 
 // Rate limiting - usando el middleware importado
@@ -107,9 +129,10 @@ app.use(rateLimitMiddleware.api);
 // Compresión
 app.use(compression());
 
-// Parseo de JSON
-app.use(express.json({ 
+// Parseo de JSON - solo para requests application/json
+app.use(express.json({
   limit: process.env.MAX_JSON_SIZE || '10mb',
+  type: 'application/json', // Solo parsear application/json
   verify: (req, res, buf) => {
     try {
       JSON.parse(buf);
@@ -120,15 +143,20 @@ app.use(express.json({
   }
 }));
 
-// Parseo de URL encoded
-app.use(express.urlencoded({ 
-  extended: true, 
-  limit: process.env.MAX_URL_SIZE || '10mb' 
+// Parseo de URL encoded - solo para requests application/x-www-form-urlencoded
+app.use(express.urlencoded({
+  extended: true,
+  limit: process.env.MAX_URL_SIZE || '10mb',
+  type: 'application/x-www-form-urlencoded' // Solo parsear URL encoded
 }));
+
+// NOTE: File uploads are handled by multer in individual routes
+// Do NOT use express-fileupload here as it conflicts with multer
 
 // Archivos estáticos
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/docs', express.static(path.join(__dirname, 'docs')));
+app.use('/manuales', express.static(path.join(__dirname, '../template/public/manuales')));
 
 // ===================================================================
 // LOGGING

@@ -124,7 +124,7 @@ async function query(sql, params = []) {
       logger.debug('Params:', paramsArray);
     }
 
-    const [results] = await connection.execute(sql, paramsArray);
+    const [results] = await connection.query(sql, paramsArray);
 
     return results;
   } catch (error) {

@@ -137,27 +137,66 @@ class SellerReportController {
    */
   static async getCompanyInfo(req, res) {
     try {
-      const query = `
+      const { store_id } = req.query;
+
+      let query = `
         SELECT
-          company_name,
+          name as company_name,
           commercial_name,
-          company_rtn as rtn,
-          company_address as direccion,
-          company_phone as telefono,
-          company_email as email
-        FROM billing_settings
-        LIMIT 1
+          rtn,
+          address as direccion,
+          phone as telefono,
+          email,
+          logo_url
+        FROM companies
+        WHERE deleted_at IS NULL
       `;
 
-      const results = await db.query(query);
-      const company = results.length > 0 ? results[0] : {
-        company_name: 'EMPRESA SIN CONFIGURAR',
-        commercial_name: '',
-        rtn: '00000000000000',
-        direccion: 'Sin dirección',
-        telefono: 'Sin teléfono',
-        email: 'sin@email.com'
-      };
+      const params = [];
+
+      // Si se proporciona store_id, usarlo; si no, obtener la empresa por defecto
+      if (store_id) {
+        query += ' AND id = ?';
+        params.push(store_id);
+      } else {
+        query += ' AND is_default = 1';
+      }
+
+      query += ' LIMIT 1';
+
+      const results = await db.query(query, params);
+
+      let company;
+      if (results.length > 0) {
+        company = results[0];
+      } else {
+        // Si no se encontró por store_id o is_default, obtener la primera empresa activa
+        const fallbackQuery = `
+          SELECT
+            name as company_name,
+            commercial_name,
+            rtn,
+            address as direccion,
+            phone as telefono,
+            email,
+            logo_url
+          FROM companies
+          WHERE deleted_at IS NULL AND is_active = 1
+          ORDER BY id ASC
+          LIMIT 1
+        `;
+        const fallbackResults = await db.query(fallbackQuery);
+
+        company = fallbackResults.length > 0 ? fallbackResults[0] : {
+          company_name: 'EMPRESA SIN CONFIGURAR',
+          commercial_name: '',
+          rtn: '00000000000000',
+          direccion: 'Sin dirección',
+          telefono: 'Sin teléfono',
+          email: 'sin@email.com',
+          logo_url: null
+        };
+      }
 
       sendSuccessResponse(res, company, 'Información de empresa obtenida');
     } catch (error) {

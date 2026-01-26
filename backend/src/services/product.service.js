@@ -26,15 +26,18 @@ class ProductService {
 
       // Filtro de estado
       if (status && status !== 'all') {
-        whereClause += ' AND p.status = ?';
-        params.push(status);
+        if (status === 'active') {
+          whereClause += ' AND p.is_active = 1';
+        } else if (status === 'inactive') {
+          whereClause += ' AND p.is_active = 0';
+        }
       }
 
       // Filtro de búsqueda
       if (search) {
-        whereClause += ' AND (p.name LIKE ? OR p.code LIKE ? OR p.barcode LIKE ?)';
+        whereClause += ' AND (p.name LIKE ? OR p.code LIKE ?)';
         const searchTerm = `%${search}%`;
-        params.push(searchTerm, searchTerm, searchTerm);
+        params.push(searchTerm, searchTerm);
       }
 
       const query = `
@@ -42,15 +45,32 @@ class ProductService {
           p.id,
           p.code,
           p.name,
-          p.barcode,
-          p.status,
+          p.is_active,
+          p.image,
+          p.price_1,
+          p.cost,
+          p.category_id,
+          p.subcategory_id,
+          p.brand_id,
+          p.tax_id,
+          p.unit_id,
           c.name as category_name,
           sc.name as subcategory_name,
-          b.name as brand_name
+          b.name as brand_name,
+          t.rate as tax_rate,
+          u.name as unit_name,
+          ROUND(COALESCE(stock_totals.total_stock, 0), 2) as stock
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
         LEFT JOIN subcategories sc ON p.subcategory_id = sc.id
         LEFT JOIN brands b ON p.brand_id = b.id
+        LEFT JOIN tax_rates t ON p.tax_id = t.id
+        LEFT JOIN units u ON p.unit_id = u.id
+        LEFT JOIN (
+          SELECT product_id, ROUND(SUM(quantity), 2) as total_stock
+          FROM stock
+          GROUP BY product_id
+        ) stock_totals ON p.id = stock_totals.product_id
         ${whereClause}
         ORDER BY p.name ASC
         LIMIT 10000
@@ -71,6 +91,9 @@ class ProductService {
         page = 1,
         limit = 20,
         search = '',
+        category_id,
+        subcategory_id,
+        brand_id,
         sort_by = 'id',
         sort_order = 'ASC',
         warehouse_id,
@@ -86,9 +109,27 @@ class ProductService {
 
       // Filtro de búsqueda
       if (search) {
-        whereClause += ' AND (p.name LIKE ? OR p.code LIKE ? OR p.barcode LIKE ?)';
+        whereClause += ' AND (p.name LIKE ? OR p.code LIKE ?)';
         const searchTerm = `%${search}%`;
-        searchParams.push(searchTerm, searchTerm, searchTerm);
+        searchParams.push(searchTerm, searchTerm);
+      }
+
+      // Filtro de categoría
+      if (category_id) {
+        whereClause += ' AND p.category_id = ?';
+        searchParams.push(parseInt(category_id));
+      }
+
+      // Filtro de subcategoría
+      if (subcategory_id) {
+        whereClause += ' AND p.subcategory_id = ?';
+        searchParams.push(parseInt(subcategory_id));
+      }
+
+      // Filtro de marca
+      if (brand_id) {
+        whereClause += ' AND p.brand_id = ?';
+        searchParams.push(parseInt(brand_id));
       }
 
       // Validar columna de ordenamiento para prevenir SQL injection
@@ -97,7 +138,9 @@ class ProductService {
         'name': 'p.name',
         'code': 'p.code',
         'price_1': 'p.price_1',
-        'stock': 'p.stock',
+        'stock': includeStock ? 'stock' : 'p.id', // Ordenar por stock calculado si está incluido
+        'is_active': 'p.is_active',
+        'category_name': 'c.name',
         'created_at': 'p.created_at',
         'updated_at': 'p.updated_at'
       };
@@ -108,34 +151,72 @@ class ProductService {
       // Construir query con ORDER BY seguro (sin interpolación problemática)
       const orderByClause = `ORDER BY ${sortColumn} ${sortDirection}`;
 
-      // Si se solicita incluir stock, agregarlo a la consulta
-      let selectClause = 'p.*, c.name as category_name, sc.name as subcategory_name, b.name as brand_name';
-      let joinClause = '';
+      // Construir query según necesidades de stock
+      let query;
 
-      if (includeStock) {
-        if (warehouse_id) {
-          // Stock de una bodega específica
-          selectClause += ', COALESCE(s.quantity, 0) as stock';
-          joinClause = `LEFT JOIN stock s ON p.id = s.product_id AND s.warehouse_id = ${parseInt(warehouse_id)}`;
-        } else {
-          // Stock total de todas las bodegas
-          selectClause += ', COALESCE(SUM(s.quantity), 0) as stock';
-          joinClause = 'LEFT JOIN stock s ON p.id = s.product_id';
-        }
+      if (includeStock && !warehouse_id) {
+        // Stock total de todas las bodegas usando subconsulta
+        query = `
+          SELECT
+            p.*,
+            c.name as category_name,
+            sc.name as subcategory_name,
+            b.name as brand_name,
+            t.rate as tax_rate,
+            ROUND(COALESCE(stock_totals.total_stock, 0), 2) as stock
+          FROM products p
+          LEFT JOIN categories c ON p.category_id = c.id
+          LEFT JOIN subcategories sc ON p.subcategory_id = sc.id
+          LEFT JOIN brands b ON p.brand_id = b.id
+          LEFT JOIN tax_rates t ON p.tax_id = t.id
+          LEFT JOIN (
+            SELECT product_id, ROUND(SUM(quantity), 2) as total_stock
+            FROM stock
+            GROUP BY product_id
+          ) stock_totals ON p.id = stock_totals.product_id
+          ${whereClause}
+          ${orderByClause}
+          LIMIT ${limitNum} OFFSET ${offset}
+        `;
+      } else if (includeStock && warehouse_id) {
+        // Stock de una bodega específica
+        query = `
+          SELECT
+            p.*,
+            c.name as category_name,
+            sc.name as subcategory_name,
+            b.name as brand_name,
+            t.rate as tax_rate,
+            ROUND(COALESCE(s.quantity, 0), 2) as stock
+          FROM products p
+          LEFT JOIN categories c ON p.category_id = c.id
+          LEFT JOIN subcategories sc ON p.subcategory_id = sc.id
+          LEFT JOIN brands b ON p.brand_id = b.id
+          LEFT JOIN tax_rates t ON p.tax_id = t.id
+          LEFT JOIN stock s ON p.id = s.product_id AND s.warehouse_id = ${parseInt(warehouse_id)}
+          ${whereClause}
+          ${orderByClause}
+          LIMIT ${limitNum} OFFSET ${offset}
+        `;
+      } else {
+        // Sin stock
+        query = `
+          SELECT
+            p.*,
+            c.name as category_name,
+            sc.name as subcategory_name,
+            b.name as brand_name,
+            t.rate as tax_rate
+          FROM products p
+          LEFT JOIN categories c ON p.category_id = c.id
+          LEFT JOIN subcategories sc ON p.subcategory_id = sc.id
+          LEFT JOIN brands b ON p.brand_id = b.id
+          LEFT JOIN tax_rates t ON p.tax_id = t.id
+          ${whereClause}
+          ${orderByClause}
+          LIMIT ${limitNum} OFFSET ${offset}
+        `;
       }
-
-      const query = `
-        SELECT ${selectClause}
-        FROM products p
-        LEFT JOIN categories c ON p.category_id = c.id
-        LEFT JOIN subcategories sc ON p.subcategory_id = sc.id
-        LEFT JOIN brands b ON p.brand_id = b.id
-        ${joinClause}
-        ${whereClause}
-        ${includeStock && !warehouse_id ? 'GROUP BY p.id' : ''}
-        ${orderByClause}
-        LIMIT ${limitNum} OFFSET ${offset}
-      `;
 
       // Para esta query usamos solo los parámetros de búsqueda
       const products = await db.query(query, searchParams);
@@ -189,17 +270,19 @@ class ProductService {
 
   /**
    * Obtener producto por código de barras
+   * NOTA: Campo barcode eliminado de la BD
    */
   static async getProductByBarcode(barcode, store_id = 1) {
     try {
+      // Buscar por código normal en lugar de barcode
       const query = `
-        SELECT 
+        SELECT
           p.*,
           c.name as category_name,
           (SELECT SUM(st.quantity) FROM stock st WHERE st.product_id = p.id) as current_stock
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
-        WHERE p.barcode = ? AND p.status = 'active' AND p.deleted_at IS NULL
+        WHERE p.code = ? AND p.is_active = 1 AND p.deleted_at IS NULL
       `;
 
       const [rows] = await db.execute(query, [barcode]);
@@ -220,10 +303,10 @@ class ProductService {
         name,
         short_name,
         code,
-        barcode,
         category_id,
         subcategory_id,
         brand_id,
+        supplier_id,
         description,
         cost = 0,
         price_1 = 0,
@@ -232,37 +315,47 @@ class ProductService {
         price_4 = 0,
         price_5 = 0,
         price_6 = 0,
-        stock = 0,
-        fractional = 0,
-        tax_rate = 0,
+        unit_id,
+        weight,
+        show_in_online_store = 0,
+        is_featured = 0,
+        tax_id,
         image_url,
         is_active = 1,
-        created_by
+        created_by,
+        color = null,
+        acabado = null,
+        estilo = null,
+        additional_fields = null
       } = productData;
 
       // Verificar duplicados
       const existing = await db.execute(
-        'SELECT id FROM products WHERE (code = ? OR (barcode = ? AND barcode IS NOT NULL)) AND deleted_at IS NULL',
-        [code, barcode]
+        'SELECT id FROM products WHERE code = ? AND deleted_at IS NULL',
+        [code]
       );
 
       if (existing.length > 0) {
-        throw new Error('Ya existe un producto con ese código o código de barras');
+        throw new Error('Ya existe un producto con ese código');
       }
 
       // Insertar producto
       const insertQuery = `
         INSERT INTO products (
-          name, short_name, code, barcode, category_id, subcategory_id, brand_id,
+          name, short_name, code, category_id, subcategory_id, brand_id, supplier_id,
           description, cost, price_1, price_2, price_3, price_4, price_5, price_6,
-          stock, fractional, tax_rate, image_url, is_active, created_by, created_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+          unit_id, weight, show_in_online_store, is_featured, tax_id, image, is_active,
+          color, acabado, estilo,
+          created_by, created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
       `;
 
       const result = await db.execute(insertQuery, [
-        name, short_name, code, barcode, category_id, subcategory_id, brand_id,
+        name, short_name, code, category_id, subcategory_id, brand_id, supplier_id,
         description, cost, price_1, price_2, price_3, price_4, price_5, price_6,
-        stock, fractional, tax_rate, image_url, is_active, created_by
+        unit_id, weight, show_in_online_store, is_featured, tax_id, image_url, is_active,
+        color, acabado, estilo,
+        created_by
       ]);
 
       return {
@@ -282,32 +375,9 @@ class ProductService {
    */
   static async updateProduct(id, productData) {
     try {
-      const {
-        name,
-        short_name,
-        barcode,
-        category_id,
-        subcategory_id,
-        brand_id,
-        description,
-        cost,
-        price_1,
-        price_2,
-        price_3,
-        price_4,
-        price_5,
-        price_6,
-        stock,
-        fractional,
-        tax_rate,
-        image_url,
-        is_active,
-        updated_by
-      } = productData;
-
-      // Verificar que existe
+      // Verificar que existe y obtener datos actuales
       const existing = await db.execute(
-        'SELECT id FROM products WHERE id = ? AND deleted_at IS NULL',
+        'SELECT * FROM products WHERE id = ? AND deleted_at IS NULL',
         [id]
       );
 
@@ -315,34 +385,119 @@ class ProductService {
         throw new Error('Producto no encontrado');
       }
 
-      // Verificar código de barras duplicado
-      if (barcode) {
-        const duplicate = await db.execute(
-          'SELECT id FROM products WHERE barcode = ? AND id != ? AND deleted_at IS NULL',
-          [barcode, id]
-        );
+      const currentProduct = existing[0];
 
-        if (duplicate.length > 0) {
-          throw new Error('Ya existe otro producto con ese código de barras');
-        }
-      }
+      // Merge: usar valores nuevos si están definidos, sino mantener los actuales
+      const code = productData.code !== undefined ? productData.code : currentProduct.code;
+      const name = productData.name !== undefined ? productData.name : currentProduct.name;
+      const short_name = productData.short_name !== undefined ? productData.short_name : currentProduct.short_name;
+      const category_id = productData.category_id !== undefined ? productData.category_id : currentProduct.category_id;
+      const subcategory_id = productData.subcategory_id !== undefined ? productData.subcategory_id : currentProduct.subcategory_id;
+      const brand_id = productData.brand_id !== undefined ? productData.brand_id : currentProduct.brand_id;
+      const supplier_id = productData.supplier_id !== undefined ? productData.supplier_id : currentProduct.supplier_id;
+      const description = productData.description !== undefined ? productData.description : currentProduct.description;
+      const cost = productData.cost !== undefined ? productData.cost : currentProduct.cost;
+      const price_1 = productData.price_1 !== undefined ? productData.price_1 : currentProduct.price_1;
+      const price_2 = productData.price_2 !== undefined ? productData.price_2 : currentProduct.price_2;
+      const price_3 = productData.price_3 !== undefined ? productData.price_3 : currentProduct.price_3;
+      const price_4 = productData.price_4 !== undefined ? productData.price_4 : currentProduct.price_4;
+      const price_5 = productData.price_5 !== undefined ? productData.price_5 : currentProduct.price_5;
+      const price_6 = productData.price_6 !== undefined ? productData.price_6 : currentProduct.price_6;
+      const unit_id = productData.unit_id !== undefined ? productData.unit_id : currentProduct.unit_id;
+      const weight = productData.weight !== undefined ? productData.weight : currentProduct.weight;
+      const show_in_online_store = productData.show_in_online_store !== undefined ? productData.show_in_online_store : currentProduct.show_in_online_store;
+      const is_featured = productData.is_featured !== undefined ? productData.is_featured : currentProduct.is_featured;
+      const tax_id = productData.tax_id !== undefined ? productData.tax_id : currentProduct.tax_id;
+      const image_url = productData.image_url;
+      const is_active = productData.is_active !== undefined ? productData.is_active : currentProduct.is_active;
+      const color = productData.color !== undefined ? productData.color : currentProduct.color;
+      const acabado = productData.acabado !== undefined ? productData.acabado : currentProduct.acabado;
+      const estilo = productData.estilo !== undefined ? productData.estilo : currentProduct.estilo;
+      const additional_fields = productData.additional_fields !== undefined ? productData.additional_fields : currentProduct.additional_fields;
+      const updated_by = productData.updated_by;
 
       // Actualizar
-      const updateQuery = `
-        UPDATE products SET
-          name = ?, short_name = ?, barcode = ?, category_id = ?, subcategory_id = ?,
-          brand_id = ?, description = ?, cost = ?, price_1 = ?, price_2 = ?,
-          price_3 = ?, price_4 = ?, price_5 = ?, price_6 = ?, stock = ?,
-          fractional = ?, tax_rate = ?, image_url = ?, is_active = ?,
-          updated_by = ?, updated_at = NOW()
-        WHERE id = ?
-      `;
+      // Solo actualizar el campo image si se proporcionó un nuevo image_url
+      let updateQuery;
+      let updateParams;
 
-      await db.execute(updateQuery, [
-        name, short_name, barcode, category_id, subcategory_id, brand_id,
-        description, cost, price_1, price_2, price_3, price_4, price_5, price_6,
-        stock, fractional, tax_rate, image_url, is_active, updated_by, id
-      ]);
+      if (image_url !== undefined) {
+        // Actualizar incluyendo la imagen
+        updateQuery = `
+          UPDATE products SET
+            code = ?, name = ?, short_name = ?, category_id = ?, subcategory_id = ?,
+            brand_id = ?, supplier_id = ?, description = ?, cost = ?, price_1 = ?, price_2 = ?,
+            price_3 = ?, price_4 = ?, price_5 = ?, price_6 = ?,
+            unit_id = ?, weight = ?, show_in_online_store = ?, is_featured = ?, tax_id = ?,
+            image = ?, is_active = ?,
+            color = ?, acabado = ?, estilo = ?, additional_fields = ?,
+            updated_by = ?, updated_at = NOW()
+          WHERE id = ?
+        `;
+
+        updateParams = [
+          code, name, short_name, category_id, subcategory_id, brand_id, supplier_id,
+          description, cost, price_1, price_2, price_3, price_4, price_5, price_6,
+          unit_id, weight, show_in_online_store, is_featured, tax_id, image_url, is_active,
+          color, acabado, estilo, additional_fields,
+          updated_by, id
+        ];
+      } else {
+        // Actualizar sin modificar la imagen existente
+        updateQuery = `
+          UPDATE products SET
+            code = ?, name = ?, short_name = ?, category_id = ?, subcategory_id = ?,
+            brand_id = ?, supplier_id = ?, description = ?, cost = ?, price_1 = ?, price_2 = ?,
+            price_3 = ?, price_4 = ?, price_5 = ?, price_6 = ?,
+            unit_id = ?, weight = ?, show_in_online_store = ?, is_featured = ?, tax_id = ?,
+            is_active = ?,
+            color = ?, acabado = ?, estilo = ?, additional_fields = ?,
+            updated_by = ?, updated_at = NOW()
+          WHERE id = ?
+        `;
+
+        updateParams = [
+          code, name, short_name, category_id, subcategory_id, brand_id, supplier_id,
+          description, cost, price_1, price_2, price_3, price_4, price_5, price_6,
+          unit_id, weight, show_in_online_store, is_featured, tax_id, is_active,
+          color, acabado, estilo, additional_fields,
+          updated_by, id
+        ];
+      }
+
+      await db.execute(updateQuery, updateParams);
+
+      // Actualizar min_stock y max_stock por bodega si se proporcionaron
+      if (productData.warehouse_stock) {
+        const warehouseStock = typeof productData.warehouse_stock === 'string'
+          ? JSON.parse(productData.warehouse_stock)
+          : productData.warehouse_stock;
+
+        for (const [warehouseId, stockData] of Object.entries(warehouseStock)) {
+          // Verificar si existe el registro en la tabla stock - incluir store_id en la búsqueda
+          const existingStock = await db.execute(
+            'SELECT id FROM stock WHERE product_id = ? AND warehouse_id = ? AND store_id = ?',
+            [id, warehouseId, productData.store_id || 1]
+          );
+
+          if (existingStock.length > 0) {
+            // Actualizar solo min_stock y max_stock, NO la cantidad
+            await db.execute(
+              `UPDATE stock
+               SET min_stock = ?, max_stock = ?, updated_at = NOW()
+               WHERE product_id = ? AND warehouse_id = ? AND store_id = ?`,
+              [stockData.min || 0, stockData.max || 1000, id, warehouseId, productData.store_id || 1]
+            );
+          } else {
+            // Crear nuevo registro si no existe - incluir store_id
+            await db.execute(
+              `INSERT INTO stock (product_id, warehouse_id, store_id, quantity, min_stock, max_stock, created_at, updated_at)
+               VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())`,
+              [id, warehouseId, productData.store_id || 1, stockData.current || 0, stockData.min || 0, stockData.max || 1000]
+            );
+          }
+        }
+      }
 
       return { id, name };
 
@@ -442,7 +597,7 @@ class ProductService {
       const query = `
         SELECT 
           COUNT(DISTINCT p.id) as total_products,
-          COUNT(DISTINCT CASE WHEN p.status = 'active' THEN p.id END) as active_products,
+          COUNT(DISTINCT CASE WHEN p.is_active = 1 THEN p.id END) as active_products,
           COALESCE(SUM(s.quantity), 0) as total_stock,
           COUNT(DISTINCT CASE WHEN s.quantity <= p.min_stock THEN p.id END) as low_stock_count
         FROM products p
@@ -475,7 +630,7 @@ class ProductService {
         FROM products p
         LEFT JOIN stock s ON p.id = s.product_id
         LEFT JOIN categories c ON p.category_id = c.id
-        WHERE p.status = 'active' AND p.deleted_at IS NULL
+        WHERE p.is_active = 1 AND p.deleted_at IS NULL
         GROUP BY p.id
         HAVING current_stock <= p.min_stock
         ORDER BY current_stock ASC
@@ -520,44 +675,58 @@ class ProductService {
       }
 
       const query = `
-        SELECT 
-          p.id,
-          p.name,
-          p.code,
-          p.min_stock,
-          p.max_stock,
-          COALESCE(SUM(s.quantity), 0) as current_stock,
-          w.name as warehouse_name
+        SELECT
+          p.id as product_id,
+          p.name as product_name,
+          p.code as product_code,
+          w.id as warehouse_id,
+          w.nombre as warehouse_name,
+          COALESCE(s.quantity, 0) as quantity,
+          COALESCE(s.min_stock, 0) as min_stock,
+          COALESCE(s.max_stock, 1000) as max_stock
         FROM products p
-        LEFT JOIN stock s ON p.id = s.product_id
-        LEFT JOIN warehouses w ON s.warehouse_id = w.id
-        ${whereClause}
-        GROUP BY p.id, w.id
-        ${low_stock ? 'HAVING current_stock <= p.min_stock' : ''}
-        ORDER BY p.name
+        CROSS JOIN warehouses w
+        LEFT JOIN stock s ON p.id = s.product_id AND s.warehouse_id = w.id
+        ${whereClause} AND w.deleted_at IS NULL
+        ${low_stock ? 'AND s.quantity <= s.min_stock' : ''}
+        ORDER BY p.name, w.nombre
         LIMIT ? OFFSET ?
       `;
 
       params.push(limit, offset);
 
-      const [stock] = await db.execute(query, params);
+      const stock = await db.execute(query, params);
+
+      logger.info('Stock query result:', {
+        stockIsArray: Array.isArray(stock),
+        stockLength: stock ? stock.length : 0,
+        stockType: typeof stock,
+        firstItem: stock ? stock[0] : null,
+        secondItem: stock ? stock[1] : null,
+        product_id
+      });
 
       // Contar total
       const countQuery = `
-        SELECT COUNT(DISTINCT p.id) as total 
-        FROM products p 
-        LEFT JOIN stock s ON p.id = s.product_id 
-        ${whereClause}
+        SELECT COUNT(*) as total
+        FROM products p
+        CROSS JOIN warehouses w
+        LEFT JOIN stock s ON p.id = s.product_id AND s.warehouse_id = w.id
+        ${whereClause} AND w.deleted_at IS NULL
       `;
-      const [countResult] = await db.execute(countQuery, params.slice(0, -2));
+      const countParams = params.slice(0, -2); // Remover limit y offset
+      const countResult = await db.execute(countQuery, countParams);
+
+      // Safety check for countResult
+      const total = countResult && countResult.length > 0 && countResult[0] ? countResult[0].total : 0;
 
       return {
         stock,
         pagination: {
           page: parseInt(page),
           limit: parseInt(limit),
-          total: countResult[0].total,
-          pages: Math.ceil(countResult[0].total / limit)
+          total: total,
+          pages: Math.ceil(total / limit)
         }
       };
 
@@ -578,7 +747,7 @@ class ProductService {
           COALESCE(SUM(s.quantity), 0) as current_stock
         FROM products p
         LEFT JOIN stock s ON p.id = s.product_id
-        WHERE p.id = ? AND p.status = 'active' AND p.deleted_at IS NULL
+        WHERE p.id = ? AND p.is_active = 1 AND p.deleted_at IS NULL
         GROUP BY p.id
       `;
 
@@ -676,8 +845,8 @@ class ProductService {
         );
       } else {
         await connection.execute(
-          'INSERT INTO stock (product_id, warehouse_id, quantity, created_at) VALUES (?, ?, ?, NOW())',
-          [product_id, warehouse_id, new_quantity]
+          'INSERT INTO stock (product_id, warehouse_id, store_id, quantity, min_stock, max_stock, created_at, updated_at) VALUES (?, ?, ?, ?, 0, 1000, NOW(), NOW())',
+          [product_id, warehouse_id, store_id, new_quantity]
         );
       }
 
@@ -758,8 +927,8 @@ class ProductService {
         );
       } else {
         await connection.execute(
-          'INSERT INTO stock (product_id, warehouse_id, quantity, created_at) VALUES (?, ?, ?, NOW())',
-          [product_id, to_warehouse_id, quantity]
+          'INSERT INTO stock (product_id, warehouse_id, store_id, quantity, min_stock, max_stock, created_at, updated_at) VALUES (?, ?, ?, ?, 0, 1000, NOW(), NOW())',
+          [product_id, to_warehouse_id, store_id, quantity]
         );
       }
 
@@ -956,7 +1125,7 @@ class ProductService {
         FROM products p
         LEFT JOIN stock s ON p.id = s.product_id
         LEFT JOIN categories c ON p.category_id = c.id
-        WHERE p.status = 'active' AND p.deleted_at IS NULL
+        WHERE p.is_active = 1 AND p.deleted_at IS NULL
         GROUP BY p.id
         HAVING current_stock <= p.min_stock
         ORDER BY 
@@ -983,6 +1152,136 @@ class ProductService {
 
     } catch (error) {
       logger.error('Error in getCriticalStockReport:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Guardar imágenes de galería del producto
+   */
+  static async saveProductGalleryImages(product_id, images) {
+    try {
+      // NO eliminar imágenes existentes aquí - eso ya se hizo en cleanupGalleryImages
+
+      // Solo insertar nuevas imágenes
+      if (images && images.length > 0) {
+        const insertQuery = `
+          INSERT INTO product_images (product_id, image_url, image_order, is_primary, created_at)
+          VALUES (?, ?, ?, ?, NOW())
+        `;
+
+        for (const img of images) {
+          await db.execute(insertQuery, [
+            product_id,
+            img.image_url,
+            img.image_order || 0,
+            img.is_primary || false
+          ]);
+        }
+
+        logger.info('Gallery images saved', {
+          productId: product_id,
+          imagesCount: images.length
+        });
+      }
+
+      return true;
+    } catch (error) {
+      logger.error('Error saving product gallery images:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Obtener imágenes de galería del producto
+   */
+  static async getProductGalleryImages(product_id) {
+    try {
+      const images = await db.query(
+        `SELECT id, image_url, image_order, is_primary, created_at
+         FROM product_images
+         WHERE product_id = ? AND deleted_at IS NULL
+         ORDER BY image_order ASC`,
+        [product_id]
+      );
+
+      logger.info('Gallery images query result:', {
+        type: typeof images,
+        isArray: Array.isArray(images),
+        length: images?.length,
+        keys: images ? Object.keys(images) : null,
+        firstItem: images?.[0]
+      });
+
+      return images;
+    } catch (error) {
+      logger.error('Error getting product gallery images:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Limpiar imágenes de galería - eliminar las que no están en la lista de IDs a mantener
+   */
+  static async cleanupGalleryImages(productId, idsToKeep) {
+    try {
+      if (idsToKeep.length === 0) {
+        // Si no hay IDs para mantener, eliminar todas las imágenes del producto
+        await db.execute(
+          `UPDATE product_images
+           SET deleted_at = NOW()
+           WHERE product_id = ? AND deleted_at IS NULL`,
+          [productId]
+        );
+        logger.info(`All gallery images soft-deleted for product ${productId}`);
+      } else {
+        // Eliminar solo las que NO están en la lista
+        const placeholders = idsToKeep.map(() => '?').join(',');
+        await db.execute(
+          `UPDATE product_images
+           SET deleted_at = NOW()
+           WHERE product_id = ? AND id NOT IN (${placeholders}) AND deleted_at IS NULL`,
+          [productId, ...idsToKeep]
+        );
+        logger.info(`Gallery images cleaned for product ${productId}, kept ${idsToKeep.length} images`);
+      }
+
+      return { success: true };
+    } catch (error) {
+      logger.error('Error cleaning up gallery images:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Eliminar imagen de galería
+   */
+  static async deleteGalleryImage(productId, imageId) {
+    try {
+      // Verificar que la imagen pertenece al producto
+      const [image] = await db.query(
+        `SELECT id, image_url FROM product_images
+         WHERE id = ? AND product_id = ? AND deleted_at IS NULL`,
+        [imageId, productId]
+      );
+
+      if (!image) {
+        throw new Error('Imagen no encontrada o no pertenece a este producto');
+      }
+
+      // Soft delete de la imagen
+      await db.execute(
+        `UPDATE product_images
+         SET deleted_at = NOW()
+         WHERE id = ? AND product_id = ?`,
+        [imageId, productId]
+      );
+
+      logger.info(`Gallery image deleted: ${imageId} from product ${productId}`);
+
+      return { success: true, message: 'Imagen eliminada exitosamente' };
+    } catch (error) {
+      logger.error('Error deleting gallery image:', error);
       throw error;
     }
   }

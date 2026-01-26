@@ -5,8 +5,11 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const { OAuth2Client } = require('google-auth-library');
 const db = require('../utils/database');
 const logger = require('../utils/logger');
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 class AuthService {
   /**
@@ -103,6 +106,227 @@ class AuthService {
     } catch (error) {
       logger.error('Error in login service:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Login con Google OAuth usando Access Token
+   */
+  static async loginWithGoogleOAuth({ email, given_name, family_name, picture, sub: googleId, ipAddress, userAgent }) {
+    try {
+      console.log('🔍 loginWithGoogleOAuth - Datos recibidos:', { email, given_name, family_name, googleId });
+
+      // Buscar o crear ecommerce_customer directamente
+      let ecommerceCustomers = await db.query(`
+        SELECT id, first_name, last_name, email, phone, dni, google_id, created_at
+        FROM ecommerce_customers
+        WHERE email = ? OR google_id = ?
+        LIMIT 1
+      `, [email, googleId]);
+
+      console.log('📊 Clientes encontrados:', ecommerceCustomers.length);
+
+      let ecommerceCustomer;
+      if (ecommerceCustomers.length === 0) {
+        console.log('➕ Creando nuevo cliente de ecommerce...');
+        // Crear ecommerce_customer si no existe
+        const result = await db.query(`
+          INSERT INTO ecommerce_customers (
+            first_name, last_name, email, password, phone,
+            google_id, created_at, updated_at
+          ) VALUES (?, ?, ?, NULL, NULL, ?, NOW(), NOW())
+        `, [given_name || '', family_name || '', email, googleId]);
+
+        console.log('✅ Cliente creado con ID:', result.insertId);
+
+        ecommerceCustomer = {
+          id: result.insertId,
+          first_name: given_name || '',
+          last_name: family_name || '',
+          email: email,
+          phone: null,
+          dni: null,
+          google_id: googleId
+        };
+      } else {
+        console.log('✅ Cliente encontrado:', ecommerceCustomers[0].id);
+        ecommerceCustomer = ecommerceCustomers[0];
+        // Si no tiene google_id, actualizarlo
+        if (!ecommerceCustomer.google_id) {
+          console.log('🔧 Actualizando google_id del cliente...');
+          await db.query(`
+            UPDATE ecommerce_customers
+            SET google_id = ?, updated_at = NOW()
+            WHERE id = ?
+          `, [googleId, ecommerceCustomer.id]);
+          ecommerceCustomer.google_id = googleId;
+        }
+      }
+
+      console.log('🔑 Generando token JWT...');
+      // Generar JWT con ID de ecommerce_customer y type correcto
+      const expiresIn = '7d';
+      const token = jwt.sign(
+        {
+          id: ecommerceCustomer.id,
+          email: ecommerceCustomer.email,
+          type: 'ecommerce_customer'
+        },
+        process.env.JWT_SECRET || 'prosperpos-secret-key',
+        { expiresIn }
+      );
+
+      console.log('✅ Login exitoso para:', email);
+
+      // Retornar información del cliente de ecommerce
+      return {
+        token,
+        expiresIn,
+        customer: ecommerceCustomer
+      };
+
+    } catch (error) {
+      console.error('❌ Error in Google OAuth login:', error.message);
+      console.error('Stack:', error.stack);
+      logger.error('Error in Google OAuth login:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Login con Google OAuth (método original con ID Token)
+   */
+  static async loginWithGoogle({ googleToken, ipAddress, userAgent }) {
+    try {
+      // Verificar el token de Google
+      const ticket = await googleClient.verifyIdToken({
+        idToken: googleToken,
+        audience: process.env.GOOGLE_CLIENT_ID
+      });
+
+      const payload = ticket.getPayload();
+      const { email, given_name, family_name, picture, sub: googleId } = payload;
+
+      // Buscar usuario por email o google_id
+      let users = await db.query(`
+        SELECT
+          u.*,
+          s.name as store_name
+        FROM users u
+        LEFT JOIN stores s ON u.store_id = s.id
+        WHERE (u.email = ? OR u.google_id = ?)
+          AND u.deleted_at IS NULL
+        LIMIT 1
+      `, [email, googleId]);
+
+      let user;
+
+      if (users.length === 0) {
+        // Usuario no existe, crear uno nuevo
+        const username = email.split('@')[0] + '_' + Math.random().toString(36).substring(7);
+
+        const result = await db.query(`
+          INSERT INTO users (
+            username, email, first_name, last_name,
+            google_id, avatar, store_id, is_active, created_at
+          ) VALUES (?, ?, ?, ?, ?, ?, 1, true, NOW())
+        `, [username, email, given_name || '', family_name || '', googleId, picture || null]);
+
+        const userId = result.insertId;
+
+        // Asignar rol por defecto (Cashier = 2)
+        await db.query(`
+          INSERT INTO user_roles (user_id, role_id, assigned_at)
+          VALUES (?, 2, NOW())
+        `, [userId]);
+
+        // Obtener el usuario recién creado
+        users = await db.query(`
+          SELECT
+            u.*,
+            s.name as store_name
+          FROM users u
+          LEFT JOIN stores s ON u.store_id = s.id
+          WHERE u.id = ?
+        `, [userId]);
+
+        user = users[0];
+
+        logger.auth('GOOGLE_REGISTER', userId, {
+          email,
+          ip: ipAddress
+        });
+      } else {
+        user = users[0];
+
+        // Si el usuario no tiene google_id, actualizarlo
+        if (!user.google_id) {
+          await db.query(`
+            UPDATE users
+            SET google_id = ?, avatar = COALESCE(avatar, ?), updated_at = NOW()
+            WHERE id = ?
+          `, [googleId, picture, user.id]);
+        }
+      }
+
+      // Verificar si el usuario está activo
+      if (!user.is_active) {
+        throw new Error('Usuario inactivo');
+      }
+
+      // Obtener roles y permisos del usuario
+      const rolesPermissions = await this.getUserRolesAndPermissions(user.id);
+
+      // Generar token JWT
+      const token = this.generateToken(user, '7d'); // 7 días para Google login
+
+      // Calcular fecha de expiración
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + 7);
+
+      // Guardar sesión en la base de datos
+      await db.query(`
+        INSERT INTO user_sessions (
+          user_id, token, ip_address, user_agent, expires_at, created_at
+        ) VALUES (?, ?, ?, ?, ?, NOW())
+      `, [user.id, token, ipAddress, userAgent, expiresAt]);
+
+      // Registrar login exitoso
+      await this.recordLoginAttempt(email, ipAddress, userAgent, true, 'google_oauth');
+
+      logger.auth('GOOGLE_LOGIN', user.id, {
+        ip: ipAddress,
+        userAgent
+      });
+
+      // Preparar respuesta
+      return {
+        token,
+        expires_at: expiresAt,
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          full_name: `${user.first_name} ${user.last_name}`.trim(),
+          phone: user.phone,
+          avatar: user.avatar,
+          store_id: user.store_id,
+          store_name: user.store_name,
+          roles: rolesPermissions.roles,
+          permissions: rolesPermissions.permissions
+        }
+      };
+
+    } catch (error) {
+      logger.error('Error in Google login service:', error);
+
+      if (error.message === 'Usuario inactivo') {
+        throw error;
+      }
+
+      throw new Error('Error al autenticar con Google');
     }
   }
 
@@ -547,7 +771,7 @@ class AuthService {
     try {
       const results = await db.query(`
         SELECT DISTINCT
-          r.name as role_name,
+          r.slug as role_slug,
           p.name as permission_name
         FROM users u
         INNER JOIN user_roles ur ON u.id = ur.user_id
@@ -557,7 +781,7 @@ class AuthService {
         WHERE u.id = ?
       `, [userId]);
 
-      const roles = [...new Set(results.map(r => r.role_name))];
+      const roles = [...new Set(results.map(r => r.role_slug))];
       const permissions = [...new Set(results.map(r => r.permission_name).filter(p => p))];
 
       return { roles, permissions };

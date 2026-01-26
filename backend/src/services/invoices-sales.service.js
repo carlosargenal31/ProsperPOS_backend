@@ -105,9 +105,11 @@ class InvoicesSalesService {
     const itemsSql = `
       SELECT
         ii.*,
-        p.code as product_code
+        p.code as product_code,
+        COALESCE(u.name, 'UNIDAD') as product_unit
       FROM invoice_items ii
       LEFT JOIN products p ON ii.product_id = p.id
+      LEFT JOIN units u ON p.unit_id = u.id
       WHERE ii.invoice_id = ?
     `;
     const items = await db.query(itemsSql, [id]);

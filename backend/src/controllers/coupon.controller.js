@@ -142,6 +142,34 @@ exports.validateCoupon = async (req, res) => {
       }
     }
 
+    // Validar días de la semana
+    const now = new Date();
+    const dayOfWeek = now.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
+
+    const dayMapping = {
+      0: 'aplica_domingo',
+      1: 'aplica_lunes',
+      2: 'aplica_martes',
+      3: 'aplica_miercoles',
+      4: 'aplica_jueves',
+      5: 'aplica_viernes',
+      6: 'aplica_sabado'
+    };
+
+    const dayField = dayMapping[dayOfWeek];
+    if (coupon[dayField] !== undefined && !coupon[dayField]) {
+      const dayNames = {
+        0: 'domingo',
+        1: 'lunes',
+        2: 'martes',
+        3: 'miércoles',
+        4: 'jueves',
+        5: 'viernes',
+        6: 'sábado'
+      };
+      return sendErrorResponse(res, 400, `Este cupón no es válido para el día ${dayNames[dayOfWeek]}`);
+    }
+
     // Si es múltiples artículos, obtener los productos relacionados
     if (coupon.tipo_aplicacion === 'multiple') {
       const productsQuery = `
@@ -238,6 +266,19 @@ exports.createCoupon = async (req, res) => {
       limitar_fecha,
       fecha_desde,
       fecha_hasta,
+      limitar_hora,
+      hora_desde,
+      hora_hasta,
+      aplica_lunes,
+      aplica_martes,
+      aplica_miercoles,
+      aplica_jueves,
+      aplica_viernes,
+      aplica_sabado,
+      aplica_domingo,
+      aplica_para,
+      monto_minimo,
+      cantidad_minima,
       items,
       suspendida,
       is_active
@@ -264,9 +305,13 @@ exports.createCoupon = async (req, res) => {
       INSERT INTO coupons (
         codigo, nombre, agencia_id, tipo_descuento, valor_descuento,
         limitar_fecha, fecha_desde, fecha_hasta,
+        limitar_hora, hora_desde, hora_hasta,
+        aplica_lunes, aplica_martes, aplica_miercoles, aplica_jueves,
+        aplica_viernes, aplica_sabado, aplica_domingo,
+        aplica_para, monto_minimo, cantidad_minima,
         tipo_aplicacion, grupo_id, subgrupo_id, articulo_id,
         suspendida, is_active, created_by, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     `;
 
     const result = await db.query(query, [
@@ -278,6 +323,19 @@ exports.createCoupon = async (req, res) => {
       limitar_fecha || 0,
       fecha_desde || null,
       fecha_hasta || null,
+      limitar_hora || 0,
+      hora_desde || null,
+      hora_hasta || null,
+      aplica_lunes !== undefined ? aplica_lunes : 1,
+      aplica_martes !== undefined ? aplica_martes : 1,
+      aplica_miercoles !== undefined ? aplica_miercoles : 1,
+      aplica_jueves !== undefined ? aplica_jueves : 1,
+      aplica_viernes !== undefined ? aplica_viernes : 1,
+      aplica_sabado !== undefined ? aplica_sabado : 0,
+      aplica_domingo !== undefined ? aplica_domingo : 0,
+      aplica_para || 'todos',
+      monto_minimo || 0,
+      cantidad_minima || 0,
       tipo_aplicacion,
       categoria_id || null,
       subcategoria_id || null,
@@ -349,6 +407,19 @@ exports.updateCoupon = async (req, res) => {
       limitar_fecha: 'limitar_fecha',
       fecha_desde: 'fecha_desde',
       fecha_hasta: 'fecha_hasta',
+      limitar_hora: 'limitar_hora',
+      hora_desde: 'hora_desde',
+      hora_hasta: 'hora_hasta',
+      aplica_lunes: 'aplica_lunes',
+      aplica_martes: 'aplica_martes',
+      aplica_miercoles: 'aplica_miercoles',
+      aplica_jueves: 'aplica_jueves',
+      aplica_viernes: 'aplica_viernes',
+      aplica_sabado: 'aplica_sabado',
+      aplica_domingo: 'aplica_domingo',
+      aplica_para: 'aplica_para',
+      monto_minimo: 'monto_minimo',
+      cantidad_minima: 'cantidad_minima',
       tipo_aplicacion: 'tipo_aplicacion',
       categoria_id: 'grupo_id',
       subcategoria_id: 'subgrupo_id',

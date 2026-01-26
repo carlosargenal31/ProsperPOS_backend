@@ -24,35 +24,50 @@ class PendingInvoicesController {
         items,
         subtotal,
         discount,
+        discount_type,
+        discount_value,
         tax,
         total,
         surcharge,
+        applied_coupons,
+        applied_offers,
         notes,
         internal_notes,
-        expires_at
+        expires_at,
+        orden_compra,
+        constancia_exonerado,
+        registro_sag
       } = req.body;
 
       const userId = req.user.id;
 
-      // Generar número de documento
-      const countSql = 'SELECT COUNT(*) as total FROM pending_invoices';
-      const countResult = await db.query(countSql);
-      const docCount = countResult[0].total + 1;
-      const documentNumber = String(docCount).padStart(10, '0');
+      // Generar número de documento (usar el ID que se va a generar)
+      const maxIdSql = 'SELECT COALESCE(MAX(id), 0) as max_id FROM pending_invoices';
+      const maxIdResult = await db.query(maxIdSql);
+      const nextId = maxIdResult[0].max_id + 1;
+      const documentNumber = String(nextId).padStart(10, '0');
+
+      // Convertir arrays a JSON
+      const appliedCouponsJson = applied_coupons && applied_coupons.length > 0 ? JSON.stringify(applied_coupons) : null;
+      const appliedOffersJson = applied_offers && applied_offers.length > 0 ? JSON.stringify(applied_offers) : null;
 
       // Insertar factura en espera
       const insertSql = `
         INSERT INTO pending_invoices (
           document_number, customer_id, customer_name, customer_rtn, customer_phone,
           customer_email, branch_id, warehouse_id, seller_id, seller_name,
-          subtotal, discount, tax, total, surcharge, notes, internal_notes, expires_at, created_by
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          subtotal, discount, discount_type, discount_value, tax, total, surcharge,
+          applied_coupons, applied_offers, notes, internal_notes, expires_at,
+          orden_compra, constancia_exonerado, registro_sag, created_by
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
       const result = await db.query(insertSql, [
         documentNumber, customer_id, customer_name, customer_rtn, customer_phone,
         customer_email, branch_id, warehouse_id, seller_id, seller_name,
-        subtotal, discount, tax, total, surcharge || 0, notes, internal_notes, expires_at, userId
+        subtotal, discount, discount_type || null, discount_value || 0, tax, total, surcharge || 0,
+        appliedCouponsJson, appliedOffersJson, notes, internal_notes, expires_at,
+        orden_compra || null, constancia_exonerado || null, registro_sag || null, userId
       ]);
 
       const pendingInvoiceId = result.insertId;
@@ -165,6 +180,16 @@ class PendingInvoicesController {
 
       const pendingInvoice = results[0];
 
+      // MySQL devuelve columnas JSON ya parseadas como objetos
+      // Solo necesitamos asegurarnos de que existan como arrays
+      if (!pendingInvoice.applied_coupons || !Array.isArray(pendingInvoice.applied_coupons)) {
+        pendingInvoice.applied_coupons = [];
+      }
+
+      if (!pendingInvoice.applied_offers || !Array.isArray(pendingInvoice.applied_offers)) {
+        pendingInvoice.applied_offers = [];
+      }
+
       // Obtener items con códigos de producto
       const itemsSql = `
         SELECT
@@ -211,9 +236,13 @@ class PendingInvoicesController {
         items,
         subtotal,
         discount,
+        discount_type,
+        discount_value,
         tax,
         total,
         surcharge,
+        applied_coupons,
+        applied_offers,
         notes,
         internal_notes,
         expires_at,
@@ -274,12 +303,17 @@ class PendingInvoicesController {
           id
         ];
       } else {
+        // Convertir arrays a JSON
+        const appliedCouponsJson = applied_coupons && applied_coupons.length > 0 ? JSON.stringify(applied_coupons) : null;
+        const appliedOffersJson = applied_offers && applied_offers.length > 0 ? JSON.stringify(applied_offers) : null;
+
         // Actualizar factura en espera completa (datos del cliente, items, etc.)
         updateSql = `
           UPDATE pending_invoices SET
             customer_id = ?, customer_name = ?, customer_rtn = ?, customer_phone = ?,
             customer_email = ?, branch_id = ?, warehouse_id = ?, seller_id = ?, seller_name = ?,
-            subtotal = ?, discount = ?, tax = ?, total = ?, surcharge = ?, notes = ?, internal_notes = ?,
+            subtotal = ?, discount = ?, discount_type = ?, discount_value = ?, tax = ?, total = ?, surcharge = ?,
+            applied_coupons = ?, applied_offers = ?, notes = ?, internal_notes = ?,
             expires_at = ?, updated_at = NOW()
           WHERE id = ?
         `;
@@ -287,7 +321,8 @@ class PendingInvoicesController {
         params = [
           customer_id, customer_name, customer_rtn, customer_phone,
           customer_email, branch_id, warehouse_id, seller_id, seller_name,
-          subtotal, discount, tax, total, surcharge || 0, notes, internal_notes, expires_at, id
+          subtotal, discount, discount_type || null, discount_value || 0, tax, total, surcharge || 0,
+          appliedCouponsJson, appliedOffersJson, notes, internal_notes, expires_at, id
         ];
       }
 

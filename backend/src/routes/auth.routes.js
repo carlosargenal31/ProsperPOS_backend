@@ -20,6 +20,20 @@ const { validateLogin, validateRegister, validateChangePassword } = require('../
 router.post('/login', validateLogin, AuthController.login);
 
 /**
+ * @route   POST /api/v1/auth/google
+ * @desc    Iniciar sesión con Google OAuth (ID Token)
+ * @access  Public
+ */
+router.post('/google', AuthController.googleLogin);
+
+/**
+ * @route   POST /api/v1/auth/google-oauth
+ * @desc    Iniciar sesión con Google OAuth (Access Token)
+ * @access  Public
+ */
+router.post('/google-oauth', AuthController.googleOAuthLogin);
+
+/**
  * @route   POST /api/v1/auth/register
  * @desc    Registrar nuevo usuario (solo si está habilitado)
  * @access  Public (puede ser restringido)

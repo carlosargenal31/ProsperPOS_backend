@@ -16,6 +16,13 @@ class DatabaseMigrator {
       await this.insertDefaultData();
       await this.addBranchIdToInvoices();
       await this.createInventoryAdjustmentTables();
+      await this.moveMinMaxStockToStockTable();
+      await this.createAndPopulateLocations();
+      await this.addEcommerceCustomerFields();
+      await this.createBillingInfoTable();
+      await this.createFavoritesTable();
+      await this.createOrdersTables();
+      await this.createEcommerceSettingsTable();
       logger.info('✅ Migraciones completadas exitosamente');
     } catch (error) {
       logger.error('❌ Error en migraciones:', error);
@@ -211,9 +218,9 @@ class DatabaseMigrator {
           code VARCHAR(50) UNIQUE NOT NULL,
           barcode VARCHAR(100) NULL,
           sku VARCHAR(100) NULL,
-          category_id VARCHAR(36) NULL,
-          brand_id VARCHAR(36) NULL,
-          supplier_id VARCHAR(36) NULL,
+          category_id INT NULL,
+          brand_id INT NULL,
+          supplier_id INT NULL,
           description TEXT NULL,
           unit VARCHAR(20) DEFAULT 'Unidad',
           min_stock INT DEFAULT 0,
@@ -329,6 +336,44 @@ class DatabaseMigrator {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
       `);
 
+      // 10.1 Tabla de clientes de ecommerce
+      await connection.execute(`
+        CREATE TABLE IF NOT EXISTS ecommerce_customers (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          first_name VARCHAR(100) NOT NULL,
+          last_name VARCHAR(100) NOT NULL,
+          email VARCHAR(255) NOT NULL UNIQUE,
+          phone VARCHAR(20) NULL,
+          password VARCHAR(255) NOT NULL,
+          is_active TINYINT(1) DEFAULT 1,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+          INDEX idx_email (email),
+          INDEX idx_active (is_active)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+      `);
+
+      // 10.2 Tabla de direcciones de clientes
+      await connection.execute(`
+        CREATE TABLE IF NOT EXISTS customer_addresses (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          customer_id INT NOT NULL,
+          recipient_name VARCHAR(150) NOT NULL,
+          phone VARCHAR(20) NOT NULL,
+          department VARCHAR(100) NOT NULL,
+          city VARCHAR(100) NOT NULL,
+          full_address TEXT NOT NULL,
+          is_default TINYINT(1) DEFAULT 0,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+          INDEX idx_customer_id (customer_id),
+          INDEX idx_is_default (is_default),
+          FOREIGN KEY (customer_id) REFERENCES ecommerce_customers(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+      `);
+
       // 11. Tabla de métodos de pago
       await connection.execute(`
         CREATE TABLE IF NOT EXISTS payment_methods (
@@ -405,7 +450,7 @@ class DatabaseMigrator {
         CREATE TABLE IF NOT EXISTS purchases (
           id INT AUTO_INCREMENT PRIMARY KEY,
           purchase_number VARCHAR(50) UNIQUE NOT NULL,
-          supplier_id VARCHAR(36) NOT NULL,
+          supplier_id INT NOT NULL,
           user_id INT NOT NULL,
           store_id INT NOT NULL,
           purchase_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -451,6 +496,33 @@ class DatabaseMigrator {
           
           FOREIGN KEY (purchase_id) REFERENCES purchases(id) ON DELETE CASCADE,
           FOREIGN KEY (product_id) REFERENCES products(id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+      `);
+
+      // 16. Tabla de items de documentos de compra (purchases_documents)
+      await connection.execute(`
+        CREATE TABLE IF NOT EXISTS purchases_documents_items (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          purchase_id INT NOT NULL,
+          product_id INT,
+          product_code VARCHAR(100),
+          product_name VARCHAR(255) NOT NULL,
+          quantity DECIMAL(15,3) NOT NULL,
+          unit_price DECIMAL(15,2) NOT NULL,
+          discount_percentage DECIMAL(5,2) DEFAULT 0,
+          discount_amount DECIMAL(15,2) DEFAULT 0,
+          tax_percentage DECIMAL(5,2) DEFAULT 0,
+          tax_amount DECIMAL(15,2) DEFAULT 0,
+          subtotal DECIMAL(15,2) NOT NULL,
+          total DECIMAL(15,2) NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+          INDEX idx_purchases_documents_items_purchase (purchase_id),
+          INDEX idx_purchases_documents_items_product (product_id),
+
+          FOREIGN KEY (purchase_id) REFERENCES purchases_documents(id) ON DELETE CASCADE,
+          FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
       `);
 
@@ -684,6 +756,488 @@ class DatabaseMigrator {
 
     } catch (error) {
       logger.error('❌ Error al crear tablas de ajuste de inventario:', error);
+      // No lanzar el error para que la aplicación continúe
+    } finally {
+      connection.release();
+    }
+  }
+
+  static async moveMinMaxStockToStockTable() {
+    const connection = await db.getConnection();
+
+    try {
+      logger.info('📦 Migrando min_stock y max_stock a la tabla stock...');
+
+      // Verificar si las columnas ya existen en stock
+      const [stockColumns] = await connection.execute(`
+        SELECT COLUMN_NAME
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = 'stock'
+          AND COLUMN_NAME IN ('min_stock', 'max_stock')
+      `);
+
+      if (stockColumns.length === 0) {
+        // Agregar columnas min_stock y max_stock a la tabla stock
+        logger.info('🔧 Agregando columnas min_stock y max_stock a tabla stock...');
+        await connection.execute(`
+          ALTER TABLE stock
+          ADD COLUMN min_stock DECIMAL(15,3) DEFAULT 0,
+          ADD COLUMN max_stock DECIMAL(15,3) DEFAULT 1000
+        `);
+        logger.info('✅ Columnas agregadas a stock');
+
+        // Migrar datos existentes de products a stock
+        logger.info('🔄 Migrando datos de products.min_stock y products.max_stock a stock...');
+        await connection.execute(`
+          UPDATE stock s
+          INNER JOIN products p ON s.product_id = p.id
+          SET s.min_stock = COALESCE(p.min_stock, 0),
+              s.max_stock = COALESCE(p.max_stock, 1000)
+          WHERE p.min_stock IS NOT NULL OR p.max_stock IS NOT NULL
+        `);
+        logger.info('✅ Datos migrados correctamente');
+      } else {
+        logger.info('✅ Columnas min_stock y max_stock ya existen en stock');
+      }
+
+      // Verificar si las columnas aún existen en products antes de eliminarlas
+      const [productColumns] = await connection.execute(`
+        SELECT COLUMN_NAME
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = 'products'
+          AND COLUMN_NAME IN ('min_stock', 'max_stock')
+      `);
+
+      if (productColumns.length > 0) {
+        logger.info('🔧 Eliminando columnas min_stock y max_stock de tabla products...');
+
+        // Eliminar columnas una por una ya que MySQL no soporta DROP COLUMN IF EXISTS con múltiples columnas
+        const columnNames = productColumns.map(col => col.COLUMN_NAME);
+
+        for (const columnName of columnNames) {
+          try {
+            await connection.execute(`ALTER TABLE products DROP COLUMN ${columnName}`);
+            logger.info(`✅ Columna ${columnName} eliminada de products`);
+          } catch (error) {
+            if (!error.message.includes("check that it exists")) {
+              logger.error(`Error eliminando columna ${columnName}:`, error.message);
+            }
+          }
+        }
+      } else {
+        logger.info('✅ Columnas min_stock y max_stock ya fueron eliminadas de products');
+      }
+
+      logger.info('✅ Migración de min_stock y max_stock completada');
+
+    } catch (error) {
+      logger.error('❌ Error al migrar min_stock y max_stock:', error);
+      // No lanzar el error para que la aplicación continúe
+    } finally {
+      connection.release();
+    }
+  }
+
+  static async createAndPopulateLocations() {
+    const connection = await db.getConnection();
+
+    try {
+      logger.info('📍 Verificando tablas de ubicaciones...');
+
+      // Crear tabla de departamentos (states)
+      await connection.execute(`
+        CREATE TABLE IF NOT EXISTS states (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          nombre VARCHAR(100) NOT NULL,
+          is_active TINYINT(1) DEFAULT 1,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          deleted_at TIMESTAMP NULL,
+
+          INDEX idx_nombre (nombre),
+          INDEX idx_active (is_active)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+      `);
+
+      // Crear tabla de ciudades/municipios
+      await connection.execute(`
+        CREATE TABLE IF NOT EXISTS cities (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          nombre VARCHAR(100) NOT NULL,
+          state_id INT NOT NULL,
+          is_active TINYINT(1) DEFAULT 1,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          deleted_at TIMESTAMP NULL,
+
+          INDEX idx_nombre (nombre),
+          INDEX idx_state_id (state_id),
+          INDEX idx_active (is_active),
+          FOREIGN KEY (state_id) REFERENCES states(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+      `);
+
+      logger.info('✅ Tablas de ubicaciones creadas/verificadas');
+
+      // Verificar si ya hay datos
+      const [existingStates] = await connection.execute('SELECT COUNT(*) as count FROM states');
+      if (existingStates[0].count > 0) {
+        logger.info('✅ Departamentos ya poblados');
+        return;
+      }
+
+      logger.info('📊 Poblando departamentos y municipios de Honduras...');
+
+      // 18 Departamentos de Honduras
+      const departamentos = [
+        'Atlántida', 'Choluteca', 'Colón', 'Comayagua', 'Copán', 'Cortés',
+        'El Paraíso', 'Francisco Morazán', 'Gracias a Dios', 'Intibucá',
+        'Islas de la Bahía', 'La Paz', 'Lempira', 'Ocotepeque', 'Olancho',
+        'Santa Bárbara', 'Valle', 'Yoro'
+      ];
+
+      // Insertar departamentos
+      for (const dept of departamentos) {
+        await connection.execute('INSERT INTO states (nombre) VALUES (?)', [dept]);
+      }
+
+      // Municipios principales por departamento
+      const municipiosPorDepartamento = {
+        'Francisco Morazán': ['Tegucigalpa', 'Cedros', 'Curarén', 'Guaimaca', 'La Libertad', 'Lepaterique', 'Ojojona', 'Sabanagrande', 'San Antonio de Oriente', 'San Buenaventura', 'Santa Lucía', 'Talanga', 'Valle de Ángeles'],
+        'Cortés': ['San Pedro Sula', 'Choloma', 'Omoa', 'Puerto Cortés', 'La Lima', 'Villanueva', 'Potrerillos'],
+        'Atlántida': ['La Ceiba', 'Tela', 'El Porvenir', 'Jutiapa', 'La Masica'],
+        'Choluteca': ['Choluteca', 'Marcovia', 'Namasigüe', 'Pespire', 'San Marcos de Colón'],
+        'Colón': ['Trujillo', 'Tocoa', 'Sonaguera', 'Limón', 'Sabá'],
+        'Comayagua': ['Comayagua', 'Siguatepeque', 'La Libertad', 'Ajuterique'],
+        'Copán': ['Santa Rosa de Copán', 'Copán Ruinas', 'La Entrada', 'Dulce Nombre'],
+        'El Paraíso': ['Danlí', 'El Paraíso', 'Yuscarán', 'Trojes'],
+        'Gracias a Dios': ['Puerto Lempira', 'Brus Laguna', 'Ahuas'],
+        'Intibucá': ['La Esperanza', 'Jesús de Otoro', 'Intibucá', 'Yamaranguila'],
+        'Islas de la Bahía': ['Roatán', 'Guanaja', 'Utila'],
+        'La Paz': ['La Paz', 'Marcala', 'Mercedes de Oriente', 'Cabañas'],
+        'Lempira': ['Gracias', 'Lepaera', 'La Campa', 'Erandique'],
+        'Ocotepeque': ['Ocotepeque', 'Belén Gualcho', 'San Marcos', 'Sensenti'],
+        'Olancho': ['Juticalpa', 'Catacamas', 'Campamento', 'Gualaco'],
+        'Santa Bárbara': ['Santa Bárbara', 'Quimistán', 'Ilama', 'San Luis'],
+        'Valle': ['Nacaome', 'San Lorenzo', 'Amapala', 'Langue'],
+        'Yoro': ['Yoro', 'El Progreso', 'Olanchito', 'Morazán']
+      };
+
+      let totalMunicipios = 0;
+      for (const [departamento, municipios] of Object.entries(municipiosPorDepartamento)) {
+        const [deptResult] = await connection.execute('SELECT id FROM states WHERE nombre = ?', [departamento]);
+
+        if (deptResult.length > 0) {
+          const deptId = deptResult[0].id;
+          for (const municipio of municipios) {
+            await connection.execute('INSERT INTO cities (nombre, state_id) VALUES (?, ?)', [municipio, deptId]);
+            totalMunicipios++;
+          }
+        }
+      }
+
+      logger.info(`✅ ${departamentos.length} departamentos y ${totalMunicipios} municipios insertados`);
+
+    } catch (error) {
+      logger.error('❌ Error en migración de ubicaciones:', error);
+      // No lanzar el error para que la aplicación continúe
+    } finally {
+      connection.release();
+    }
+  }
+
+  static async addEcommerceCustomerFields() {
+    const connection = await db.getConnection();
+
+    try {
+      logger.info('📝 Verificando columnas de clientes ecommerce...');
+
+      // Verificar y agregar columna DNI a ecommerce_customers
+      const [dniColumn] = await connection.execute(`
+        SELECT COLUMN_NAME
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = 'ecommerce_customers'
+          AND COLUMN_NAME = 'dni'
+      `);
+
+      if (dniColumn.length === 0) {
+        await connection.execute(`
+          ALTER TABLE ecommerce_customers
+          ADD COLUMN dni VARCHAR(50) NULL AFTER phone
+        `);
+        logger.info('✅ Columna DNI agregada a ecommerce_customers');
+      } else {
+        logger.info('✅ Columna DNI ya existe en ecommerce_customers');
+      }
+
+      // Verificar y agregar columna additional_notes a customer_addresses
+      const [notesColumn] = await connection.execute(`
+        SELECT COLUMN_NAME
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = 'customer_addresses'
+          AND COLUMN_NAME = 'additional_notes'
+      `);
+
+      if (notesColumn.length === 0) {
+        await connection.execute(`
+          ALTER TABLE customer_addresses
+          ADD COLUMN additional_notes TEXT NULL AFTER city
+        `);
+        logger.info('✅ Columna additional_notes agregada a customer_addresses');
+      } else {
+        logger.info('✅ Columna additional_notes ya existe en customer_addresses');
+      }
+
+      // Verificar y corregir foreign key de customer_addresses
+      const [foreignKeys] = await connection.execute(`
+        SELECT CONSTRAINT_NAME, REFERENCED_TABLE_NAME
+        FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = 'customer_addresses'
+          AND COLUMN_NAME = 'customer_id'
+          AND REFERENCED_TABLE_NAME IS NOT NULL
+      `);
+
+      // Si existe una FK apuntando a web_customers, eliminarla y crear una nueva a ecommerce_customers
+      if (foreignKeys.length > 0 && foreignKeys[0].REFERENCED_TABLE_NAME === 'web_customers') {
+        await connection.execute(`
+          ALTER TABLE customer_addresses
+          DROP FOREIGN KEY ${foreignKeys[0].CONSTRAINT_NAME}
+        `);
+        logger.info('✅ Foreign key antigua eliminada de customer_addresses');
+
+        await connection.execute(`
+          ALTER TABLE customer_addresses
+          ADD CONSTRAINT customer_addresses_ecommerce_fk
+          FOREIGN KEY (customer_id) REFERENCES ecommerce_customers(id) ON DELETE CASCADE
+        `);
+        logger.info('✅ Foreign key correcta agregada apuntando a ecommerce_customers');
+      } else if (foreignKeys.length === 0) {
+        // Si no hay FK, crear una nueva
+        await connection.execute(`
+          ALTER TABLE customer_addresses
+          ADD CONSTRAINT customer_addresses_ecommerce_fk
+          FOREIGN KEY (customer_id) REFERENCES ecommerce_customers(id) ON DELETE CASCADE
+        `);
+        logger.info('✅ Foreign key agregada apuntando a ecommerce_customers');
+      } else {
+        logger.info('✅ Foreign key ya apunta correctamente a ecommerce_customers');
+      }
+
+    } catch (error) {
+      logger.error('❌ Error al agregar columnas de ecommerce:', error);
+      // No lanzar el error para que la aplicación continúe
+    } finally {
+      connection.release();
+    }
+  }
+
+  static async createBillingInfoTable() {
+    const connection = await db.getConnection();
+
+    try {
+      logger.info('📝 Creando tabla de información de facturación...');
+
+      // Crear tabla para guardar información de facturación (RTN)
+      await connection.execute(`
+        CREATE TABLE IF NOT EXISTS customer_billing_info (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          customer_id INT NOT NULL,
+          label VARCHAR(100) NULL,
+          business_name VARCHAR(255) NOT NULL,
+          rtn VARCHAR(20) NOT NULL,
+          is_default TINYINT(1) DEFAULT 0,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+          INDEX idx_customer_id (customer_id),
+          INDEX idx_is_default (is_default),
+          FOREIGN KEY (customer_id) REFERENCES ecommerce_customers(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+      `);
+
+      logger.info('✅ Tabla customer_billing_info creada/verificada');
+
+    } catch (error) {
+      logger.error('❌ Error al crear tabla de facturación:', error);
+      // No lanzar el error para que la aplicación continúe
+    } finally {
+      connection.release();
+    }
+  }
+
+  static async createFavoritesTable() {
+    const connection = await db.getConnection();
+
+    try {
+      logger.info('⭐ Creando tabla de productos favoritos...');
+
+      // Primero, eliminar la tabla si existe para recrearla con las foreign keys correctas
+      await connection.execute(`DROP TABLE IF EXISTS customer_favorites`);
+      logger.info('🗑️ Tabla customer_favorites eliminada si existía');
+
+      // Crear tabla para guardar productos favoritos
+      await connection.execute(`
+        CREATE TABLE customer_favorites (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          customer_id INT NOT NULL,
+          product_id INT NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+          INDEX idx_customer_id (customer_id),
+          INDEX idx_product_id (product_id),
+          UNIQUE KEY unique_favorite (customer_id, product_id),
+          FOREIGN KEY (customer_id) REFERENCES ecommerce_customers(id) ON DELETE CASCADE,
+          FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+      `);
+
+      logger.info('✅ Tabla customer_favorites creada/verificada');
+
+    } catch (error) {
+      logger.error('❌ Error al crear tabla de favoritos:', error);
+      // No lanzar el error para que la aplicación continúe
+    } finally {
+      connection.release();
+    }
+  }
+
+  static async createOrdersTables() {
+    const connection = await db.getConnection();
+
+    try {
+      logger.info('📦 Creando tablas de pedidos en línea...');
+
+      // Verificar si la tabla orders ya existe
+      const [ordersExists] = await connection.execute(`
+        SELECT COUNT(*) as count
+        FROM information_schema.tables
+        WHERE table_schema = DATABASE() AND table_name = 'orders'
+      `);
+
+      if (ordersExists[0].count === 0) {
+        // Crear tabla de pedidos (orders)
+        await connection.execute(`
+          CREATE TABLE orders (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            order_number VARCHAR(50) UNIQUE NOT NULL,
+            customer_id INT,
+            customer_name VARCHAR(255) NOT NULL,
+            customer_email VARCHAR(255),
+            customer_phone VARCHAR(50),
+            delivery_address TEXT,
+            department VARCHAR(100),
+            city VARCHAR(100),
+            total_amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+            status ENUM('pendiente', 'cotizado', 'cobrado') DEFAULT 'pendiente',
+            notes TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+            INDEX idx_customer_id (customer_id),
+            INDEX idx_status (status),
+            INDEX idx_created_at (created_at),
+            FOREIGN KEY (customer_id) REFERENCES ecommerce_customers(id) ON DELETE SET NULL
+          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        `);
+        logger.info('✅ Tabla orders creada');
+      } else {
+        logger.info('✅ Tabla orders ya existe');
+      }
+
+      // Verificar si la tabla order_items ya existe
+      const [orderItemsExists] = await connection.execute(`
+        SELECT COUNT(*) as count
+        FROM information_schema.tables
+        WHERE table_schema = DATABASE() AND table_name = 'order_items'
+      `);
+
+      if (orderItemsExists[0].count === 0) {
+        // Crear tabla de items de pedidos (order_items)
+        await connection.execute(`
+          CREATE TABLE order_items (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            order_id INT NOT NULL,
+            product_id INT NOT NULL,
+            product_name VARCHAR(255) NOT NULL,
+            product_code VARCHAR(100),
+            quantity INT NOT NULL,
+            unit_price DECIMAL(10,2) NOT NULL,
+            subtotal DECIMAL(10,2) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+            INDEX idx_order_id (order_id),
+            INDEX idx_product_id (product_id),
+            FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+            FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT
+          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        `);
+        logger.info('✅ Tabla order_items creada');
+      } else {
+        logger.info('✅ Tabla order_items ya existe');
+      }
+
+      logger.info('✅ Tablas de pedidos creadas/verificadas exitosamente');
+
+    } catch (error) {
+      logger.error('❌ Error al crear tablas de pedidos:', error);
+      // No lanzar el error para que la aplicación continúe
+    } finally {
+      connection.release();
+    }
+  }
+
+  static async createEcommerceSettingsTable() {
+    const connection = await db.getConnection();
+
+    try {
+      logger.info('⚙️ Creando tabla de configuración del ecommerce...');
+
+      // Verificar si la tabla ecommerce_settings ya existe
+      const [settingsExists] = await connection.execute(`
+        SELECT COUNT(*) as count
+        FROM information_schema.tables
+        WHERE table_schema = DATABASE() AND table_name = 'ecommerce_settings'
+      `);
+
+      if (settingsExists[0].count === 0) {
+        // Crear tabla de configuración
+        await connection.execute(`
+          CREATE TABLE ecommerce_settings (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            setting_key VARCHAR(100) UNIQUE NOT NULL,
+            setting_value TEXT,
+            setting_type VARCHAR(50) DEFAULT 'text',
+            description TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+            INDEX idx_setting_key (setting_key)
+          ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        `);
+        logger.info('✅ Tabla ecommerce_settings creada');
+
+        // Insertar configuración por defecto
+        await connection.execute(`
+          INSERT INTO ecommerce_settings (setting_key, setting_value, setting_type, description)
+          VALUES
+            ('whatsapp_number', '+504 0000-0000', 'text', 'Número de WhatsApp para pedidos'),
+            ('store_email', 'tienda@ejemplo.com', 'email', 'Email de contacto de la tienda'),
+            ('store_name', 'Mi Tienda Online', 'text', 'Nombre de la tienda'),
+            ('send_email_notifications', '1', 'boolean', 'Enviar notificaciones por email'),
+            ('send_whatsapp_notifications', '1', 'boolean', 'Enviar notificaciones por WhatsApp')
+        `);
+        logger.info('✅ Configuración por defecto insertada');
+      } else {
+        logger.info('✅ Tabla ecommerce_settings ya existe');
+      }
+
+    } catch (error) {
+      logger.error('❌ Error al crear tabla de configuración:', error);
       // No lanzar el error para que la aplicación continúe
     } finally {
       connection.release();

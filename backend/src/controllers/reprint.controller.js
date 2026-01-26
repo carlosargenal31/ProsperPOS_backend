@@ -103,10 +103,13 @@ class ReprintController {
               i.seller_name,
               i.total,
               i.payment_status,
+              i.orden_compra,
+              i.constancia_exonerado,
+              i.registro_sag,
               'FACTURA' as document_type
             FROM invoices i
             WHERE i.deleted_at IS NULL
-              AND i.payment_status IN ('paid', 'pending', 'partial')
+              AND i.payment_status IN ('paid', 'pending', 'partial', 'returned')
           `;
 
           if (searchQuery) {
@@ -154,6 +157,9 @@ class ReprintController {
               CONCAT(u.first_name, ' ', u.last_name) as created_by_name,
               pi.total,
               pi.status,
+              pi.orden_compra,
+              pi.constancia_exonerado,
+              pi.registro_sag,
               'FACT EN ESPERA' as document_type
             FROM pending_invoices pi
             LEFT JOIN users u ON pi.created_by = u.id
@@ -274,6 +280,20 @@ class ReprintController {
       console.log('Params:', params);
       documents = await db.query(sql, params);
 
+      // Formatear fechas - SUMAR 6 horas para compensar timezone
+      documents.forEach(doc => {
+        if (doc.issue_date) {
+          const d = new Date(doc.issue_date);
+          d.setHours(d.getHours() + 6);
+          doc.issue_date = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+        }
+        if (doc.emission_date) {
+          const d = new Date(doc.emission_date);
+          d.setHours(d.getHours() + 6);
+          doc.emission_date = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+        }
+      });
+
       res.json({
         success: true,
         data: documents
@@ -331,6 +351,28 @@ class ReprintController {
         });
       }
 
+      // DEBUG: Ver qué se está enviando al frontend
+      if (documentType === 'FACTURA') {
+        console.log('=== ENVIANDO AL FRONTEND ===');
+        console.log('Invoice ID:', documentData.id);
+        console.log('orden_compra:', documentData.orden_compra);
+        console.log('constancia_exonerado:', documentData.constancia_exonerado);
+        console.log('registro_sag:', documentData.registro_sag);
+        console.log('===========================');
+      }
+
+      if (documentType === 'DEVOLUCION') {
+        console.log('=== ENVIANDO DEVOLUCIÓN AL FRONTEND ===');
+        console.log('Return ID:', documentData.id);
+        console.log('subtotal_bruto:', documentData.subtotal_bruto);
+        console.log('descuento:', documentData.descuento);
+        console.log('recargo:', documentData.recargo);
+        console.log('importe_gravado_15:', documentData.importe_gravado_15);
+        console.log('isv_15:', documentData.isv_15);
+        console.log('total_final:', documentData.total_final);
+        console.log('=======================================');
+      }
+
       res.json({
         success: true,
         data: documentData
@@ -373,14 +415,36 @@ class ReprintController {
 
     const creditNote = results[0];
 
+    // AGREGAR DESGLOSE DE IMPUESTOS
+    // IMPORTANTE: el subtotal en credit_notes es NETO (ya con descuento aplicado)
+    // Para obtener el BRUTO, sumamos el subtotal + descuento
+    const subtotalNeto = parseFloat(creditNote.subtotal || 0);
+    const descuento = parseFloat(creditNote.discount || 0);
+    const subtotalBruto = subtotalNeto + descuento;
+    const recargo = parseFloat(creditNote.shipping_cost || 0);
+    const taxAmount = parseFloat(creditNote.tax || 0);
+
+    creditNote.subtotal_bruto = subtotalBruto;
+    creditNote.descuento = descuento;
+    creditNote.importe_exento = 0;
+    creditNote.importe_exonerado = 0;
+    creditNote.importe_gravado_15 = subtotalNeto;
+    creditNote.importe_gravado_18 = 0;
+    creditNote.isv_15 = taxAmount;
+    creditNote.isv_18 = 0;
+    creditNote.recargo = recargo;
+    creditNote.total_final = parseFloat(creditNote.total || 0);
+
     // Obtener items
     const itemsSql = `
       SELECT
         cni.*,
         p.code as product_code,
-        p.name as product_name
+        p.name as product_name,
+        COALESCE(u.name, 'UNIDAD') as product_unit
       FROM credit_note_items cni
       LEFT JOIN products p ON cni.product_id = p.id
+      LEFT JOIN units u ON p.unit_id = u.id
       WHERE cni.credit_note_id = ?
     `;
 
@@ -397,6 +461,7 @@ class ReprintController {
         sr.correlative,
         i.customer_rtn,
         i.invoice_number,
+        i.shipping_cost,
         b.nombre as branch_name
       FROM sales_returns sr
       LEFT JOIN invoices i ON sr.invoice_id = i.id
@@ -409,14 +474,36 @@ class ReprintController {
 
     const returnData = results[0];
 
+    // AGREGAR DESGLOSE DE IMPUESTOS
+    // IMPORTANTE: el subtotal en sales_returns es NETO (ya con descuento aplicado)
+    // Para obtener el BRUTO, sumamos el subtotal + descuento
+    const subtotalNeto = parseFloat(returnData.subtotal || 0);
+    const descuento = parseFloat(returnData.discount || 0);
+    const subtotalBruto = subtotalNeto + descuento;
+    const recargo = parseFloat(returnData.shipping_cost || 0);
+    const taxAmount = parseFloat(returnData.tax || 0);
+
+    returnData.subtotal_bruto = subtotalBruto;
+    returnData.descuento = descuento;
+    returnData.importe_exento = 0;
+    returnData.importe_exonerado = 0;
+    returnData.importe_gravado_15 = subtotalNeto;
+    returnData.importe_gravado_18 = 0;
+    returnData.isv_15 = taxAmount;
+    returnData.isv_18 = 0;
+    returnData.recargo = recargo;
+    returnData.total_final = parseFloat(returnData.total || 0);
+
     // Obtener items
     const itemsSql = `
       SELECT
         sri.*,
         p.code as product_code,
-        p.name as product_name
+        p.name as product_name,
+        COALESCE(u.name, 'UNIDAD') as product_unit
       FROM sales_return_items sri
       LEFT JOIN products p ON sri.product_id = p.id
+      LEFT JOIN units u ON p.unit_id = u.id
       WHERE sri.sales_return_id = ?
     `;
 
@@ -431,11 +518,16 @@ class ReprintController {
       SELECT
         i.*,
         i.invoice_number as correlative,
+        i.orden_compra,
+        i.constancia_exonerado,
+        i.registro_sag,
         b.nombre as branch_name,
         r.cai,
         r.numero_resolucion,
         r.nro_inicial_control,
-        r.nro_final_control
+        r.nro_final_control,
+        r.fecha_fin,
+        r.prefijo_control
       FROM invoices i
       LEFT JOIN branches b ON i.branch_id = b.id
       LEFT JOIN resolutions r ON i.resolution_id = r.id
@@ -447,14 +539,51 @@ class ReprintController {
 
     const invoice = results[0];
 
+    // Formatear issue_date - SUMAR 6 horas para compensar timezone
+    if (invoice.issue_date) {
+      const d = new Date(invoice.issue_date);
+      d.setHours(d.getHours() + 6); // Sumar 6 horas
+      invoice.issue_date = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+    }
+
+    // DEBUG: Ver campos adicionales
+    console.log('=== DEBUG REPRINT INVOICE ===');
+    console.log('Invoice ID:', invoice.id);
+    console.log('Invoice Number:', invoice.invoice_number);
+    console.log('orden_compra:', invoice.orden_compra);
+    console.log('constancia_exonerado:', invoice.constancia_exonerado);
+    console.log('registro_sag:', invoice.registro_sag);
+    console.log('============================');
+
+    // AGREGAR DESGLOSE DE IMPUESTOS
+    const subtotalBruto = parseFloat(invoice.subtotal || 0);
+    const descuento = parseFloat(invoice.discount_amount || 0);
+    const recargo = parseFloat(invoice.shipping_cost || 0);
+    const taxAmount = parseFloat(invoice.tax_amount || 0);
+
+    // Por ahora, asumimos que todo el monto es gravado al 15%
+    // En el futuro se pueden agregar campos para exento, exonerado y 18%
+    invoice.subtotal_bruto = subtotalBruto;
+    invoice.descuento = descuento;
+    invoice.importe_exento = 0;
+    invoice.importe_exonerado = 0;
+    invoice.importe_gravado_15 = subtotalBruto - descuento;
+    invoice.importe_gravado_18 = 0;
+    invoice.isv_15 = taxAmount;
+    invoice.isv_18 = 0;
+    invoice.recargo = recargo;
+    invoice.total_final = parseFloat(invoice.total || 0);
+
     // Obtener items
     const itemsSql = `
       SELECT
         ii.*,
         p.code as product_code,
-        p.name as product_name
+        p.name as product_name,
+        COALESCE(u.name, 'UNIDAD') as product_unit
       FROM invoice_items ii
       LEFT JOIN products p ON ii.product_id = p.id
+      LEFT JOIN units u ON p.unit_id = u.id
       WHERE ii.invoice_id = ?
     `;
 
@@ -470,6 +599,12 @@ class ReprintController {
         pi.*,
         pi.customer_rtn,
         pi.document_number as correlative,
+        pi.discount,
+        pi.discount_type,
+        pi.discount_value,
+        pi.orden_compra,
+        pi.constancia_exonerado,
+        pi.registro_sag,
         b.nombre as branch_name
       FROM pending_invoices pi
       LEFT JOIN branches b ON pi.branch_id = b.id
@@ -481,14 +616,33 @@ class ReprintController {
 
     const order = results[0];
 
+    // AGREGAR DESGLOSE DE IMPUESTOS
+    const subtotalBruto = parseFloat(order.subtotal || 0);
+    const descuento = parseFloat(order.discount || 0);
+    const recargo = parseFloat(order.shipping_cost || 0);
+    const taxAmount = parseFloat(order.tax || 0);
+
+    order.subtotal_bruto = subtotalBruto;
+    order.descuento = descuento;
+    order.importe_exento = 0;
+    order.importe_exonerado = 0;
+    order.importe_gravado_15 = subtotalBruto - descuento;
+    order.importe_gravado_18 = 0;
+    order.isv_15 = taxAmount;
+    order.isv_18 = 0;
+    order.recargo = recargo;
+    order.total_final = parseFloat(order.total || 0);
+
     // Obtener items
     const itemsSql = `
       SELECT
         pii.*,
         p.code as product_code,
-        p.name as product_name
+        p.name as product_name,
+        COALESCE(u.name, 'UNIDAD') as product_unit
       FROM pending_invoice_items pii
       LEFT JOIN products p ON pii.product_id = p.id
+      LEFT JOIN units u ON p.unit_id = u.id
       WHERE pii.pending_invoice_id = ?
     `;
 
@@ -515,14 +669,33 @@ class ReprintController {
 
     const quote = results[0];
 
+    // AGREGAR DESGLOSE DE IMPUESTOS
+    const subtotalBruto = parseFloat(quote.subtotal || 0);
+    const descuento = parseFloat(quote.discount || 0);
+    const recargo = parseFloat(quote.shipping_cost || 0);
+    const taxAmount = parseFloat(quote.tax || 0);
+
+    quote.subtotal_bruto = subtotalBruto;
+    quote.descuento = descuento;
+    quote.importe_exento = 0;
+    quote.importe_exonerado = 0;
+    quote.importe_gravado_15 = subtotalBruto - descuento;
+    quote.importe_gravado_18 = 0;
+    quote.isv_15 = taxAmount;
+    quote.isv_18 = 0;
+    quote.recargo = recargo;
+    quote.total_final = parseFloat(quote.total || 0);
+
     // Obtener items
     const itemsSql = `
       SELECT
         qi.*,
         p.code as product_code,
-        p.name as product_name
+        p.name as product_name,
+        COALESCE(u.name, 'UNIDAD') as product_unit
       FROM quote_items qi
       LEFT JOIN products p ON qi.product_id = p.id
+      LEFT JOIN units u ON p.unit_id = u.id
       WHERE qi.quote_id = ?
     `;
 
@@ -562,9 +735,11 @@ class ReprintController {
         si.*,
         si.product_code,
         si.product_name,
-        p.weight
+        p.weight,
+        COALESCE(u.name, 'UNIDAD') as product_unit
       FROM shipment_items si
       LEFT JOIN products p ON si.product_id = p.id
+      LEFT JOIN units u ON p.unit_id = u.id
       WHERE si.shipment_id = ?
     `;
 

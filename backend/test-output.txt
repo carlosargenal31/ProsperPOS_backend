@@ -1,0 +1,14 @@
+1. Iniciando sesión...
+✓ Login exitoso
+
+2. Probando endpoint /products/search/all...
+
+✗ ERROR:
+Status: 500
+Data: {
+  "success": false,
+  "message": "Error al obtener productos",
+  "timestamp": "2026-01-18T05:13:37.945Z"
+}
+
+📝 Detalles guardados en error-detail.json

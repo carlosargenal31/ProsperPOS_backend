@@ -13,12 +13,24 @@ class SubcategoryController {
    */
   static async getSubcategories(req, res) {
     try {
-      const { search = '', is_active, category_id } = req.query;
+      const {
+        search = '',
+        is_active,
+        category_id,
+        sort_by = 'id',
+        sort_order = 'ASC',
+        page = 1,
+        limit = 15
+      } = req.query;
 
       const filters = {
         search,
-        is_active: is_active === 'true' ? true : is_active === 'false' ? false : null,
-        category_id
+        is_active: is_active === 'true' || is_active === '1' ? true : is_active === 'false' || is_active === '0' ? false : null,
+        category_id,
+        sort_by,
+        sort_order,
+        page: parseInt(page),
+        limit: parseInt(limit)
       };
 
       const subcategories = await SubcategoryService.getSubcategories(filters);

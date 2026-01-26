@@ -4,6 +4,7 @@
 
 const db = require('../utils/database');
 const logger = require('../utils/logger');
+const { getInstance: getGCSInstance } = require('../utils/google-cloud-storage');
 
 class CategoryService {
 
@@ -87,6 +88,7 @@ class CategoryService {
         name,
         image_url,
         is_active = true,
+        show_in_ecommerce = false,
         created_by
       } = categoryData;
 
@@ -103,14 +105,15 @@ class CategoryService {
       // Insertar categoría (el ID se genera automáticamente con AUTO_INCREMENT)
       const insertQuery = `
         INSERT INTO categories (
-          name, image_url, is_active, created_by, created_at
-        ) VALUES (?, ?, ?, ?, NOW())
+          name, image_url, is_active, show_in_ecommerce, created_by, created_at
+        ) VALUES (?, ?, ?, ?, ?, NOW())
       `;
 
       const result = await db.execute(insertQuery, [
         name,
         image_url || null,
         is_active ? 1 : 0,
+        show_in_ecommerce ? 1 : 0,
         created_by || 1
       ]);
 
@@ -134,6 +137,7 @@ class CategoryService {
         name,
         image_url,
         is_active,
+        show_in_ecommerce,
         updated_by
       } = categoryData;
 
@@ -147,34 +151,57 @@ class CategoryService {
         throw new Error('Categoría no encontrada');
       }
 
-      // Verificar nombre duplicado
-      const duplicate = await db.execute(
-        'SELECT id FROM categories WHERE name = ? AND id != ? AND deleted_at IS NULL',
-        [name, id]
-      );
+      // Verificar nombre duplicado solo si se proporciona un nombre
+      if (name !== undefined) {
+        const duplicate = await db.execute(
+          'SELECT id FROM categories WHERE name = ? AND id != ? AND deleted_at IS NULL',
+          [name, id]
+        );
 
-      if (duplicate.length > 0) {
-        throw new Error('Ya existe otra categoría con ese nombre');
+        if (duplicate.length > 0) {
+          throw new Error('Ya existe otra categoría con ese nombre');
+        }
       }
 
-      // Actualizar
+      // Construir query dinámicamente
+      const updates = [];
+      const params = [];
+
+      if (name !== undefined) {
+        updates.push('name = ?');
+        params.push(name);
+      }
+
+      if (image_url !== undefined) {
+        updates.push('image_url = ?');
+        params.push(image_url || null);
+      }
+
+      if (is_active !== undefined) {
+        updates.push('is_active = ?');
+        params.push(is_active ? 1 : 0);
+      }
+
+      if (show_in_ecommerce !== undefined) {
+        updates.push('show_in_ecommerce = ?');
+        params.push(show_in_ecommerce ? 1 : 0);
+      }
+
+      if (updated_by !== undefined) {
+        updates.push('updated_by = ?');
+        params.push(updated_by);
+      }
+
+      updates.push('updated_at = NOW()');
+      params.push(id);
+
       const updateQuery = `
         UPDATE categories SET
-          name = ?,
-          image_url = ?,
-          is_active = ?,
-          updated_by = ?,
-          updated_at = NOW()
+          ${updates.join(', ')}
         WHERE id = ?
       `;
 
-      await db.execute(updateQuery, [
-        name,
-        image_url || null,
-        is_active ? 1 : 0,
-        updated_by,
-        id
-      ]);
+      await db.execute(updateQuery, params);
 
       return { id, name };
 
@@ -277,6 +304,75 @@ class CategoryService {
 
     } catch (error) {
       logger.error('Error in getActiveCategories:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Subir imagen de categoría a Google Cloud Storage
+   */
+  static async uploadCategoryImage(categoryId, fileBuffer, fileName, contentType) {
+    try {
+      const gcs = getGCSInstance();
+
+      // Extraer extensión del archivo
+      const extension = fileName.split('.').pop() || 'jpg';
+
+      // Subir imagen a GCS en la carpeta 'categories'
+      const result = await gcs.uploadCategoryImage(fileBuffer, categoryId, {
+        extension,
+        contentType
+      });
+
+      // Actualizar URL de imagen en la base de datos
+      await db.execute(
+        'UPDATE categories SET image_url = ?, updated_at = NOW() WHERE id = ?',
+        [result.url, categoryId]
+      );
+
+      logger.info('Category image uploaded successfully', { categoryId, url: result.url });
+
+      return {
+        success: true,
+        url: result.url,
+        categoryId
+      };
+
+    } catch (error) {
+      logger.error('Error uploading category image:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Eliminar imagen de categoría
+   */
+  static async deleteCategoryImage(categoryId) {
+    try {
+      // Obtener la URL actual de la imagen
+      const category = await this.getCategoryById(categoryId);
+
+      if (!category || !category.image_url) {
+        return { success: true, message: 'No hay imagen para eliminar' };
+      }
+
+      const gcs = getGCSInstance();
+
+      // Eliminar imagen de GCS
+      await gcs.deleteFile(category.image_url);
+
+      // Actualizar base de datos para remover la URL
+      await db.execute(
+        'UPDATE categories SET image_url = NULL, updated_at = NOW() WHERE id = ?',
+        [categoryId]
+      );
+
+      logger.info('Category image deleted successfully', { categoryId });
+
+      return { success: true };
+
+    } catch (error) {
+      logger.error('Error deleting category image:', error);
       throw error;
     }
   }

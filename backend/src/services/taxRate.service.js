@@ -33,7 +33,7 @@ class TaxRateService {
       const query = `
         SELECT
           t.*,
-          COALESCE((SELECT COUNT(*) FROM products p WHERE p.tax_rate_id = t.id AND p.deleted_at IS NULL), 0) as products_count
+          COALESCE((SELECT COUNT(*) FROM products p WHERE p.tax_id = t.id AND p.deleted_at IS NULL), 0) as products_count
         FROM tax_rates t
         ${whereClause}
         ORDER BY t.is_default DESC, t.rate ASC
@@ -56,7 +56,7 @@ class TaxRateService {
       const query = `
         SELECT
           t.*,
-          COALESCE((SELECT COUNT(*) FROM products p WHERE p.tax_rate_id = t.id AND p.deleted_at IS NULL), 0) as products_count
+          COALESCE((SELECT COUNT(*) FROM products p WHERE p.tax_id = t.id AND p.deleted_at IS NULL), 0) as products_count
         FROM tax_rates t
         WHERE t.id = ? AND t.deleted_at IS NULL
       `;
@@ -201,11 +201,7 @@ class TaxRateService {
         id
       ]);
 
-      // Actualizar también el tax_rate en productos
-      await db.execute(
-        'UPDATE products SET tax_rate = ? WHERE tax_rate_id = ?',
-        [rate, id]
-      );
+      // Ya no necesitamos actualizar tax_rate en productos porque se eliminó esa columna
 
       return { id, name, rate };
 
@@ -237,7 +233,7 @@ class TaxRateService {
 
       // Verificar productos asociados
       const products = await db.execute(
-        'SELECT COUNT(*) as count FROM products WHERE tax_rate_id = ? AND deleted_at IS NULL',
+        'SELECT COUNT(*) as count FROM products WHERE tax_id = ? AND deleted_at IS NULL',
         [id]
       );
 

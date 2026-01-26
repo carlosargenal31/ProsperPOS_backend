@@ -7,6 +7,7 @@ const router = express.Router();
 const ProductController = require('../controllers/product.controller');
 const { authenticateToken, requirePermission } = require('../middleware/auth.middleware');
 const { validateProductCreation, validateProductUpdate, validateStockAdjustment } = require('../middleware/validation.middleware');
+const upload = require('../middleware/upload.middleware');
 
 // Middleware global
 router.use(authenticateToken);
@@ -76,6 +77,26 @@ router.get('/barcode/:barcode',
 );
 
 /**
+ * @route   GET /api/v1/products/:id/gallery
+ * @desc    Obtener imágenes de galería del producto
+ * @access  Private (products.read)
+ */
+router.get('/:id/gallery',
+  requirePermission('products.read'),
+  ProductController.getProductGallery
+);
+
+/**
+ * @route   DELETE /api/v1/products/:id/gallery/:imageId
+ * @desc    Eliminar imagen de galería del producto
+ * @access  Private (products.update)
+ */
+router.delete('/:id/gallery/:imageId',
+  requirePermission('products.update'),
+  ProductController.deleteGalleryImage
+);
+
+/**
  * @route   GET /api/v1/products/:id
  * @desc    Obtener producto por ID
  * @access  Private (products.read)
@@ -103,6 +124,14 @@ router.post('/',
  */
 router.put('/:id',
   requirePermission('products.update'),
+  upload.fields([
+    { name: 'image', maxCount: 1 },
+    { name: 'gallery_0', maxCount: 1 },
+    { name: 'gallery_1', maxCount: 1 },
+    { name: 'gallery_2', maxCount: 1 },
+    { name: 'gallery_3', maxCount: 1 },
+    { name: 'gallery_4', maxCount: 1 }
+  ]),
   validateProductUpdate,
   ProductController.updateProduct
 );
@@ -115,6 +144,16 @@ router.put('/:id',
 router.delete('/:id',
   requirePermission('products.delete'),
   ProductController.deleteProduct
+);
+
+/**
+ * @route   PATCH /api/v1/products/:id/featured
+ * @desc    Marcar/desmarcar producto como destacado
+ * @access  Private (products.update)
+ */
+router.patch('/:id/featured',
+  requirePermission('products.update'),
+  ProductController.toggleFeatured
 );
 
 // ===================================================================

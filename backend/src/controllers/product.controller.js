@@ -5,6 +5,7 @@
 const ProductService = require('../services/product.service');
 const { sendSuccessResponse, sendErrorResponse } = require('../utils/response');
 const logger = require('../utils/logger');
+const { getInstance: getGCSInstance } = require('../utils/google-cloud-storage');
 
 class ProductController {
   
@@ -39,6 +40,7 @@ class ProductController {
         limit = 20,
         search = '',
         category_id,
+        subcategory_id,
         brand_id,
         supplier_id,
         status = 'active',
@@ -57,6 +59,7 @@ class ProductController {
         limit: parseInt(limit),
         search,
         category_id,
+        subcategory_id,
         brand_id,
         supplier_id,
         status,
@@ -124,6 +127,40 @@ class ProductController {
   }
 
   /**
+   * Obtener imágenes de galería del producto
+   */
+  static async getProductGallery(req, res) {
+    try {
+      const { id } = req.params;
+
+      const images = await ProductService.getProductGalleryImages(id);
+
+      return sendSuccessResponse(res, images, 'Imágenes de galería obtenidas exitosamente');
+
+    } catch (error) {
+      logger.error('Error getting product gallery:', error);
+      return sendErrorResponse(res, 500, 'Error al obtener imágenes de galería');
+    }
+  }
+
+  /**
+   * Eliminar imagen de galería
+   */
+  static async deleteGalleryImage(req, res) {
+    try {
+      const { id, imageId } = req.params;
+
+      await ProductService.deleteGalleryImage(id, imageId);
+
+      return sendSuccessResponse(res, null, 'Imagen eliminada exitosamente');
+
+    } catch (error) {
+      logger.error('Error deleting gallery image:', error);
+      return sendErrorResponse(res, 500, error.message || 'Error al eliminar imagen de galería');
+    }
+  }
+
+  /**
    * Crear nuevo producto
    */
   static async createProduct(req, res) {
@@ -167,31 +204,141 @@ class ProductController {
         store_id: req.user?.store_id || 1
       };
 
+      // Debug logging for files
+      logger.info('Update product - Files received:', {
+        hasFiles: !!req.files,
+        fileKeys: req.files ? Object.keys(req.files) : [],
+        imageField: req.files?.image ? 'present' : 'missing',
+        imageCount: req.files?.image?.length || 0
+      });
+
+      // Manejar imagen principal si existe
+      if (req.files && req.files.image && req.files.image[0]) {
+        try {
+          const gcs = getGCSInstance();
+          const file = req.files.image[0];
+          const ext = file.mimetype.split('/')[1];
+
+          const uploadResult = await gcs.uploadProductImage(
+            file.buffer,
+            id,
+            'main',
+            {
+              extension: ext,
+              contentType: file.mimetype,
+              metadata: {
+                originalName: file.originalname,
+                uploadedBy: req.user.id,
+                uploadedAt: new Date().toISOString()
+              }
+            }
+          );
+
+          updateData.image_url = uploadResult.url;
+
+          logger.info('Main image uploaded to GCS for product', {
+            productId: id,
+            imageUrl: uploadResult.url
+          });
+        } catch (uploadError) {
+          logger.error('Error uploading main image to GCS:', uploadError);
+        }
+      }
+
+      // Manejar imágenes de galería
+      const galleryImages = [];
+      if (req.files) {
+        for (let i = 0; i < 5; i++) {
+          const fieldName = `gallery_${i}`;
+          if (req.files[fieldName] && req.files[fieldName][0]) {
+            try {
+              const gcs = getGCSInstance();
+              const file = req.files[fieldName][0];
+              const ext = file.mimetype.split('/')[1];
+
+              const uploadResult = await gcs.uploadProductImage(
+                file.buffer,
+                id,
+                `gallery_${i}`,
+                {
+                  extension: ext,
+                  contentType: file.mimetype,
+                  metadata: {
+                    originalName: file.originalname,
+                    uploadedBy: req.user.id,
+                    uploadedAt: new Date().toISOString(),
+                    imageOrder: i
+                  }
+                }
+              );
+
+              galleryImages.push({
+                image_url: uploadResult.url,
+                image_order: i,
+                is_primary: false
+              });
+
+              logger.info('Gallery image uploaded to GCS', {
+                productId: id,
+                imageUrl: uploadResult.url,
+                order: i
+              });
+            } catch (uploadError) {
+              logger.error(`Error uploading gallery image ${i}:`, uploadError);
+            }
+          }
+        }
+      }
+
+      // Actualizar producto
       const product = await ProductService.updateProduct(id, updateData);
 
       if (!product) {
         return sendErrorResponse(res, 404, 'Producto no encontrado');
       }
 
+      // Procesar imágenes de galería
+      // 1. Obtener lista de IDs de imágenes existentes a mantener
+      const existingGalleryIds = req.body.existing_gallery_ids
+        ? JSON.parse(req.body.existing_gallery_ids)
+        : [];
+
+      // 2. Eliminar (soft delete) todas las imágenes que NO están en la lista
+      if (existingGalleryIds.length > 0 || galleryImages.length > 0) {
+        await ProductService.cleanupGalleryImages(id, existingGalleryIds);
+      }
+
+      // 3. Guardar nuevas imágenes de galería en la tabla product_images
+      if (galleryImages.length > 0) {
+        await ProductService.saveProductGalleryImages(id, galleryImages);
+      }
+
       logger.info('Product updated', {
         productId: id,
-        userId: req.user.id
+        userId: req.user.id,
+        galleryImagesCount: galleryImages.length,
+        existingImagesKept: existingGalleryIds.length
       });
 
       return sendSuccessResponse(res, product, 'Producto actualizado exitosamente');
 
     } catch (error) {
-      logger.error('Error updating product:', error);
-      
+      logger.error('Error updating product:', {
+        error: error.message,
+        stack: error.stack,
+        productId: id,
+        userId: req.user?.id
+      });
+
       if (error.message.includes('ya existe')) {
         return sendErrorResponse(res, 409, error.message);
       }
-      
+
       if (error.message.includes('no encontrado')) {
         return sendErrorResponse(res, 404, error.message);
       }
-      
-      return sendErrorResponse(res, 500, 'Error al actualizar producto');
+
+      return sendErrorResponse(res, 500, `Error al actualizar producto: ${error.message}`);
     }
   }
 
@@ -521,6 +668,52 @@ class ProductController {
     } catch (error) {
       logger.error('Error getting critical stock report:', error);
       return sendErrorResponse(res, 500, 'Error al obtener reporte');
+    }
+  }
+
+  /**
+   * Marcar/desmarcar producto como destacado
+   */
+  static async toggleFeatured(req, res) {
+    try {
+      const { id } = req.params;
+      const { is_featured } = req.body;
+      const db = require('../utils/database');
+
+      // Validar que el producto existe
+      const checkQuery = `
+        SELECT id, name, is_featured
+        FROM products
+        WHERE id = ? AND deleted_at IS NULL
+      `;
+
+      const products = await db.execute(checkQuery, [id]);
+
+      if (!products || products.length === 0) {
+        return sendErrorResponse(res, 404, 'Producto no encontrado');
+      }
+
+      // Actualizar estado de destacado
+      const updateQuery = `
+        UPDATE products
+        SET is_featured = ?, updated_at = NOW()
+        WHERE id = ?
+      `;
+
+      await db.execute(updateQuery, [is_featured ? 1 : 0, id]);
+
+      return sendSuccessResponse(
+        res,
+        {
+          id: parseInt(id),
+          is_featured: is_featured ? 1 : 0
+        },
+        `Producto ${is_featured ? 'marcado' : 'desmarcado'} como destacado`
+      );
+
+    } catch (error) {
+      logger.error('Error toggling featured product:', error);
+      return sendErrorResponse(res, 500, 'Error al actualizar producto destacado');
     }
   }
 }

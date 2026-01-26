@@ -4,6 +4,7 @@
 
 const db = require('../utils/database');
 const logger = require('../utils/logger');
+const { getInstance: getGCSInstance } = require('../utils/google-cloud-storage');
 
 class SubcategoryService {
 
@@ -15,7 +16,11 @@ class SubcategoryService {
       const {
         search = '',
         is_active = null,
-        category_id = null
+        category_id = null,
+        sort_by = 'id',
+        sort_order = 'ASC',
+        page = 1,
+        limit = 15
       } = filters;
 
       let whereClause = 'WHERE s.deleted_at IS NULL';
@@ -36,6 +41,18 @@ class SubcategoryService {
         params.push(category_id);
       }
 
+      // Mapeo de campos para ordenamiento
+      const sortFieldMap = {
+        'id': 's.id',
+        'name': 's.name',
+        'category_name': 'c.name',
+        'products_count': 'products_count',
+        'is_active': 's.is_active'
+      };
+
+      const orderByField = sortFieldMap[sort_by] || 's.id';
+      const orderByDirection = sort_order.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
+
       const query = `
         SELECT
           s.id,
@@ -50,16 +67,12 @@ class SubcategoryService {
         FROM subcategories s
         LEFT JOIN categories c ON s.category_id = c.id
         ${whereClause}
-        ORDER BY c.name ASC, s.id ASC
+        ORDER BY ${orderByField} ${orderByDirection}
       `;
 
       const subcategories = await db.execute(query, params);
 
-      // DEBUG: Log para ver qué datos estamos devolviendo
-      logger.info(`getSubcategories: Devolviendo ${subcategories.length} subcategorías`);
-      if (subcategories.length > 0) {
-        logger.info('Ejemplo de subcategoría:', subcategories[0]);
-      }
+      logger.info(`getSubcategories: Devolviendo ${subcategories.length} subcategorías con orden ${orderByField} ${orderByDirection}`);
 
       return subcategories;
 
@@ -349,6 +362,78 @@ class SubcategoryService {
 
     } catch (error) {
       logger.error('Error in getActiveSubcategories:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Subir imagen de subcategoría a Google Cloud Storage
+   */
+  static async uploadSubcategoryImage(subcategoryId, fileBuffer, fileName, contentType) {
+    try {
+      const gcs = getGCSInstance();
+
+      // Extraer extensión del archivo
+      const extension = fileName.split('.').pop() || 'jpg';
+
+      // Crear nombre único para la subcategoría
+      const uniqueFileName = `subcategory_${subcategoryId}.${extension}`;
+
+      // Subir imagen a GCS en la carpeta 'categories' (subcategorías están dentro de categories)
+      const result = await gcs.uploadFile(fileBuffer, uniqueFileName, 'categories', {
+        contentType,
+        subcategoryId
+      });
+
+      // Actualizar URL de imagen en la base de datos
+      await db.execute(
+        'UPDATE subcategories SET image_url = ?, updated_at = NOW() WHERE id = ?',
+        [result.url, subcategoryId]
+      );
+
+      logger.info('Subcategory image uploaded successfully', { subcategoryId, url: result.url });
+
+      return {
+        success: true,
+        url: result.url,
+        subcategoryId
+      };
+
+    } catch (error) {
+      logger.error('Error uploading subcategory image:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Eliminar imagen de subcategoría
+   */
+  static async deleteSubcategoryImage(subcategoryId) {
+    try {
+      // Obtener la URL actual de la imagen
+      const subcategory = await this.getSubcategoryById(subcategoryId);
+
+      if (!subcategory || !subcategory.image_url) {
+        return { success: true, message: 'No hay imagen para eliminar' };
+      }
+
+      const gcs = getGCSInstance();
+
+      // Eliminar imagen de GCS
+      await gcs.deleteFile(subcategory.image_url);
+
+      // Actualizar base de datos para remover la URL
+      await db.execute(
+        'UPDATE subcategories SET image_url = NULL, updated_at = NOW() WHERE id = ?',
+        [subcategoryId]
+      );
+
+      logger.info('Subcategory image deleted successfully', { subcategoryId });
+
+      return { success: true };
+
+    } catch (error) {
+      logger.error('Error deleting subcategory image:', error);
       throw error;
     }
   }

@@ -61,6 +61,16 @@ const ecommerceRoutes = require('./ecommerce.routes');
 const soldItemsRoutes = require('./sold-items.routes');
 const physicalInventoryRoutes = require('./physical-inventory.routes');
 const inventoryAdjustmentRoutes = require('./inventory-adjustment.routes');
+const uploadRoutes = require('./upload.routes');
+const stockHistoryRoutes = require('./stock-history.routes');
+const barcodeRoutes = require('./barcode.routes');
+const bannerRoutes = require('./banner.routes');
+const companyRoutes = require('./company.routes');
+const locationRoutes = require('./location.routes');
+const orderRoutes = require('./order.routes');
+const opinionRoutes = require('./opinion.routes');
+const imageProxyRoutes = require('./image-proxy.routes');
+const cashRegisterRoutes = require('./cash-register.routes');
 
 
 // ===================================================================
@@ -119,6 +129,16 @@ router.use('/v1/ecommerce', ecommerceRoutes);
 router.use('/v1/sold-items', soldItemsRoutes);
 router.use('/v1/physical-inventory', physicalInventoryRoutes);
 router.use('/v1/inventory-adjustments', inventoryAdjustmentRoutes);
+router.use('/v1/upload', uploadRoutes);
+router.use('/v1/stock-history', stockHistoryRoutes);
+router.use('/v1/barcodes', barcodeRoutes);
+router.use('/v1/banners', bannerRoutes);
+router.use('/v1/companies', companyRoutes);
+router.use('/v1/locations', locationRoutes);
+router.use('/v1/orders', orderRoutes);
+router.use('/v1/opinions', opinionRoutes);
+router.use('/v1/image-proxy', imageProxyRoutes);
+router.use('/v1/cash-register', cashRegisterRoutes);
 
 // ===================================================================
 // RUTAS FUTURAS (Comentadas)

@@ -29,7 +29,7 @@ const verifyCustomerToken = (req, res, next) => {
     );
 
     // Verificar que es un token de cliente web
-    if (decoded.type !== 'web_customer') {
+    if (decoded.type !== 'web_customer' && decoded.type !== 'ecommerce_customer') {
       return res.status(403).json({
         success: false,
         message: 'Token inválido para esta operación'
@@ -87,7 +87,7 @@ const optionalCustomerAuth = (req, res, next) => {
       process.env.JWT_SECRET || 'prosperpos-secret-key'
     );
 
-    if (decoded.type === 'web_customer') {
+    if (decoded.type === 'web_customer' || decoded.type === 'ecommerce_customer') {
       req.customer = {
         id: decoded.id,
         email: decoded.email

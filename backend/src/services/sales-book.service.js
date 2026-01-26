@@ -30,12 +30,12 @@ class SalesBookService {
 
       // Filtro de fechas
       if (date_from) {
-        whereConditions.push('DATE(i.issue_date) >= ?');
+        whereConditions.push('DATE(i.created_at) >= ?');
         params.push(date_from);
       }
 
       if (date_to) {
-        whereConditions.push('DATE(i.issue_date) <= ?');
+        whereConditions.push('DATE(i.created_at) <= ?');
         params.push(date_to);
       }
 
@@ -96,8 +96,8 @@ class SalesBookService {
       const query = `
         SELECT
           i.id,
-          DATE_FORMAT(i.issue_date, '%d/%m/%Y %H:%i:%S') as fecha_operacion,
-          i.issue_date as fecha_operacion_raw,
+          DATE_FORMAT(i.created_at, '%d/%m/%Y %H:%i:%S') as fecha_operacion,
+          i.created_at as fecha_operacion_raw,
           COALESCE(b.nombre, 'N/A') as sucursal,
           UPPER(i.invoice_type) as tipo_documento,
           i.invoice_number as nro_documento,
@@ -117,9 +117,16 @@ class SalesBookService {
           i.payment_status as estatus_raw,
           COALESCE(i.subtotal, 0) as subtotal,
           COALESCE(i.discount_amount, 0) as descuento,
-          COALESCE(i.shipping_cost, 0) as recargos,
           COALESCE(i.tax_amount, 0) as impuesto,
+          COALESCE(i.shipping_cost, 0) as recargos,
           COALESCE(i.total, 0) as total,
+          COALESCE(
+            (SELECT ABS(SUM(cn.total))
+             FROM credit_notes cn
+             WHERE cn.invoice_id = i.id
+             AND cn.deleted_at IS NULL),
+            0
+          ) as devuelto,
           COALESCE(i.seller_name, u.username, 'N/A') as vendedor,
           'FACTURA' as tipo_fila
 
@@ -133,8 +140,8 @@ class SalesBookService {
 
         SELECT
           CONCAT('CN-', cn.id) as id,
-          DATE_FORMAT(cn.emission_date, '%d/%m/%Y %H:%i:%S') as fecha_operacion,
-          cn.emission_date as fecha_operacion_raw,
+          DATE_FORMAT(cn.created_at, '%d/%m/%Y %H:%i:%S') as fecha_operacion,
+          cn.created_at as fecha_operacion_raw,
           COALESCE(b.nombre, 'N/A') as sucursal,
           'DEVOLUCION' as tipo_documento,
           CONCAT('DEV-', LPAD(cn.id, 6, '0')) as nro_documento,
@@ -146,11 +153,12 @@ class SalesBookService {
           COALESCE(cn.customer_rtn, '') as rtn_cliente,
           CONCAT('NC-', COALESCE(cn.credit_note_number, LPAD(cn.id, 6, '0')), ' - DEVUELTO') as estatus,
           'returned' as estatus_raw,
-          -COALESCE(cn.subtotal, 0) as subtotal,
+          -COALESCE(cn.subtotal + cn.discount, 0) as subtotal,
           -COALESCE(cn.discount, 0) as descuento,
-          0 as recargos,
           -COALESCE(cn.tax, 0) as impuesto,
+          -COALESCE(cn.shipping_cost, 0) as recargos,
           -COALESCE(cn.total, 0) as total,
+          0 as devuelto,
           COALESCE(CONCAT(u.first_name, ' ', u.last_name), u.username, 'N/A') as vendedor,
           'DEVOLUCION' as tipo_fila
 
@@ -159,8 +167,8 @@ class SalesBookService {
         LEFT JOIN branches b ON i.branch_id = b.id
         LEFT JOIN users u ON cn.created_by = u.id
         WHERE cn.deleted_at IS NULL
-        AND DATE(cn.emission_date) >= ?
-        AND DATE(cn.emission_date) <= ?
+        AND DATE(cn.created_at) >= ?
+        AND DATE(cn.created_at) <= ?
 
         ORDER BY fecha_operacion_raw DESC
       `;
@@ -252,12 +260,12 @@ class SalesBookService {
 
       // Filtro de fechas
       if (date_from) {
-        whereConditions.push('DATE(i.issue_date) >= ?');
+        whereConditions.push('DATE(i.created_at) >= ?');
         params.push(date_from);
       }
 
       if (date_to) {
-        whereConditions.push('DATE(i.issue_date) <= ?');
+        whereConditions.push('DATE(i.created_at) <= ?');
         params.push(date_to);
       }
 
@@ -401,7 +409,9 @@ class SalesBookService {
         'Subtotal': invoice.subtotal,
         'Descuento': invoice.descuento,
         'Impuesto': invoice.impuesto,
+        'Recargos': invoice.recargos,
         'Total': invoice.total,
+        'Devuelto': invoice.devuelto || 0,
         'Abonado': invoice.abonado,
         'Saldo': invoice.saldo,
         'Vendedor': invoice.vendedor
