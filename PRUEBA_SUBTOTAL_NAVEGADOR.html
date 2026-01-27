@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de Subtotal - Libro de Ventas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .step {
+            background: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .step h2 {
+            color: #1e40af;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .step p {
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 15px 0;
+            white-space: pre-wrap;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .button-secondary {
+            background: #64748b;
+        }
+
+        .result {
+            background: #d1fae5;
+            border-left: 4px solid #10b981;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result h3 {
+            color: #065f46;
+            margin-bottom: 10px;
+        }
+
+        .result pre {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            color: #333;
+            font-size: 12px;
+        }
+
+        .warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .warning p {
+            color: #78350f;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Prueba de Subtotal - Libro de Ventas</h1>
+        <p class="subtitle">Verificación directa del endpoint del backend</p>
+
+        <div class="warning">
+            <p><strong>⚠️ Importante:</strong> Esta prueba consulta DIRECTAMENTE el backend para verificar que los cálculos son correctos. Si los datos aquí son correctos pero en el sistema se ven mal, es un problema de caché del navegador.</p>
+        </div>
+
+        <div class="step">
+            <h2>📋 Paso 1: Obtener Token</h2>
+            <p>Primero necesitamos autenticarnos para obtener un token de acceso.</p>
+            <button class="button" onclick="getToken()">Obtener Token</button>
+            <button class="button button-secondary" onclick="limpiarCache()">Limpiar Caché del Navegador</button>
+        </div>
+
+        <div id="tokenResult" class="result">
+            <h3>✅ Token Obtenido</h3>
+            <pre id="tokenDisplay"></pre>
+        </div>
+
+        <div class="step">
+            <h2>📊 Paso 2: Consultar Libro de Ventas</h2>
+            <p>Consultar los datos del 20 al 23 de enero de 2026.</p>
+            <button class="button" onclick="consultarLibroVentas()" id="btnConsultar" disabled>Consultar Datos</button>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Consultando datos...</p>
+        </div>
+
+        <div id="dataResult" class="result">
+            <h3>✅ Datos del Servidor</h3>
+            <pre id="dataDisplay"></pre>
+        </div>
+
+        <div class="step">
+            <h2>🎯 Interpretación de Resultados</h2>
+            <p><strong>Columnas:</strong></p>
+            <ul style="margin-left: 20px; color: #475569; line-height: 1.8;">
+                <li><strong>Subtotal:</strong> Debe ser el valor BRUTO (sin descuentos aplicados)</li>
+                <li><strong>Descuento:</strong> El descuento en su propia columna</li>
+                <li><strong>Impuesto:</strong> Los impuestos calculados</li>
+                <li><strong>Recargos:</strong> Costos adicionales (envío, etc.)</li>
+                <li><strong>Total:</strong> Subtotal - Descuento + Impuesto + Recargos</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let token = localStorage.getItem('token');
+
+        if (token) {
+            document.getElementById('tokenResult').classList.add('show');
+            document.getElementById('tokenDisplay').textContent = 'Token encontrado en localStorage';
+            document.getElementById('btnConsultar').disabled = false;
+        }
+
+        async function getToken() {
+            try {
+                // Intentar con el token del localStorage primero
+                const storedToken = localStorage.getItem('token');
+                if (storedToken) {
+                    token = storedToken;
+                    document.getElementById('tokenResult').classList.add('show');
+                    document.getElementById('tokenDisplay').textContent = '✅ Token recuperado de localStorage';
+                    document.getElementById('btnConsultar').disabled = false;
+                    return;
+                }
+
+                alert('No se encontró token en localStorage. Por favor, inicia sesión en el sistema primero y vuelve a intentar.');
+
+            } catch (error) {
+                alert('Error al obtener token: ' + error.message);
+            }
+        }
+
+        async function consultarLibroVentas() {
+            if (!token) {
+                alert('Primero debes obtener un token');
+                return;
+            }
+
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('dataResult').classList.remove('show');
+
+            try {
+                const response = await fetch('http://localhost:3000/api/v1/sales-book?date_from=2026-01-20&date_to=2026-01-23', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.message || 'Error al consultar datos');
+                }
+
+                const invoices = data.data.invoices;
+                const totals = data.data.totals;
+
+                // Formatear los datos para mostrar
+                let output = '╔══════════════════════════════════════════════════════════════════════════════════════════════════════╗\n';
+                output += '║ Nro Doc          │ Tipo          │ Subtotal     │ Descuento    │ Impuesto     │ Recargos     │ Total        ║\n';
+                output += '╠══════════════════════════════════════════════════════════════════════════════════════════════════════╣\n';
+
+                invoices.slice(0, 10).forEach(inv => {
+                    output += `║ ${inv.nro_documento.padEnd(16)} │ ${inv.tipo_documento.padEnd(13)} │ ${parseFloat(inv.subtotal || 0).toFixed(2).padStart(12)} │ ${parseFloat(inv.descuento || 0).toFixed(2).padStart(12)} │ ${parseFloat(inv.impuesto || 0).toFixed(2).padStart(12)} │ ${parseFloat(inv.recargos || 0).toFixed(2).padStart(12)} │ ${parseFloat(inv.total || 0).toFixed(2).padStart(12)} ║\n`;
+                });
+
+                output += '╠══════════════════════════════════════════════════════════════════════════════════════════════════════╣\n';
+                output += '║ TOTALES                                                                                              ║\n';
+                output += '╠══════════════════════════════════════════════════════════════════════════════════════════════════════╣\n';
+                output += `║ Subtotal Total:    L ${parseFloat(totals.subtotal_total || 0).toFixed(2).padStart(12)}                                                        ║\n`;
+                output += `║ Descuento Total:   L ${parseFloat(totals.descuento_total || 0).toFixed(2).padStart(12)}                                                        ║\n`;
+                output += `║ Impuesto Total:    L ${parseFloat(totals.impuesto_total || 0).toFixed(2).padStart(12)}                                                        ║\n`;
+                output += `║ Recargos Total:    L ${parseFloat(totals.recargos_total || 0).toFixed(2).padStart(12)}                                                        ║\n`;
+                output += `║ Total General:     L ${parseFloat(totals.total_total || 0).toFixed(2).padStart(12)}                                                        ║\n`;
+                output += '╚══════════════════════════════════════════════════════════════════════════════════════════════════════╝\n\n';
+
+                // Buscar una factura con descuento
+                const facturaConDescuento = invoices.find(inv => parseFloat(inv.descuento || 0) > 0);
+                if (facturaConDescuento) {
+                    output += '═══════════════════════════════════════════════════════════════\n';
+                    output += '✅ VERIFICACIÓN DE CÁLCULO\n';
+                    output += '═══════════════════════════════════════════════════════════════\n\n';
+                    output += `Factura: ${facturaConDescuento.nro_documento}\n\n`;
+                    output += `  Subtotal (BRUTO):  L ${parseFloat(facturaConDescuento.subtotal || 0).toFixed(2)}\n`;
+                    output += `  Descuento:         L ${parseFloat(facturaConDescuento.descuento || 0).toFixed(2)}\n`;
+                    output += `  ─────────────────────────────────\n`;
+                    output += `  Subtotal Neto:     L ${(parseFloat(facturaConDescuento.subtotal || 0) - parseFloat(facturaConDescuento.descuento || 0)).toFixed(2)}\n`;
+                    output += `  Impuesto:          L ${parseFloat(facturaConDescuento.impuesto || 0).toFixed(2)}\n`;
+                    output += `  Recargos:          L ${parseFloat(facturaConDescuento.recargos || 0).toFixed(2)}\n`;
+                    output += `  ─────────────────────────────────\n`;
+                    output += `  TOTAL:             L ${parseFloat(facturaConDescuento.total || 0).toFixed(2)}\n\n`;
+                    output += '✅ El subtotal muestra el valor BRUTO (antes de descuentos)\n';
+                    output += '✅ El descuento está en su propia columna\n';
+                    output += '✅ Orden: Subtotal → Descuento → Impuesto → Recargos\n';
+                }
+
+                document.getElementById('dataDisplay').textContent = output;
+                document.getElementById('dataResult').classList.add('show');
+
+            } catch (error) {
+                alert('Error al consultar datos: ' + error.message);
+            } finally {
+                document.getElementById('loading').classList.remove('show');
+            }
+        }
+
+        function limpiarCache() {
+            if (confirm('¿Deseas limpiar la caché del navegador?\n\nEsto cerrará todas las pestañas del sistema. Asegúrate de guardar cualquier trabajo pendiente.')) {
+                // Limpiar localStorage
+                const token = localStorage.getItem('token');
+                localStorage.clear();
+                sessionStorage.clear();
+
+                // Restaurar el token
+                if (token) {
+                    localStorage.setItem('token', token);
+                }
+
+                alert('Caché limpiada.\n\nAhora:\n1. Presiona Ctrl+Shift+Delete\n2. Marca "Imágenes y archivos en caché"\n3. Haz clic en "Borrar datos"\n4. Recarga la página del Libro de Ventas (Ctrl+F5)');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Rol y Recargar Sistema</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .info {
+            background: #d1ecf1;
+            border-left: 4px solid #0c5460;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #856404;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #155724;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .error {
+            background: #f8d7da;
+            border-left: 4px solid #721c24;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .danger-btn {
+            background: #dc3545;
+        }
+        .danger-btn:hover {
+            background: #c82333;
+        }
+        pre {
+            background: #272822;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        code {
+            font-family: 'Courier New', monospace;
+        }
+        #output {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Verificar Rol de Usuario y Recargar Sistema</h1>
+
+        <div class="warning">
+            <strong>⚠️ Importante:</strong> Esta página te ayudará a verificar tu rol actual y limpiar el cache del navegador.
+        </div>
+
+        <div class="section">
+            <h2>Paso 1: Verificar Usuario Actual</h2>
+            <button onclick="verificarUsuario()">🔍 Verificar Usuario</button>
+            <div id="user-info" style="margin-top: 15px;"></div>
+        </div>
+
+        <div class="section">
+            <h2>Paso 2: Limpiar Cache y Recargar</h2>
+            <p>Limpia el cache del navegador y recarga el sistema para aplicar los cambios.</p>
+            <button onclick="limpiarCacheYRecargar()" class="danger-btn">🗑️ Limpiar Cache y Recargar</button>
+        </div>
+
+        <div class="section">
+            <h2>Paso 3: Reiniciar Sesión</h2>
+            <p>Si los cambios no se aplican, cierra sesión y vuelve a iniciar.</p>
+            <button onclick="cerrarSesion()" class="danger-btn">🚪 Cerrar Sesión</button>
+        </div>
+
+        <div class="info">
+            <h3>📋 Información:</h3>
+            <ul>
+                <li><strong>Manual Bodega:</strong> Ahora aparecerá arriba de "Cerrar Sesión"</li>
+                <li><strong>Redirección automática:</strong> Al iniciar sesión con rol de bodega, irás a: <code>/inventory/product-list</code></li>
+                <li><strong>Roles válidos para bodega:</strong> warehouse, bodega, almacenista, personal_de_bodega</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>📊 Consola de Depuración</h2>
+            <div id="debug-console"></div>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const console = document.getElementById('debug-console');
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+            console.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+        }
+
+        function verificarUsuario() {
+            try {
+                const userStr = localStorage.getItem('user');
+                const token = localStorage.getItem('accessToken');
+
+                if (!userStr) {
+                    document.getElementById('user-info').innerHTML = `
+                        <div class="error">
+                            <strong>❌ No hay usuario en sesión</strong>
+                            <p>Debes iniciar sesión primero.</p>
+                        </div>
+                    `;
+                    log('No se encontró usuario en localStorage', 'error');
+                    return;
+                }
+
+                const user = JSON.parse(userStr);
+
+                let rolesHTML = '<ul>';
+                if (user.roles && Array.isArray(user.roles)) {
+                    user.roles.forEach(role => {
+                        rolesHTML += `<li><strong>${role}</strong></li>`;
+                    });
+                    rolesHTML += '</ul>';
+                } else {
+                    rolesHTML = '<p>No se encontraron roles</p>';
+                }
+
+                const isBodega = user.roles && (
+                    user.roles.includes('warehouse') ||
+                    user.roles.includes('bodega') ||
+                    user.roles.includes('almacenista') ||
+                    user.roles.includes('personal_de_bodega')
+                );
+
+                document.getElementById('user-info').innerHTML = `
+                    <div class="${isBodega ? 'success' : 'info'}">
+                        <h3>👤 Usuario: ${user.name || user.username || 'Sin nombre'}</h3>
+                        <p><strong>Email:</strong> ${user.email || 'Sin email'}</p>
+                        <p><strong>ID:</strong> ${user.id || 'Sin ID'}</p>
+                        <h4>🎭 Roles:</h4>
+                        ${rolesHTML}
+                        ${isBodega ? '<p><strong>✅ Este usuario es de BODEGA</strong></p>' : '<p><strong>⚠️ Este usuario NO es de bodega</strong></p>'}
+                        <p><strong>Token presente:</strong> ${token ? '✅ Sí' : '❌ No'}</p>
+                        <details>
+                            <summary>Ver datos completos del usuario</summary>
+                            <pre>${JSON.stringify(user, null, 2)}</pre>
+                        </details>
+                    </div>
+                `;
+
+                log(`Usuario verificado: ${user.name || user.username}`, 'success');
+                log(`Roles: ${user.roles?.join(', ') || 'ninguno'}`, 'info');
+
+            } catch (error) {
+                document.getElementById('user-info').innerHTML = `
+                    <div class="error">
+                        <strong>❌ Error al verificar usuario:</strong>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+                log(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        function limpiarCacheYRecargar() {
+            if (!confirm('¿Estás seguro? Esto limpiará el cache del navegador y recargará la página.')) {
+                return;
+            }
+
+            log('Limpiando cache del navegador...', 'info');
+
+            // Limpiar caches específicos del sistema
+            const keysToKeep = ['accessToken', 'token', 'user', 'store_id'];
+            const allKeys = Object.keys(localStorage);
+
+            allKeys.forEach(key => {
+                if (!keysToKeep.includes(key)) {
+                    localStorage.removeItem(key);
+                    log(`Eliminado: ${key}`, 'success');
+                }
+            });
+
+            // Limpiar sessionStorage
+            sessionStorage.clear();
+            log('SessionStorage limpiado', 'success');
+
+            // Forzar recarga completa
+            setTimeout(() => {
+                log('Recargando página...', 'info');
+                window.location.href = 'http://localhost:3001/vue/template/';
+                // Forzar recarga sin cache
+                window.location.reload(true);
+            }, 1000);
+        }
+
+        function cerrarSesion() {
+            if (!confirm('¿Cerrar sesión? Perderás todos los datos de sesión actual.')) {
+                return;
+            }
+
+            log('Cerrando sesión...', 'info');
+
+            // Limpiar todo el localStorage
+            localStorage.clear();
+            sessionStorage.clear();
+
+            log('Datos de sesión eliminados', 'success');
+
+            // Redirigir al login
+            setTimeout(() => {
+                window.location.href = 'http://localhost:3001/vue/template/';
+            }, 1000);
+        }
+
+        // Auto-verificar al cargar
+        window.addEventListener('DOMContentLoaded', () => {
+            log('Página cargada. Listo para verificar usuario.', 'success');
+        });
+    </script>
+</body>
+</html>

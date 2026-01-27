@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Coupon & Offers API</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+        .section {
+            background: #252526;
+            border: 1px solid #3e3e42;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        h2 {
+            color: #4ec9b0;
+            margin-top: 0;
+        }
+        button {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #1177bb;
+        }
+        button.success {
+            background: #4e7a2e;
+        }
+        button.success:hover {
+            background: #5a8f34;
+        }
+        pre {
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .success-text {
+            color: #4ec9b0;
+        }
+        .error-text {
+            color: #f48771;
+        }
+        .warning-text {
+            color: #dcdcaa;
+        }
+        input {
+            background: #3c3c3c;
+            border: 1px solid #3e3e42;
+            color: #d4d4d4;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 200px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Test Cupones y Ofertas API</h1>
+
+    <div class="section">
+        <h2>1. Test Cupón Individual</h2>
+        <input type="text" id="couponCode" placeholder="Código cupón (ej: 000006)" value="000006">
+        <button onclick="testCoupon()">Probar Cupón</button>
+        <pre id="couponResult">Resultado del cupón...</pre>
+    </div>
+
+    <div class="section">
+        <h2>2. Test Oferta Individual</h2>
+        <input type="text" id="offerCode" placeholder="Código oferta (ej: 000002)" value="000002">
+        <button onclick="testOffer()">Probar Oferta</button>
+        <pre id="offerResult">Resultado de la oferta...</pre>
+    </div>
+
+    <div class="section">
+        <h2>3. Test con Carrito Real</h2>
+        <p>Productos: C-0128-9 (ID: 128) y FF-0051-9 (ID: 1017)</p>
+        <button onclick="testWithRealCart()" class="success">Probar con Carrito</button>
+        <pre id="cartTestResult">Resultado con carrito...</pre>
+    </div>
+
+    <script>
+        async function testCoupon() {
+            const code = document.getElementById('couponCode').value;
+            const result = document.getElementById('couponResult');
+            result.textContent = 'Probando cupón...';
+
+            // Test cart with the two products
+            const cart = {
+                items: [
+                    {
+                        product_id: 128,  // C-0128-9
+                        price: "350.00",
+                        quantity: 3,
+                        category_id: 5,   // Will be filled from DB
+                        subcategory_id: 4
+                    },
+                    {
+                        product_id: 1017,  // FF-0051-9
+                        price: "360.00",
+                        quantity: 5,
+                        category_id: 1,
+                        subcategory_id: 1
+                    }
+                ]
+            };
+
+            try {
+                const response = await fetch('http://localhost:3000/api/v1/ecommerce/cart/validate-coupon', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ code, cart })
+                });
+
+                const data = await response.json();
+
+                let output = `STATUS: ${response.status}\n\n`;
+                output += `SUCCESS: ${data.success}\n`;
+                output += `MESSAGE: ${data.message || 'N/A'}\n\n`;
+
+                if (data.data?.coupon) {
+                    output += `COUPON DATA:\n`;
+                    output += JSON.stringify(data.data.coupon, null, 2);
+                } else if (data.debug) {
+                    output += `DEBUG INFO:\n`;
+                    output += JSON.stringify(data.debug, null, 2);
+                }
+
+                result.textContent = output;
+                result.className = response.ok ? 'success-text' : 'error-text';
+            } catch (error) {
+                result.textContent = `ERROR: ${error.message}`;
+                result.className = 'error-text';
+            }
+        }
+
+        async function testOffer() {
+            const code = document.getElementById('offerCode').value;
+            const result = document.getElementById('offerResult');
+            result.textContent = 'Probando oferta...';
+
+            // Get all active offers
+            const cart = {
+                items: [
+                    {
+                        product_id: 128,
+                        price: "350.00",
+                        quantity: 3,
+                        category_id: 5,
+                        subcategory_id: 4
+                    },
+                    {
+                        product_id: 1017,
+                        price: "360.00",
+                        quantity: 5,
+                        category_id: 1,
+                        subcategory_id: 1
+                    }
+                ]
+            };
+
+            try {
+                const response = await fetch('http://localhost:3000/api/v1/ecommerce/cart/active-offers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ cart })
+                });
+
+                const data = await response.json();
+
+                let output = `STATUS: ${response.status}\n\n`;
+                output += `SUCCESS: ${data.success}\n`;
+                output += `OFFERS FOUND: ${data.data?.offers?.length || 0}\n\n`;
+
+                if (data.data?.offers && data.data.offers.length > 0) {
+                    output += `ACTIVE OFFERS:\n`;
+                    data.data.offers.forEach((offer, i) => {
+                        output += `\n[${i + 1}] ${offer.name}\n`;
+                        output += `    Discount: ${offer.discount_type} ${offer.discount_value}\n`;
+                        output += `    Amount: L ${offer.discount_amount}\n`;
+                        output += `    Applicable Items: ${offer.applicable_items}\n`;
+                    });
+
+                    // Check if the specific offer code is in the results
+                    const specificOffer = data.data.offers.find(o => o.name.includes(code));
+                    if (specificOffer) {
+                        output += `\n✅ Oferta ${code} ENCONTRADA`;
+                    } else {
+                        output += `\n⚠️ Oferta ${code} NO está en las ofertas activas`;
+                    }
+                } else {
+                    output += `❌ No hay ofertas activas aplicables`;
+                }
+
+                result.textContent = output;
+            } catch (error) {
+                result.textContent = `ERROR: ${error.message}`;
+                result.className = 'error-text';
+            }
+        }
+
+        async function testWithRealCart() {
+            const result = document.getElementById('cartTestResult');
+            result.textContent = 'Obteniendo productos de la API...';
+
+            try {
+                // Get product 128 details
+                const prod128 = await fetch('http://localhost:3000/api/v1/ecommerce/products/128');
+                const data128 = await prod128.json();
+
+                // Get product 1017 details
+                const prod1017 = await fetch('http://localhost:3000/api/v1/ecommerce/products/1017');
+                const data1017 = await prod1017.json();
+
+                let output = 'PRODUCTOS:\n\n';
+
+                if (data128.data) {
+                    output += `[1] ${data128.data.code} - ${data128.data.name}\n`;
+                    output += `    ID: ${data128.data.id}\n`;
+                    output += `    Category ID: ${data128.data.category_id}\n`;
+                    output += `    Subcategory ID: ${data128.data.subcategory_id}\n`;
+                    output += `    Price: L ${data128.data.sale_price}\n\n`;
+                }
+
+                if (data1017.data) {
+                    output += `[2] ${data1017.data.code} - ${data1017.data.name}\n`;
+                    output += `    ID: ${data1017.data.id}\n`;
+                    output += `    Category ID: ${data1017.data.category_id}\n`;
+                    output += `    Subcategory ID: ${data1017.data.subcategory_id}\n`;
+                    output += `    Price: L ${data1017.data.sale_price}\n\n`;
+                }
+
+                // Build cart with real data
+                const cart = {
+                    items: []
+                };
+
+                if (data128.data) {
+                    cart.items.push({
+                        product_id: data128.data.id,
+                        price: data128.data.sale_price,
+                        quantity: 3,
+                        category_id: data128.data.category_id,
+                        subcategory_id: data128.data.subcategory_id
+                    });
+                }
+
+                if (data1017.data) {
+                    cart.items.push({
+                        product_id: data1017.data.id,
+                        price: data1017.data.sale_price,
+                        quantity: 5,
+                        category_id: data1017.data.category_id,
+                        subcategory_id: data1017.data.subcategory_id
+                    });
+                }
+
+                output += '='.repeat(60) + '\n';
+                output += 'PROBANDO OFERTAS ACTIVAS:\n\n';
+
+                // Test active offers
+                const offersResp = await fetch('http://localhost:3000/api/v1/ecommerce/cart/active-offers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cart })
+                });
+                const offersData = await offersResp.json();
+
+                if (offersData.data?.offers && offersData.data.offers.length > 0) {
+                    output += `✅ ${offersData.data.offers.length} OFERTAS APLICABLES:\n\n`;
+                    offersData.data.offers.forEach((offer, i) => {
+                        output += `[${i + 1}] ${offer.name}\n`;
+                        output += `    Descuento: -L ${offer.discount_amount}\n\n`;
+                    });
+                } else {
+                    output += `❌ No hay ofertas aplicables\n\n`;
+                }
+
+                output += '='.repeat(60) + '\n';
+                output += 'PROBANDO CUPÓN 000006:\n\n';
+
+                // Test coupon 000006
+                const couponResp = await fetch('http://localhost:3000/api/v1/ecommerce/cart/validate-coupon', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: '000006', cart })
+                });
+                const couponData = await couponResp.json();
+
+                if (couponResp.ok && couponData.data?.coupon) {
+                    output += `✅ CUPÓN VÁLIDO\n`;
+                    output += `    Código: ${couponData.data.coupon.code}\n`;
+                    output += `    Nombre: ${couponData.data.coupon.name}\n`;
+                    output += `    Descuento: -L ${couponData.data.coupon.discount_amount}\n`;
+                } else {
+                    output += `❌ ${couponData.message}\n`;
+                }
+
+                result.textContent = output;
+            } catch (error) {
+                result.textContent = `ERROR: ${error.message}`;
+                result.className = 'error-text';
+            }
+        }
+
+        // Auto-run on load
+        window.onload = () => {
+            console.log('Test page loaded');
+        };
+    </script>
+</body>
+</html>

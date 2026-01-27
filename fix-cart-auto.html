@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Arreglar Carrito Automáticamente</title>
+</head>
+<body>
+    <h1>Arreglando carrito...</h1>
+    <pre id="output"></pre>
+
+    <script>
+        const output = document.getElementById('output');
+
+        async function fixCart() {
+            try {
+                output.textContent = 'Leyendo carrito actual...\n';
+
+                // Get current cart
+                const cartStr = localStorage.getItem('ecommerce_cart');
+                if (!cartStr) {
+                    output.textContent += '❌ No hay carrito para arreglar\n';
+                    return;
+                }
+
+                const cart = JSON.parse(cartStr);
+                output.textContent += `✅ Carrito encontrado con ${cart.length} productos\n\n`;
+
+                // Fix each product
+                const fixedCart = [];
+
+                for (const item of cart) {
+                    output.textContent += `Arreglando producto ${item.product_id}...\n`;
+
+                    try {
+                        const response = await fetch(`http://localhost:3000/api/v1/ecommerce/products/${item.product_id}`);
+                        const data = await response.json();
+
+                        if (data.success && data.data) {
+                            const product = data.data;
+
+                            fixedCart.push({
+                                product_id: item.product_id,
+                                code: item.code || product.code,
+                                name: item.name || product.name,
+                                image: item.image || product.image,
+                                category: product.category_name || '',
+                                category_id: product.category_id || null,
+                                subcategory: product.subcategory_name || '',
+                                subcategory_id: product.subcategory_id || null,
+                                brand: product.brand_name || '',
+                                price: item.price,
+                                tax_rate: item.tax_rate || product.tax_rate || 0,
+                                quantity: item.quantity,
+                                unit: item.unit || product.unit || 'UND'
+                            });
+
+                            output.textContent += `  ✅ ID: ${product.id}\n`;
+                            output.textContent += `  ✅ Category ID: ${product.category_id}\n`;
+                            output.textContent += `  ✅ Subcategory ID: ${product.subcategory_id}\n\n`;
+                        } else {
+                            output.textContent += `  ❌ No se pudo obtener datos del producto\n\n`;
+                        }
+                    } catch (err) {
+                        output.textContent += `  ❌ Error: ${err.message}\n\n`;
+                    }
+                }
+
+                if (fixedCart.length > 0) {
+                    localStorage.setItem('ecommerce_cart', JSON.stringify(fixedCart));
+                    window.dispatchEvent(new Event('cart-updated'));
+
+                    output.textContent += '\n===========================================\n';
+                    output.textContent += '✅ ¡CARRITO ARREGLADO!\n';
+                    output.textContent += '===========================================\n\n';
+                    output.textContent += 'Carrito actualizado:\n';
+                    output.textContent += JSON.stringify(fixedCart, null, 2);
+                    output.textContent += '\n\nCerrando en 3 segundos y recargando la página del carrito...';
+
+                    setTimeout(() => {
+                        window.close();
+                        window.opener?.location.reload();
+                    }, 3000);
+                } else {
+                    output.textContent += '\n❌ No se pudo arreglar ningún producto\n';
+                }
+
+            } catch (error) {
+                output.textContent += `\n❌ Error: ${error.message}`;
+            }
+        }
+
+        // Auto-run
+        window.onload = fixCart;
+    </script>
+</body>
+</html>

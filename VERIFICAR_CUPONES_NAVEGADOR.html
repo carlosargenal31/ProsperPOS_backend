@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Cupones - Producto Específico</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+        }
+        .step {
+            background: #ecf0f1;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #3498db;
+            border-radius: 4px;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #2980b9;
+        }
+        .sql-query {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .sql-query pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .error {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        table th {
+            background: #3498db;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+        table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        table tr:hover {
+            background: #f5f5f5;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-ok {
+            background: #28a745;
+            color: white;
+        }
+        .badge-error {
+            background: #dc3545;
+            color: white;
+        }
+        code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #e83e8c;
+            font-family: 'Courier New', monospace;
+        }
+        ol {
+            line-height: 1.8;
+        }
+        .btn {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Verificación de Cupones con Producto Específico</h1>
+
+        <div class="warning">
+            <strong>⚠️ Problema Reportado:</strong><br>
+            Cuando seleccionas un PRODUCTO ESPECÍFICO en un cupón, el sistema lo está aplicando a TODOS los productos de la misma categoría/subcategoría.
+        </div>
+
+        <h2>📋 Pasos de Verificación</h2>
+
+        <div class="step">
+            <h3>1️⃣ Verificar Estructura de la Base de Datos</h3>
+            <p>Abre tu gestor de base de datos (MySQL Workbench, phpMyAdmin, etc.) y ejecuta:</p>
+            <div class="sql-query">
+                <pre>DESCRIBE coupons;</pre>
+            </div>
+            <p><strong>Busca este campo:</strong></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Type</th>
+                        <th>Null</th>
+                        <th>Default</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>articulo_id</code></td>
+                        <td>int</td>
+                        <td>YES</td>
+                        <td>NULL</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>✅ Si existe: Bien, continúa al paso 2</p>
+            <p>❌ Si NO existe: Ejecuta la migración SQL</p>
+        </div>
+
+        <div class="step">
+            <h3>2️⃣ Verificar Cupones Actuales</h3>
+            <p>Ejecuta esta consulta para ver cómo están guardados tus cupones:</p>
+            <div class="sql-query">
+                <pre>SELECT
+  id,
+  codigo,
+  nombre,
+  tipo_aplicacion,
+  grupo_id AS categoria_id,
+  subgrupo_id AS subcategoria_id,
+  articulo_id AS producto_id
+FROM coupons
+WHERE deleted_at IS NULL
+ORDER BY id DESC
+LIMIT 10;</pre>
+            </div>
+            <p><strong>Interpreta los resultados:</strong></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>codigo</th>
+                        <th>categoria_id</th>
+                        <th>subcategoria_id</th>
+                        <th>producto_id</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>000007</td>
+                        <td>1</td>
+                        <td>5</td>
+                        <td><strong style="color: red;">NULL</strong></td>
+                        <td><span class="badge badge-error">PROBLEMA</span></td>
+                    </tr>
+                    <tr>
+                        <td>000008</td>
+                        <td>1</td>
+                        <td>5</td>
+                        <td><strong style="color: green;">123</strong></td>
+                        <td><span class="badge badge-ok">CORRECTO</span></td>
+                    </tr>
+                    <tr>
+                        <td>000009</td>
+                        <td>1</td>
+                        <td>NULL</td>
+                        <td>NULL</td>
+                        <td><span class="badge badge-ok">OK (Categoría)</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="step">
+            <h3>3️⃣ Crear Cupón de Prueba</h3>
+            <p>Desde la interfaz web:</p>
+            <ol>
+                <li>Ve a <strong>Ventas → Cupones</strong></li>
+                <li>Haz clic en <strong>"Agregar Nuevo Cupón"</strong></li>
+                <li>Nombre: <code>PRUEBA PRODUCTO ÚNICO</code></li>
+                <li>Selecciona <strong>"Seleccionar una categoría y/o producto en específico"</strong></li>
+                <li>Selecciona una Categoría</li>
+                <li>Selecciona una Subcategoría</li>
+                <li><strong>⚠️ IMPORTANTE:</strong> Selecciona un Producto específico</li>
+                <li>Tipo de Descuento: <code>Monto</code></li>
+                <li>Valor: <code>10.00</code></li>
+                <li>Abre la <strong>Consola del navegador</strong> (F12)</li>
+                <li>Haz clic en <strong>"Guardar"</strong></li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>4️⃣ Verificar en la Consola del Navegador</h3>
+            <p>En la consola (F12), busca un log que diga:</p>
+            <div class="sql-query">
+                <pre>Datos a enviar: {
+  codigo: "000010",
+  nombre: "PRUEBA PRODUCTO ÚNICO",
+  tipo_aplicacion: "grupo",
+  categoria_id: 1,
+  subcategoria_id: 5,
+  producto_id: 123,  ← ✅ DEBE TENER UN NÚMERO
+  ...
+}</pre>
+            </div>
+            <p><strong>Verificar:</strong></p>
+            <ul>
+                <li>✅ Si <code>producto_id</code> tiene un número: El frontend está funcionando correctamente</li>
+                <li>❌ Si <code>producto_id: null</code>: Hay un problema en el frontend</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>5️⃣ Verificar en Base de Datos</h3>
+            <p>Ejecuta esta consulta con el código del cupón que acabas de crear:</p>
+            <div class="sql-query">
+                <pre>SELECT
+  codigo,
+  nombre,
+  grupo_id,
+  subgrupo_id,
+  articulo_id
+FROM coupons
+WHERE codigo = '000010'  -- Reemplaza con tu código
+AND deleted_at IS NULL;</pre>
+            </div>
+            <div class="success">
+                <strong>✅ Resultado Esperado:</strong><br>
+                <code>articulo_id</code> debe tener el ID del producto que seleccionaste, NO NULL.
+            </div>
+            <div class="error">
+                <strong>❌ Si es NULL:</strong><br>
+                Hay un problema en el backend al guardar los datos.
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>6️⃣ Probar en el POS</h3>
+            <ol>
+                <li>Ve al módulo POS</li>
+                <li>Agrega al carrito <strong>3 productos diferentes</strong> de la misma categoría/subcategoría</li>
+                <li>Aplica el cupón que creaste</li>
+                <li>Abre la consola del navegador (F12)</li>
+                <li>Busca los logs que digan:</li>
+            </ol>
+            <div class="sql-query">
+                <pre>=== VALIDATE COUPON DEBUG ===
+Cupón encontrado: {
+  id: 10,
+  codigo: '000010',
+  tipo_aplicacion: 'grupo',
+  grupo_id: 1,
+  subgrupo_id: 5,
+  articulo_id: 123  ← ✅ DEBE TENER VALOR
+}
+...
+Items aplicables encontrados: 1  ← ✅ DEBE SER 1, NO 3</pre>
+            </div>
+        </div>
+
+        <h2>🔧 Solución Temporal (Mientras se investiga)</h2>
+
+        <div class="success">
+            <h3>Alternativa que SÍ funciona:</h3>
+            <ol>
+                <li>Al crear el cupón, selecciona <strong>"Seleccionar múltiples productos"</strong></li>
+                <li>Busca y agrega <strong>SOLO el producto</strong> al que quieres aplicar el descuento</li>
+                <li>NO agregues otros productos</li>
+                <li>Guarda el cupón</li>
+            </ol>
+            <p>De esta manera, aunque uses tipo "multiple", el cupón solo se aplicará al producto que agregaste.</p>
+        </div>
+
+        <h2>📊 Diagnóstico Esperado</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Paso</th>
+                    <th>¿Qué verifica?</th>
+                    <th>Resultado Esperado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Campo existe en BD</td>
+                    <td><code>articulo_id</code> existe</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Cupones anteriores</td>
+                    <td>Ver si tienen <code>producto_id</code></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Crear cupón nuevo</td>
+                    <td>UI funcional</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Consola navegador</td>
+                    <td><code>producto_id: 123</code></td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>BD después de guardar</td>
+                    <td><code>articulo_id: 123</code></td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Aplicación en POS</td>
+                    <td>Solo 1 producto con descuento</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>💬 ¿Necesitas Ayuda?</h2>
+
+        <div class="warning">
+            <p><strong>Si después de seguir estos pasos el problema persiste:</strong></p>
+            <ol>
+                <li>Toma capturas de pantalla de cada paso</li>
+                <li>Anota qué valores ves en cada verificación</li>
+                <li>Específicamente:
+                    <ul>
+                        <li>¿El campo <code>articulo_id</code> existe en la tabla?</li>
+                        <li>¿El <code>producto_id</code> se envía desde el navegador?</li>
+                        <li>¿El <code>articulo_id</code> se guarda en la BD?</li>
+                    </ul>
+                </li>
+                <li>Con esa información sabremos exactamente dónde está fallando</li>
+            </ol>
+        </div>
+
+        <h2>📁 Archivos de Referencia</h2>
+
+        <ul>
+            <li><code>SOLUCION_CUPONES_PRODUCTO_ESPECIFICO.md</code> - Documentación técnica completa</li>
+            <li><code>backend/check-cupones-producto-especifico.sql</code> - Consultas SQL de verificación</li>
+            <li><code>backend/test-cupon-producto-especifico.js</code> - Script automatizado de prueba</li>
+        </ul>
+
+        <div style="margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 5px; text-align: center;">
+            <p style="margin: 0; color: #6c757d;">
+                <strong>Documento creado:</strong> 2026-01-23<br>
+                <strong>Última actualización:</strong> 2026-01-23
+            </p>
+        </div>
+    </div>
+</body>
+</html>

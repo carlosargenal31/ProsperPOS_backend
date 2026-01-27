@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verificar Roles de Usuario</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #FF9F43;
+            padding-bottom: 10px;
+        }
+        .step {
+            background: #f9f9f9;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #FF9F43;
+        }
+        .code-block {
+            background: #1e1e1e;
+            color: #dcdcdc;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+        }
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .info {
+            color: #17a2b8;
+            font-weight: bold;
+        }
+        button {
+            background: #FF9F43;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #e8903b;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Verificar Roles de Usuario en ProsperPOS</h1>
+
+        <div class="step">
+            <h3>Paso 1: Abrir la Consola del Navegador</h3>
+            <p>Presiona <strong>F12</strong> en tu navegador para abrir las herramientas de desarrollo.</p>
+        </div>
+
+        <div class="step">
+            <h3>Paso 2: Copiar y Ejecutar el Siguiente Código</h3>
+            <p>Copia este código y pégalo en la consola:</p>
+            <div class="code-block">
+// Verificar roles de usuario en localStorage
+const userStr = localStorage.getItem('user');
+console.log('=== VERIFICACIÓN DE ROLES ===');
+console.log('');
+console.log('1. Usuario en localStorage (raw):', userStr);
+console.log('');
+
+if (!userStr) {
+    console.error('❌ ERROR: No hay usuario en localStorage');
+    console.log('Debes iniciar sesión primero');
+} else {
+    try {
+        const user = JSON.parse(userStr);
+        console.log('2. Usuario parseado:', user);
+        console.log('');
+        console.log('3. Roles del usuario:', user.roles);
+        console.log('');
+
+        // Verificar tipo de roles
+        if (user.roles && Array.isArray(user.roles)) {
+            console.log('✅ user.roles es un array');
+            console.log('Cantidad de roles:', user.roles.length);
+            console.log('');
+
+            user.roles.forEach((role, index) => {
+                console.log(`   Rol ${index + 1}: "${role}" (tipo: ${typeof role})`);
+            });
+            console.log('');
+
+            // Verificar qué rol es
+            if (user.roles.includes('admin') || user.roles.includes('super_admin')) {
+                console.log('👑 Usuario es ADMINISTRADOR');
+                console.log('Debería ver: Manual Administrador');
+            } else if (user.roles.includes('cashier')) {
+                console.log('💰 Usuario es VENDEDOR');
+                console.log('Debería ver: Manual Vendedor');
+            } else if (user.roles.includes('warehouse')) {
+                console.log('📦 Usuario es BODEGA');
+                console.log('Debería ver: Manual Bodega');
+            } else {
+                console.log('⚠️ Rol no reconocido:', user.roles);
+                console.log('');
+                console.log('PROBLEMA: El rol debería ser uno de estos slugs:');
+                console.log('  - admin');
+                console.log('  - super_admin');
+                console.log('  - cashier');
+                console.log('  - warehouse');
+            }
+        } else {
+            console.error('❌ ERROR: user.roles NO es un array o no existe');
+            console.log('user.roles:', user.roles);
+        }
+
+        // Verificar permisos
+        console.log('');
+        console.log('4. Permisos del usuario:', user.permissions);
+
+    } catch (error) {
+        console.error('❌ ERROR al parsear el usuario:', error);
+    }
+}
+
+console.log('');
+console.log('=== FIN DE VERIFICACIÓN ===');
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Paso 3: Ejecutar Prueba Automática</h3>
+            <p>O haz clic en este botón para ejecutar la prueba automáticamente:</p>
+            <button onclick="verificarRoles()">Verificar Roles</button>
+            <button onclick="limpiarLocalStorage()">Limpiar localStorage</button>
+            <div id="result"></div>
+        </div>
+
+        <div class="step">
+            <h3>¿Qué Hacer Si Hay Problemas?</h3>
+
+            <h4 class="error">Problema 1: Roles son nombres en lugar de slugs</h4>
+            <p>Ejemplo: <code>roles: ["Vendedor"]</code> en lugar de <code>roles: ["cashier"]</code></p>
+            <p><strong>Solución:</strong></p>
+            <ol>
+                <li>Cierra sesión</li>
+                <li>Reinicia el backend</li>
+                <li>Inicia sesión de nuevo</li>
+            </ol>
+
+            <h4 class="error">Problema 2: No hay usuario en localStorage</h4>
+            <p><strong>Solución:</strong></p>
+            <ol>
+                <li>Inicia sesión en el sistema</li>
+                <li>Vuelve a ejecutar esta prueba</li>
+            </ol>
+
+            <h4 class="error">Problema 3: Roles es null o undefined</h4>
+            <p><strong>Solución:</strong></p>
+            <ol>
+                <li>Verifica que el backend esté funcionando</li>
+                <li>Cierra sesión y vuelve a iniciar sesión</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>Usuarios de Prueba</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr style="background: #f0f0f0;">
+                    <th style="padding: 10px; border: 1px solid #ddd;">Usuario</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Rol (slug)</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Manual que debe ver</th>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ddd;">admin</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">admin</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">Manual Administrador</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ddd;">vendedor</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">cashier</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">Manual Vendedor</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ddd;">almacenista</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">warehouse</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">Manual Bodega</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function verificarRoles() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<h4>Resultados:</h4>';
+
+            const userStr = localStorage.getItem('user');
+
+            if (!userStr) {
+                resultDiv.innerHTML += '<p class="error">❌ No hay usuario en localStorage. Debes iniciar sesión primero.</p>';
+                return;
+            }
+
+            try {
+                const user = JSON.parse(userStr);
+
+                resultDiv.innerHTML += '<p class="success">✅ Usuario encontrado en localStorage</p>';
+                resultDiv.innerHTML += `<p><strong>Username:</strong> ${user.username || 'N/A'}</p>`;
+                resultDiv.innerHTML += `<p><strong>Roles:</strong> ${JSON.stringify(user.roles)}</p>`;
+
+                if (user.roles && Array.isArray(user.roles)) {
+                    resultDiv.innerHTML += '<p class="success">✅ Roles es un array válido</p>';
+
+                    if (user.roles.includes('admin') || user.roles.includes('super_admin')) {
+                        resultDiv.innerHTML += '<p class="info">👑 Tipo: ADMINISTRADOR</p>';
+                        resultDiv.innerHTML += '<p>Debe ver: <strong>Manual Administrador</strong></p>';
+                    } else if (user.roles.includes('cashier')) {
+                        resultDiv.innerHTML += '<p class="info">💰 Tipo: VENDEDOR</p>';
+                        resultDiv.innerHTML += '<p>Debe ver: <strong>Manual Vendedor</strong></p>';
+                    } else if (user.roles.includes('warehouse')) {
+                        resultDiv.innerHTML += '<p class="info">📦 Tipo: BODEGA</p>';
+                        resultDiv.innerHTML += '<p>Debe ver: <strong>Manual Bodega</strong></p>';
+                    } else {
+                        resultDiv.innerHTML += '<p class="error">⚠️ Rol no reconocido: ' + JSON.stringify(user.roles) + '</p>';
+                        resultDiv.innerHTML += '<p>El problema es que los roles están usando nombres en lugar de slugs.</p>';
+                        resultDiv.innerHTML += '<p><strong>Solución:</strong> Cierra sesión, reinicia el backend y vuelve a iniciar sesión.</p>';
+                    }
+                } else {
+                    resultDiv.innerHTML += '<p class="error">❌ Roles NO es un array válido</p>';
+                    resultDiv.innerHTML += `<p>Valor actual: ${JSON.stringify(user.roles)}</p>`;
+                }
+
+                console.log('Usuario completo:', user);
+
+            } catch (error) {
+                resultDiv.innerHTML += `<p class="error">❌ Error al parsear usuario: ${error.message}</p>`;
+            }
+        }
+
+        function limpiarLocalStorage() {
+            if (confirm('¿Estás seguro de que quieres limpiar el localStorage? Esto cerrará tu sesión.')) {
+                localStorage.clear();
+                document.getElementById('result').innerHTML = '<p class="success">✅ localStorage limpiado. Por favor, inicia sesión de nuevo.</p>';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+// ============================================================
+// SCRIPT PARA ARREGLAR EL CARRITO - COPIA ESTO EN LA CONSOLA
+// ============================================================
+//
+// INSTRUCCIONES:
+// 1. Abre la página del carrito (http://localhost:3002/cart)
+// 2. Presiona F12 para abrir la consola del navegador
+// 3. Copia y pega TODO este código en la consola
+// 4. Presiona Enter
+// 5. Espera a que termine y recarga la página (F5)
+//
+// ============================================================
+
+(async function arreglarCarrito() {
+    console.log('🔧 Iniciando reparación del carrito...\n');
+
+    try {
+        // Paso 1: Obtener datos de productos desde la API
+        console.log('📡 Consultando API para producto 1017...');
+        const response1017 = await fetch('http://localhost:3000/api/v1/ecommerce/products/1017');
+        const data1017 = await response1017.json();
+
+        console.log('📡 Consultando API para producto 128...');
+        const response128 = await fetch('http://localhost:3000/api/v1/ecommerce/products/128');
+        const data128 = await response128.json();
+
+        if (!data1017.success || !data128.success) {
+            console.error('❌ Error: No se pudieron obtener los datos de los productos');
+            return;
+        }
+
+        const p1017 = data1017.data;
+        const p128 = data128.data;
+
+        console.log('\n📦 PRODUCTO 1017:', {
+            id: p1017.id,
+            code: p1017.code,
+            name: p1017.name,
+            category_id: p1017.category_id,
+            category_name: p1017.category_name,
+            subcategory_id: p1017.subcategory_id,
+            subcategory_name: p1017.subcategory_name
+        });
+
+        console.log('\n📦 PRODUCTO 128:', {
+            id: p128.id,
+            code: p128.code,
+            name: p128.name,
+            category_id: p128.category_id,
+            category_name: p128.category_name,
+            subcategory_id: p128.subcategory_id,
+            subcategory_name: p128.subcategory_name
+        });
+
+        // Paso 2: Crear nuevo carrito con datos completos
+        const nuevoCarrito = [
+            {
+                product_id: p1017.id,
+                code: p1017.code,
+                name: p1017.name,
+                image: p1017.image,
+                category: p1017.category_name || '',
+                category_id: p1017.category_id || null,
+                subcategory: p1017.subcategory_name || '',
+                subcategory_id: p1017.subcategory_id || null,
+                brand: p1017.brand_name || '',
+                price: p1017.sale_price,
+                tax_rate: p1017.tax_rate || 0,
+                quantity: 10,
+                unit: p1017.unit || 'UND'
+            },
+            {
+                product_id: p128.id,
+                code: p128.code,
+                name: p128.name,
+                image: p128.image,
+                category: p128.category_name || '',
+                category_id: p128.category_id || null,
+                subcategory: p128.subcategory_name || '',
+                subcategory_id: p128.subcategory_id || null,
+                brand: p128.brand_name || '',
+                price: p128.sale_price,
+                tax_rate: p128.tax_rate || 0,
+                quantity: 10,
+                unit: p128.unit || 'UND'
+            }
+        ];
+
+        console.log('\n✅ NUEVO CARRITO CREADO:');
+        console.log(JSON.stringify(nuevoCarrito, null, 2));
+
+        // Paso 3: Guardar en localStorage
+        localStorage.setItem('ecommerce_cart', JSON.stringify(nuevoCarrito));
+        localStorage.removeItem('applied_coupon');
+        localStorage.removeItem('active_offers');
+        window.dispatchEvent(new Event('cart-updated'));
+
+        console.log('\n✅ Carrito guardado en localStorage');
+        console.log('✅ Cupones y ofertas anteriores eliminados');
+
+        // Paso 4: Verificar que funcionó
+        console.log('\n🔍 VERIFICANDO...');
+
+        const cartData = {
+            cart: {
+                items: nuevoCarrito.map(item => ({
+                    product_id: item.product_id,
+                    price: item.price,
+                    quantity: item.quantity,
+                    category_id: item.category_id,
+                    subcategory_id: item.subcategory_id
+                }))
+            }
+        };
+
+        // Test ofertas
+        console.log('\n📝 Probando ofertas activas...');
+        const offersResponse = await fetch('http://localhost:3000/api/v1/ecommerce/cart/active-offers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(cartData)
+        });
+        const offersData = await offersResponse.json();
+
+        if (offersData.data?.offers && offersData.data.offers.length > 0) {
+            console.log('✅ OFERTAS APLICABLES:', offersData.data.offers.length);
+            offersData.data.offers.forEach(offer => {
+                console.log(`  - ${offer.name}: -L ${offer.discount_amount}`);
+            });
+        } else {
+            console.log('⚠️ No hay ofertas aplicables a estos productos');
+        }
+
+        // Test cupón
+        console.log('\n📝 Probando cupón 000006...');
+        const couponResponse = await fetch('http://localhost:3000/api/v1/ecommerce/cart/validate-coupon', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                code: '000006',
+                cart: cartData.cart
+            })
+        });
+        const couponData = await couponResponse.json();
+
+        if (couponResponse.ok && couponData.data?.coupon) {
+            console.log('✅ CUPÓN VÁLIDO:');
+            console.log(`  Código: ${couponData.data.coupon.code}`);
+            console.log(`  Nombre: ${couponData.data.coupon.name}`);
+            console.log(`  Descuento: -L ${couponData.data.coupon.discount_amount}`);
+        } else {
+            console.log('⚠️ Cupón:', couponData.message);
+            if (couponData.debug) {
+                console.log('  Detalles:', couponData.debug);
+            }
+        }
+
+        console.log('\n' + '='.repeat(60));
+        console.log('✅ ¡REPARACIÓN COMPLETADA!');
+        console.log('='.repeat(60));
+        console.log('\n🔄 Recargando la página en 2 segundos...\n');
+
+        setTimeout(() => {
+            window.location.reload();
+        }, 2000);
+
+    } catch (error) {
+        console.error('❌ ERROR:', error.message);
+        console.error(error);
+    }
+})();

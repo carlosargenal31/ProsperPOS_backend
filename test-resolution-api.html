@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba API Resolución</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>Prueba API de Resolución Activa</h1>
+
+    <button onclick="testResolutionAPI()">Probar Endpoint /api/v1/resolutions/active</button>
+
+    <div id="result" class="result"></div>
+
+    <script>
+        async function testResolutionAPI() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '⏳ Consultando API...';
+
+            try {
+                const response = await fetch('http://localhost:3000/api/v1/resolutions/active?store_id=1', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        // Nota: En producción necesitarías el token de autenticación
+                        // 'Authorization': 'Bearer ' + token
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.status === 404) {
+                    resultDiv.innerHTML = `<div class="error">
+<strong>❌ Error 404 - No hay resolución activa</strong>
+
+Status: ${response.status}
+Message: ${data.message}
+
+<strong>✅ ESTE ES EL COMPORTAMIENTO ESPERADO</strong>
+El modal debería aparecer automáticamente en POS.
+                    </div>`;
+                } else if (response.status === 401) {
+                    resultDiv.innerHTML = `<div class="error">
+<strong>⚠️ Error 401 - No autorizado</strong>
+
+Status: ${response.status}
+Message: ${data.message}
+
+Nota: Necesitas autenticarte primero.
+Sin embargo, podemos ver que el endpoint está funcionando.
+                    </div>`;
+                } else if (response.ok && data.success) {
+                    const resolution = data.data;
+                    const isExpired = resolution.is_expired;
+
+                    resultDiv.innerHTML = `<div class="${isExpired ? 'error' : 'success'}">
+<strong>${isExpired ? '❌ Resolución VENCIDA' : '✅ Resolución Activa'}</strong>
+
+Número de Resolución: ${resolution.numero_resolucion}
+Fecha Inicio: ${resolution.fecha_inicio}
+Fecha Fin: ${resolution.fecha_fin}
+Estado: ${resolution.is_active ? 'Activa' : 'Inactiva'}
+¿Vencida?: ${isExpired ? 'SÍ' : 'NO'}
+Días hasta vencimiento: ${resolution.days_until_expiration}
+
+${isExpired ? '<strong>✅ El modal debería aparecer automáticamente en POS</strong>' : ''}
+
+Respuesta completa:
+${JSON.stringify(data, null, 2)}
+                    </div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">
+<strong>❌ Error</strong>
+
+${JSON.stringify(data, null, 2)}
+                    </div>`;
+                }
+
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">
+<strong>❌ Error de Conexión</strong>
+
+${error.message}
+
+¿Está el servidor backend corriendo en http://localhost:3000?
+                </div>`;
+            }
+        }
+
+        // Ejecutar automáticamente al cargar la página
+        window.onload = testResolutionAPI;
+    </script>
+</body>
+</html>

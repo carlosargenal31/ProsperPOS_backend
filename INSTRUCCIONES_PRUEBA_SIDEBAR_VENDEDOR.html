@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrucciones - Prueba Sidebar Vendedor</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+        .section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            border-left: 5px solid #667eea;
+        }
+        .section h2 {
+            color: #667eea;
+            margin-top: 0;
+            font-size: 22px;
+        }
+        .step {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #FF9F43;
+        }
+        .step-number {
+            display: inline-block;
+            background: #FF9F43;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        .step-content {
+            display: inline-block;
+            vertical-align: top;
+            width: calc(100% - 60px);
+        }
+        .code {
+            background: #2d3748;
+            color: #68d391;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .checklist {
+            margin: 15px 0;
+        }
+        .checklist li {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .check {
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        button.orange {
+            background: #FF9F43;
+        }
+        button.orange:hover {
+            background: #e8903b;
+        }
+        .button-group {
+            text-align: center;
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ Correcciones Completadas</h1>
+        <p class="subtitle">Sidebar de Vendedor - Listo para Probar</p>
+
+        <div class="section">
+            <h2>🔧 Cambios Aplicados</h2>
+            <div class="checklist">
+                <ul>
+                    <li><span class="check">✅</span> <strong>Eliminada sección "Gestión de Usuarios"</strong></li>
+                    <li><span class="check">✅</span> <strong>"Cerrar Sesión" movido a Ajustes → Ajustes Generales</strong></li>
+                    <li><span class="check">✅</span> <strong>Corregida expansión de submenús (Archivos, Procesos, Reportes)</strong></li>
+                    <li><span class="check">✅</span> <strong>Mantenida reactividad de Vue para clicks</strong></li>
+                    <li><span class="check">✅</span> <strong>Filtrado de permisos por rol vendedor</strong></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🚀 Pasos para Probar</h2>
+
+            <div class="step">
+                <span class="step-number">1</span>
+                <div class="step-content">
+                    <strong>Limpiar Caché del Navegador</strong>
+                    <p>Esto es CRÍTICO para ver los cambios:</p>
+                    <div class="code">
+                        Ctrl + Shift + R
+                        o
+                        Ctrl + Shift + Supr → Borrar caché
+                    </div>
+                    <div class="button-group">
+                        <button onclick="limpiarCache()">🧹 Limpiar Caché</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">2</span>
+                <div class="step-content">
+                    <strong>Cerrar Sesión y Volver a Iniciar</strong>
+                    <p>Para cargar los nuevos permisos:</p>
+                    <div class="button-group">
+                        <button class="orange" onclick="cerrarSesion()">🔓 Cerrar Sesión</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">3</span>
+                <div class="step-content">
+                    <strong>Iniciar Sesión como Vendedor</strong>
+                    <p>Usa las credenciales del usuario vendedor</p>
+                    <div class="button-group">
+                        <button onclick="irLogin()">🔑 Ir a Login</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">4</span>
+                <div class="step-content">
+                    <strong>Verificar el Sidebar</strong>
+                    <p>Debes ver las siguientes secciones:</p>
+                    <div class="checklist">
+                        <ul>
+                            <li><span class="check">✓</span> Ventas</li>
+                            <li><span class="check">✓</span> Inventario</li>
+                            <li><span class="check">✓</span> Ajustes</li>
+                            <li><span class="check">✓</span> Ayuda</li>
+                        </ul>
+                    </div>
+                    <div class="warning">
+                        <strong>⚠️ NO debe aparecer:</strong>
+                        <ul>
+                            <li>❌ Gestión de Usuarios (eliminada)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">5</span>
+                <div class="step-content">
+                    <strong>Probar Expansión de Submenús</strong>
+                    <p>Haz clic en "Ventas" y verifica que se expandan:</p>
+                    <div class="checklist">
+                        <ul>
+                            <li><strong>Archivos:</strong> Debería mostrar Cupones, Ofertas</li>
+                            <li><strong>Procesos:</strong> Debería mostrar POS Facturación, Devoluciones Ventas, Guías de Remisión</li>
+                            <li><strong>Reportes:</strong> Debería mostrar Reimpresiones Ventas, Ventas por Vendedor, Estado Cuenta Ventas</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">6</span>
+                <div class="step-content">
+                    <strong>Verificar "Cerrar Sesión"</strong>
+                    <p>En el sidebar, ve a:</p>
+                    <div class="code">
+                        Ajustes → Ajustes Generales → Cerrar Sesión
+                    </div>
+                    <div class="success">
+                        ✅ Ahora "Cerrar Sesión" está dentro de "Ajustes Generales" en lugar de estar en su propia sección
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <span class="step-number">7</span>
+                <div class="step-content">
+                    <strong>Probar POS Invoice</strong>
+                    <p>Abre el POS y verifica que cargue sin errores 403:</p>
+                    <div class="button-group">
+                        <button onclick="irPOS()">🛒 Abrir POS</button>
+                    </div>
+                    <div class="success">
+                        ✅ Deberían cargar correctamente:
+                        <ul>
+                            <li>Bodegas (warehouses)</li>
+                            <li>Resoluciones activas</li>
+                            <li>Cuentas bancarias</li>
+                            <li>Categorías</li>
+                            <li>Tasas de impuesto</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Resultado Esperado</h2>
+
+            <div class="success">
+                <h3 style="margin-top: 0;">✅ Si Todo Funciona Correctamente:</h3>
+                <ul>
+                    <li>✅ El sidebar muestra solo: Ventas, Inventario, Ajustes, Ayuda</li>
+                    <li>✅ NO aparece "Gestión de Usuarios"</li>
+                    <li>✅ "Cerrar Sesión" está en Ajustes → Ajustes Generales (al final)</li>
+                    <li>✅ Al hacer clic en "Archivos" (Ventas), se expande y muestra opciones</li>
+                    <li>✅ Al hacer clic en "Procesos" (Ventas), se expande y muestra opciones</li>
+                    <li>✅ Al hacer clic en "Reportes" (Ventas), se expande y muestra opciones</li>
+                    <li>✅ POS carga sin errores 403</li>
+                    <li>✅ Todos los datos del POS se cargan correctamente</li>
+                </ul>
+            </div>
+
+            <div class="warning">
+                <h3 style="margin-top: 0;">⚠️ Si Algo No Funciona:</h3>
+                <ol>
+                    <li>Abre la Consola del Navegador (F12)</li>
+                    <li>Ve a la pestaña "Console"</li>
+                    <li>Busca mensajes de error (en rojo)</li>
+                    <li>Copia los errores y repórtalos</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📋 Archivos Modificados</h2>
+            <div class="code">
+✅ template/src/views/layouts/vertical-sidebar.vue
+   - Simplificado expandSubMenus() para mantener reactividad
+   - Agregado isSubmenuAllowed() para filtrado por permisos
+   - Actualizado template para usar nuevo método
+
+✅ template/src/assets/json/sidebar.json
+   - Eliminada sección "Gestión de Usuarios"
+   - Agregado "Cerrar Sesión" en Ajustes → Ajustes Generales
+
+✅ template/src/utils/sidebar-permissions.js
+   - Eliminado 'Gestión de Usuarios' de roles permitidos
+   - Agregado 'Cerrar Sesión' en submenús de Ajustes
+            </div>
+        </div>
+
+        <div class="button-group" style="margin-top: 40px;">
+            <button onclick="limpiarCache()" style="font-size: 18px; padding: 20px 40px;">
+                🚀 Comenzar Pruebas (Limpiar Caché)
+            </button>
+        </div>
+
+        <div id="resultado" style="margin-top: 30px;"></div>
+    </div>
+
+    <script>
+        function limpiarCache() {
+            const resultado = document.getElementById('resultado');
+            resultado.innerHTML = `
+                <div class="success">
+                    <h3>✅ Instrucciones para Limpiar Caché:</h3>
+                    <ol>
+                        <li><strong>Opción 1 (Rápida):</strong> Presiona Ctrl + Shift + R</li>
+                        <li><strong>Opción 2 (Completa):</strong> Presiona Ctrl + Shift + Supr, marca "Caché" y haz clic en "Borrar datos"</li>
+                    </ol>
+                    <p style="margin-top: 20px;">Después de limpiar el caché, haz clic en "Cerrar Sesión" abajo.</p>
+                </div>
+            `;
+
+            // Forzar recarga sin caché
+            setTimeout(() => {
+                location.reload(true);
+            }, 3000);
+        }
+
+        function cerrarSesion() {
+            localStorage.clear();
+            sessionStorage.clear();
+
+            const resultado = document.getElementById('resultado');
+            resultado.innerHTML = `
+                <div class="success">
+                    <h3>✅ Sesión Cerrada</h3>
+                    <p>Redirigiendo a la página de login...</p>
+                </div>
+            `;
+
+            setTimeout(() => {
+                window.location.href = 'http://localhost:3001/sign-in';
+            }, 2000);
+        }
+
+        function irLogin() {
+            window.location.href = 'http://localhost:3001/sign-in';
+        }
+
+        function irPOS() {
+            window.location.href = 'http://localhost:3001/pos-invoice';
+        }
+
+        // Mostrar información del usuario actual si existe
+        window.onload = function() {
+            const user = localStorage.getItem('user');
+            if (user) {
+                try {
+                    const userData = JSON.parse(user);
+                    const info = document.createElement('div');
+                    info.className = 'warning';
+                    info.innerHTML = `
+                        <h3>👤 Usuario Actual:</h3>
+                        <p><strong>Usuario:</strong> ${userData.username || 'Desconocido'}</p>
+                        <p><strong>Roles:</strong> ${userData.roles ? userData.roles.join(', ') : 'N/A'}</p>
+                        <p style="margin-top: 15px; color: #856404;">
+                            <strong>💡 Recomendación:</strong> Cierra sesión y vuelve a iniciar para cargar los nuevos permisos.
+                        </p>
+                    `;
+                    document.querySelector('.container').insertBefore(info, document.querySelector('.section'));
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                }
+            }
+        };
+    </script>
+</body>
+</html>

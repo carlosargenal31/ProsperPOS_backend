@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Order API</title>
+</head>
+<body>
+    <h1>Testing Order API Response</h1>
+    <div id="output"></div>
+
+    <script>
+        const output = document.getElementById('output');
+
+        async function testOrderAPI() {
+            try {
+                // Try to login first
+                output.innerHTML += '<h2>Attempting to login...</h2>';
+
+                const loginResponse = await fetch('http://localhost:3000/api/v1/ecommerce/customers/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'test@test.com',
+                        password: '123456'
+                    })
+                });
+
+                const loginData = await loginResponse.json();
+                output.innerHTML += `<pre>Login Response: ${JSON.stringify(loginData, null, 2)}</pre>`;
+
+                if (!loginData.token) {
+                    output.innerHTML += '<p style="color: red;">Login failed - no token received</p>';
+                    return;
+                }
+
+                const token = loginData.token;
+
+                // Get orders
+                output.innerHTML += '<h2>Fetching orders...</h2>';
+                const ordersResponse = await fetch('http://localhost:3000/api/v1/ecommerce/orders', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const ordersData = await ordersResponse.json();
+                output.innerHTML += `<pre>Orders: ${JSON.stringify(ordersData, null, 2)}</pre>`;
+
+                // Get first order details
+                if (ordersData.orders && ordersData.orders.length > 0) {
+                    const orderNumber = ordersData.orders[0].order_number;
+                    output.innerHTML += `<h2>Fetching order ${orderNumber} details...</h2>`;
+
+                    const orderDetailResponse = await fetch(`http://localhost:3000/api/v1/ecommerce/orders/${orderNumber}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    const orderDetail = await orderDetailResponse.json();
+                    output.innerHTML += `<pre>Order Detail: ${JSON.stringify(orderDetail, null, 2)}</pre>`;
+
+                    // Check units specifically
+                    output.innerHTML += '<h2>Units in items:</h2><ul>';
+                    if (orderDetail.order && orderDetail.order.items) {
+                        orderDetail.order.items.forEach(item => {
+                            output.innerHTML += `<li><strong>${item.product_name}</strong> - Unit: <span style="color: ${item.unit && item.unit !== 'UNIDAD' ? 'green' : 'red'}; font-weight: bold;">${item.unit || 'NOT PRESENT'}</span></li>`;
+                        });
+                    }
+                    output.innerHTML += '</ul>';
+                }
+
+            } catch (error) {
+                output.innerHTML += `<p style="color: red;">Error: ${error.message}</p>`;
+                console.error(error);
+            }
+        }
+
+        testOrderAPI();
+    </script>
+</body>
+</html>

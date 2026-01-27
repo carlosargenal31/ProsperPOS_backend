@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limpiar Caché y Abrir POS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #FF9800;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #333;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .step {
+            background: #fff3e0;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #FF9800;
+            border-radius: 4px;
+        }
+        .step strong {
+            color: #FF9800;
+            font-size: 18px;
+        }
+        button {
+            background: #FF9800;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #F57C00;
+        }
+        .success {
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            display: none;
+        }
+        .warning {
+            background: #ff5722;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #d32f2f;
+        }
+        .keyboard {
+            display: inline-block;
+            background: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            margin: 0 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🔄 LIMPIAR CACHÉ Y PROBAR CAMPOS ADICIONALES</h1>
+
+        <div class="warning">
+            ⚠️ <strong>MUY IMPORTANTE:</strong> Debes limpiar el caché del navegador para que los cambios surtan efecto.
+        </div>
+
+        <h2>📋 PASO 1: Limpiar Caché del Navegador</h2>
+
+        <div class="step">
+            <strong>Opción A:</strong> Presiona <span class="keyboard">Ctrl</span> + <span class="keyboard">Shift</span> + <span class="keyboard">Del</span>
+            <br>Luego selecciona "Imágenes y archivos en caché" y haz clic en "Borrar datos"
+        </div>
+
+        <div class="step">
+            <strong>Opción B:</strong> Presiona <span class="keyboard">Ctrl</span> + <span class="keyboard">Shift</span> + <span class="keyboard">R</span>
+            <br>Esto hace un "Hard Reload" (recarga forzada sin caché)
+        </div>
+
+        <div class="step">
+            <strong>Opción C:</strong> Presiona <span class="keyboard">F12</span> → Ve a "Application/Aplicación" → Haz clic en "Clear storage/Borrar almacenamiento"
+        </div>
+
+        <button onclick="clearCacheAndReload()">🔄 LIMPIAR CACHÉ AHORA</button>
+
+        <h2>📋 PASO 2: Abrir POS y Probar</h2>
+
+        <button onclick="openPOS()">🚀 ABRIR POS FACTURACIÓN</button>
+        <button onclick="openAccountStatement()">📊 ABRIR ESTADO DE CUENTAS</button>
+        <button onclick="openReprints()">🖨️ ABRIR REIMPRESIONES</button>
+
+        <h2>📋 PASO 3: Probar los Campos Adicionales</h2>
+
+        <div class="step">
+            <strong>1.</strong> En POS Facturación, selecciona un cliente y agrega productos
+        </div>
+
+        <div class="step">
+            <strong>2.</strong> Haz clic en <strong>"OPCIONES"</strong> (botón en la parte superior derecha)
+        </div>
+
+        <div class="step">
+            <strong>3.</strong> Ingresa estos valores de prueba:
+            <br>• <strong>Orden de Compra:</strong> <code>HOLA-1</code>
+            <br>• <strong>Constancia Exonerado:</strong> <code>HOLA-2</code>
+            <br>• <strong>Registro SAG:</strong> <code>HOLA-3</code>
+        </div>
+
+        <div class="step">
+            <strong>4.</strong> Haz clic en <strong>"GUARDAR COMO COTIZACIÓN"</strong>
+        </div>
+
+        <div class="step">
+            <strong>5.</strong> En el modal de vista previa, <strong>VERIFICA</strong> que aparezcan los 3 campos:
+            <br>✅ <code>No. Correlativo de la Orden de Compra Exenta: HOLA-1</code>
+            <br>✅ <code>No. Correlativo de la Constancia del Reg Exonerado: HOLA-2</code>
+            <br>✅ <code>No. Identificativo del Registro SAG: HOLA-3</code>
+        </div>
+
+        <div class="step">
+            <strong>6.</strong> Haz clic en <strong>"IMPRIMIR"</strong> y verifica que los campos aparezcan en la vista previa de impresión
+        </div>
+
+        <h2>🔍 VERIFICAR EN ESTADO DE CUENTAS</h2>
+
+        <div class="step">
+            <strong>1.</strong> Ve a <strong>Ventas > Estado de Cuentas</strong>
+        </div>
+
+        <div class="step">
+            <strong>2.</strong> Selecciona el cliente que acabas de usar
+        </div>
+
+        <div class="step">
+            <strong>3.</strong> Busca la cotización que acabas de crear
+        </div>
+
+        <div class="step">
+            <strong>4.</strong> Haz clic en <strong>"VER/IMPRIMIR"</strong>
+        </div>
+
+        <div class="step">
+            <strong>5.</strong> Verifica que los 3 campos aparezcan con los valores <code>HOLA-1</code>, <code>HOLA-2</code>, <code>HOLA-3</code>
+        </div>
+
+        <div id="successMessage" class="success">
+            ✅ <strong>ÉXITO!</strong> Si ves los campos con los valores "HOLA-1", "HOLA-2", "HOLA-3", ¡todo está funcionando correctamente!
+        </div>
+
+        <h2>❓ SI TODAVÍA NO FUNCIONA</h2>
+
+        <div class="step">
+            <strong>1.</strong> Abre la consola del navegador con <span class="keyboard">F12</span>
+        </div>
+
+        <div class="step">
+            <strong>2.</strong> Ve a la pestaña <strong>"Console"</strong>
+        </div>
+
+        <div class="step">
+            <strong>3.</strong> Busca errores en rojo (❌) y cópialos
+        </div>
+
+        <div class="step">
+            <strong>4.</strong> Verifica que el frontend esté corriendo en <code>http://localhost:8080</code>
+        </div>
+
+        <div class="step">
+            <strong>5.</strong> Verifica que el backend esté corriendo en <code>http://localhost:3000</code>
+        </div>
+
+        <button onclick="checkServers()">🔍 VERIFICAR SERVIDORES</button>
+    </div>
+
+    <script>
+        function clearCacheAndReload() {
+            // Intentar limpiar el caché
+            if ('caches' in window) {
+                caches.keys().then(function(names) {
+                    for (let name of names) {
+                        caches.delete(name);
+                    }
+                });
+            }
+
+            // Mostrar mensaje
+            alert('✅ Caché limpiado!\n\nAhora presiona Ctrl+Shift+R para hacer una recarga forzada.');
+
+            // Recargar la página
+            setTimeout(() => {
+                location.reload(true);
+            }, 1000);
+        }
+
+        function openPOS() {
+            window.open('http://localhost:8080/#/pos-facturacion', '_blank');
+        }
+
+        function openAccountStatement() {
+            window.open('http://localhost:8080/#/estado-cuenta', '_blank');
+        }
+
+        function openReprints() {
+            window.open('http://localhost:8080/#/reimpresiones', '_blank');
+        }
+
+        async function checkServers() {
+            let message = '';
+
+            // Check frontend
+            try {
+                const frontendResponse = await fetch('http://localhost:8080');
+                if (frontendResponse.ok) {
+                    message += '✅ Frontend: CORRIENDO (http://localhost:8080)\n';
+                } else {
+                    message += '❌ Frontend: NO RESPONDE\n';
+                }
+            } catch (e) {
+                message += '❌ Frontend: NO CORRIENDO\n';
+            }
+
+            // Check backend
+            try {
+                const backendResponse = await fetch('http://localhost:3000/api/v1/health');
+                if (backendResponse.ok) {
+                    message += '✅ Backend: CORRIENDO (http://localhost:3000)\n';
+                } else {
+                    message += '⚠️ Backend: RESPONDE pero sin /health endpoint\n';
+                }
+            } catch (e) {
+                message += '❌ Backend: NO CORRIENDO\n';
+            }
+
+            alert(message);
+        }
+
+        // Auto-check servers on load
+        window.addEventListener('load', () => {
+            setTimeout(checkServers, 2000);
+        });
+    </script>
+</body>
+</html>

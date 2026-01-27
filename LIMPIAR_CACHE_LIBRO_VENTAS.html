@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limpiar Caché - Libro de Ventas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .alert {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .alert h3 {
+            color: #92400e;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .alert p {
+            color: #78350f;
+            font-size: 14px;
+        }
+
+        .steps {
+            margin-bottom: 30px;
+        }
+
+        .step {
+            background: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .step:hover {
+            background: #eff6ff;
+            transform: translateX(5px);
+        }
+
+        .step h3 {
+            color: #1e40af;
+            font-size: 18px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-number {
+            background: #3b82f6;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .step p {
+            color: #475569;
+            line-height: 1.6;
+            margin-left: 40px;
+        }
+
+        .kbd {
+            background: #333;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 13px;
+            margin: 0 2px;
+            display: inline-block;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .success {
+            background: #d1fae5;
+            border-left: 4px solid #10b981;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .success h3 {
+            color: #065f46;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .success ul {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .success li {
+            color: #047857;
+            margin-bottom: 8px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .success li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .changes {
+            background: #e0e7ff;
+            border-left: 4px solid #6366f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .changes h3 {
+            color: #3730a3;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .changes ul {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .changes li {
+            color: #4338ca;
+            margin-bottom: 8px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .changes li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #6366f1;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔄 Actualización del Libro de Ventas</h1>
+            <p>Instrucciones para ver los cambios aplicados</p>
+        </div>
+
+        <div class="alert">
+            <h3>⚠️ Importante</h3>
+            <p>El backend se actualizó correctamente, pero necesitas limpiar el caché del navegador para ver los cambios.</p>
+        </div>
+
+        <div class="changes">
+            <h3>📋 Cambios Aplicados</h3>
+            <ul>
+                <li><strong>Subtotal:</strong> Ahora muestra el valor BRUTO (sin descuentos)</li>
+                <li><strong>Orden de columnas:</strong> Subtotal → Descuento → Impuesto → Recargos</li>
+                <li><strong>Ejemplo:</strong> Si antes veías 8,315.40 ahora verás 8,713.00 como subtotal</li>
+            </ul>
+        </div>
+
+        <div class="steps">
+            <div class="step">
+                <h3>
+                    <span class="step-number">1</span>
+                    Cierra TODAS las pestañas del sistema ProsperPOS
+                </h3>
+                <p>Asegúrate de cerrar completamente todas las pestañas que tengan abierto el sistema.</p>
+            </div>
+
+            <div class="step">
+                <h3>
+                    <span class="step-number">2</span>
+                    Limpia la caché del navegador
+                </h3>
+                <p>
+                    <strong>En Chrome/Edge:</strong> Presiona <span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + <span class="kbd">Delete</span><br>
+                    <strong>En Firefox:</strong> Presiona <span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + <span class="kbd">Delete</span><br>
+                    <br>
+                    En la ventana que aparece:
+                    <br>• Selecciona "Imágenes y archivos en caché"
+                    <br>• Rango de tiempo: "Todo"
+                    <br>• Haz clic en "Borrar datos"
+                </p>
+            </div>
+
+            <div class="step">
+                <h3>
+                    <span class="step-number">3</span>
+                    Abre el sistema nuevamente
+                </h3>
+                <p>Abre una nueva ventana y accede a: <strong>http://localhost:8080</strong></p>
+            </div>
+
+            <div class="step">
+                <h3>
+                    <span class="step-number">4</span>
+                    Ve al Libro de Ventas
+                </h3>
+                <p>Navega a: <strong>Reportes → Libro de Ventas</strong></p>
+            </div>
+
+            <div class="step">
+                <h3>
+                    <span class="step-number">5</span>
+                    Configura las fechas
+                </h3>
+                <p>Selecciona: <strong>20/01/2026</strong> hasta <strong>23/01/2026</strong></p>
+            </div>
+        </div>
+
+        <div class="success">
+            <h3>✅ Verificación</h3>
+            <p>Después de limpiar la caché, deberías ver:</p>
+            <ul>
+                <li>Columnas en el orden: Subtotal → Descuento → Impuesto → Recargos</li>
+                <li>El subtotal mostrando el valor BRUTO (antes de descuentos)</li>
+                <li>Los descuentos en su propia columna separada</li>
+                <li>Los totales cuadrando correctamente</li>
+            </ul>
+        </div>
+
+        <div class="button-container">
+            <a href="http://localhost:8080" class="button" target="_blank">
+                🚀 Abrir ProsperPOS
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Auto-abrir el sistema después de 2 segundos si el usuario hace clic en el botón
+        document.querySelector('.button').addEventListener('click', function() {
+            setTimeout(function() {
+                alert('✅ Recuerda hacer Ctrl+Shift+R en la página del Libro de Ventas para forzar la recarga!');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

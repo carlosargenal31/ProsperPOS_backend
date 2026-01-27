@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEMO - Campos Adicionales</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 36px;
+        }
+        .header p {
+            color: #666;
+            font-size: 18px;
+        }
+        .steps {
+            display: grid;
+            gap: 20px;
+        }
+        .step {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border-left: 5px solid #667eea;
+            transition: transform 0.3s;
+        }
+        .step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .step-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            border-radius: 50%;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .step h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+        .step p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .step-content {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        .code {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .button {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+            margin: 10px 5px;
+        }
+        .button:hover {
+            background: #5568d3;
+        }
+        .success {
+            background: #10b981;
+        }
+        .warning {
+            background: #f59e0b;
+        }
+        .danger {
+            background: #ef4444;
+        }
+        .field-example {
+            background: white;
+            border: 2px solid #e5e7eb;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .field-example label {
+            display: block;
+            font-weight: bold;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        .field-example input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        .result {
+            background: #f0fdf4;
+            border: 2px solid #10b981;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        .result h3 {
+            color: #10b981;
+            margin-bottom: 10px;
+        }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            background: #000;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .screenshot {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            margin: 15px 0;
+        }
+        .highlight {
+            background: #fef3c7;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .checklist {
+            list-style: none;
+            padding-left: 0;
+        }
+        .checklist li {
+            padding: 10px;
+            margin: 5px 0;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            border-radius: 5px;
+        }
+        .checklist li:before {
+            content: "✓ ";
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 DEMO - Campos Adicionales</h1>
+            <p>Guía interactiva paso a paso</p>
+        </div>
+
+        <!-- PASO 1 -->
+        <div class="step">
+            <div class="step-number">1</div>
+            <h2>Abrir POS Facturación</h2>
+            <p>Primero, abre el módulo de POS Facturación en tu navegador:</p>
+            <div class="step-content">
+                <a href="http://localhost:8080/#/pos-facturacion" target="_blank" class="button">
+                    🚀 ABRIR POS FACTURACIÓN
+                </a>
+                <div class="code">http://localhost:8080/#/pos-facturacion</div>
+            </div>
+        </div>
+
+        <!-- PASO 2 -->
+        <div class="step">
+            <div class="step-number">2</div>
+            <h2>Crear tu Documento</h2>
+            <p>Sigue estos pasos en el POS:</p>
+            <ul class="checklist">
+                <li>Selecciona un cliente (o deja "CONSUMIDOR FINAL")</li>
+                <li>Agrega productos al carrito</li>
+                <li>Verifica que los productos y totales estén correctos</li>
+            </ul>
+        </div>
+
+        <!-- PASO 3 -->
+        <div class="step">
+            <div class="step-number">3</div>
+            <h2>Abrir Modal de Campos Adicionales</h2>
+            <p><strong>⚠️ IMPORTANTE:</strong> Debes hacer esto <span class="highlight">ANTES de facturar/guardar</span></p>
+            <div class="step-content">
+                <p>Haz clic en el botón <strong>"CAMPOS"</strong> en la parte superior derecha del POS</p>
+                <p>O presiona el atajo de teclado: <strong>Alt + M</strong></p>
+            </div>
+        </div>
+
+        <!-- PASO 4 -->
+        <div class="step">
+            <div class="step-number">4</div>
+            <h2>Ingresar Valores</h2>
+            <p>En el modal que aparece, ingresa los valores en los 3 campos:</p>
+            <div class="step-content">
+                <div class="field-example">
+                    <label>📝 No. Correlativo de la Orden de Compra Exenta</label>
+                    <input type="text" placeholder="Ejemplo: OC-2026-001" readonly value="OC-2026-001">
+                </div>
+                <div class="field-example">
+                    <label>📝 No. Correlativo de la Constancia del Reg Exonerado</label>
+                    <input type="text" placeholder="Ejemplo: CONST-2026-123" readonly value="CONST-2026-123">
+                </div>
+                <div class="field-example">
+                    <label>📝 No. Identificativo del Registro SAG</label>
+                    <input type="text" placeholder="Ejemplo: SAG-2026-456" readonly value="SAG-2026-456">
+                </div>
+                <p style="margin-top: 15px; color: #6b7280;">
+                    <strong>Nota:</strong> Los campos son opcionales. Puedes dejar algunos vacíos si no los necesitas.
+                </p>
+            </div>
+        </div>
+
+        <!-- PASO 5 -->
+        <div class="step">
+            <div class="step-number">5</div>
+            <h2>Guardar Campos</h2>
+            <p>Después de ingresar los valores, haz clic en el botón:</p>
+            <div class="step-content">
+                <button class="button success">✓ GUARDAR</button>
+                <p style="margin-top: 15px;">
+                    ⚠️ <strong>NO hagas clic en "CANCELAR Y LIMPIAR DATOS"</strong> porque borrará los valores que ingresaste.
+                </p>
+                <p>Verás una alerta: <span class="highlight">"Guardado - Campos adicionales guardados"</span></p>
+            </div>
+        </div>
+
+        <!-- PASO 6 -->
+        <div class="step">
+            <div class="step-number">6</div>
+            <h2>Facturar/Guardar Documento</h2>
+            <p>Ahora puedes guardar tu documento normalmente:</p>
+            <div class="step-content">
+                <button class="button">💰 FACTURAR</button>
+                <button class="button warning">📄 GUARDAR COMO COTIZACIÓN</button>
+                <button class="button">⏳ GUARDAR COMO FACTURA EN ESPERA</button>
+                <p style="margin-top: 15px;">
+                    Los campos adicionales se guardarán automáticamente con el documento.
+                </p>
+            </div>
+        </div>
+
+        <!-- PASO 7 -->
+        <div class="step">
+            <div class="step-number">7</div>
+            <h2>Verificar Resultado</h2>
+            <p>Los campos aparecerán en la vista previa y en las impresiones:</p>
+            <div class="result">
+                <h3>✅ Vista Previa del Documento</h3>
+                <div class="code">
+COTIZACION: 0000000033
+#Control Interno: 0000000033
+Sucursal: Agencia Principal
+Emisión: 19/01/2026
+Condiciones de la Transacción: Contado
+Entrega: 19/01/2026
+<span style="color: #10b981; font-weight: bold;">No. Correlativo de la Orden de Compra Exenta: OC-2026-001</span>
+<span style="color: #10b981; font-weight: bold;">No. Correlativo de la Constancia del Reg Exonerado: CONST-2026-123</span>
+<span style="color: #10b981; font-weight: bold;">No. Identificativo del Registro SAG: SAG-2026-456</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- VERIFICACIÓN -->
+        <div class="step">
+            <div class="step-number">✓</div>
+            <h2>Verificar en Otros Módulos</h2>
+            <p>Los campos también aparecen en:</p>
+            <div class="step-content">
+                <a href="http://localhost:8080/#/reimpresiones" target="_blank" class="button">
+                    🖨️ REIMPRESIONES
+                </a>
+                <a href="http://localhost:8080/#/estado-cuenta" target="_blank" class="button">
+                    📊 ESTADO DE CUENTAS
+                </a>
+                <p style="margin-top: 15px;">Busca el documento que acabas de crear y verifica que los campos aparezcan.</p>
+            </div>
+        </div>
+
+        <!-- ERRORES COMUNES -->
+        <div class="step" style="border-left-color: #ef4444;">
+            <div class="step-number" style="background: #ef4444;">❌</div>
+            <h2>Errores Comunes</h2>
+            <div class="step-content">
+                <h3 style="color: #ef4444; margin-bottom: 10px;">Error #1: Facturaste sin ingresar campos</h3>
+                <p><strong>Síntoma:</strong> Los campos aparecen vacíos en la impresión</p>
+                <p><strong>Causa:</strong> Hiciste clic en "FACTURAR" sin abrir el modal de "CAMPOS" primero</p>
+                <p><strong>Solución:</strong> La próxima vez, abre "CAMPOS" ANTES de facturar</p>
+
+                <h3 style="color: #ef4444; margin: 20px 0 10px;">Error #2: Hiciste clic en "CANCELAR Y LIMPIAR"</h3>
+                <p><strong>Síntoma:</strong> Los campos se borraron después de ingresarlos</p>
+                <p><strong>Causa:</strong> Hiciste clic en el botón gris "CANCELAR" en lugar del verde "GUARDAR"</p>
+                <p><strong>Solución:</strong> Ingresa los valores de nuevo y haz clic en el botón verde "GUARDAR"</p>
+
+                <h3 style="color: #ef4444; margin: 20px 0 10px;">Error #3: Creaste nueva factura</h3>
+                <p><strong>Síntoma:</strong> Los campos desaparecieron al crear nuevo documento</p>
+                <p><strong>Causa:</strong> Los campos se limpian automáticamente al crear nueva factura</p>
+                <p><strong>Solución:</strong> Esto es normal. Debes ingresar los campos para cada documento nuevo</p>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="header" style="margin-top: 30px;">
+            <h2>🎉 ¡Todo Listo!</h2>
+            <p>Ahora puedes usar los campos adicionales en todas tus facturas y cotizaciones</p>
+            <div style="margin-top: 20px;">
+                <a href="GUIA_COMPLETA_CAMPOS_ADICIONALES.md" class="button">
+                    📖 VER GUÍA COMPLETA
+                </a>
+                <a href="http://localhost:8080/#/pos-facturacion" target="_blank" class="button success">
+                    🚀 PROBAR AHORA
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

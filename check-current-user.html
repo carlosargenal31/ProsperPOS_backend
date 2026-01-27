@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Verificar Usuario Actual</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #1e1e1e;
+            color: #4ec9b0;
+            padding: 40px;
+            font-size: 14px;
+        }
+        .success { color: #4ec9b0; }
+        .error { color: #f48771; }
+        .info { color: #dcdcaa; }
+        pre { background: #2d2d2d; padding: 20px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Verificar Usuario Actual</h1>
+    <div id="output"></div>
+
+    <script>
+        const output = document.getElementById('output');
+
+        function log(msg, type = 'info') {
+            const line = document.createElement('div');
+            line.className = type;
+            line.innerHTML = msg;
+            output.appendChild(line);
+        }
+
+        // Check localStorage
+        const token = localStorage.getItem('ecommerce_token');
+        const cart = localStorage.getItem('ecommerce_cart');
+        const coupon = localStorage.getItem('applied_coupon');
+        const offers = localStorage.getItem('active_offers');
+
+        log('<h2>📦 LocalStorage:</h2>');
+        log('');
+
+        if (token) {
+            log('✓ Token encontrado', 'success');
+            log('<pre>' + token + '</pre>');
+
+            // Decode JWT
+            try {
+                const parts = token.split('.');
+                const payload = JSON.parse(atob(parts[1]));
+                log('<h3>Payload del token:</h3>');
+                log('<pre>' + JSON.stringify(payload, null, 2) + '</pre>');
+            } catch (error) {
+                log('❌ Error al decodificar token: ' + error.message, 'error');
+            }
+        } else {
+            log('❌ No hay token guardado', 'error');
+        }
+
+        log('');
+        log('<hr>');
+
+        if (cart) {
+            const cartData = JSON.parse(cart);
+            log('✓ Carrito (' + cartData.length + ' items):', 'success');
+            log('<pre>' + JSON.stringify(cartData, null, 2) + '</pre>');
+        } else {
+            log('❌ No hay carrito', 'error');
+        }
+
+        log('');
+        log('<hr>');
+
+        if (coupon) {
+            log('✓ Cupón aplicado:', 'success');
+            log('<pre>' + JSON.stringify(JSON.parse(coupon), null, 2) + '</pre>');
+        } else {
+            log('⚠ No hay cupón aplicado', 'info');
+        }
+
+        log('');
+        log('<hr>');
+
+        if (offers) {
+            const offersData = JSON.parse(offers);
+            log('✓ Ofertas aplicadas (' + offersData.length + '):', 'success');
+            log('<pre>' + JSON.stringify(offersData, null, 2) + '</pre>');
+        } else {
+            log('⚠ No hay ofertas aplicadas', 'info');
+        }
+
+        // Test API call
+        log('');
+        log('<hr>');
+        log('<h2>🧪 Probando API...</h2>');
+
+        if (token) {
+            fetch('http://localhost:3000/api/v1/ecommerce/auth/me', {
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    log('✓ Usuario autenticado:', 'success');
+                    log('<pre>' + JSON.stringify(data.data, null, 2) + '</pre>');
+                } else {
+                    log('❌ Error: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                log('❌ Error al llamar API: ' + error.message, 'error');
+            });
+        }
+    </script>
+</body>
+</html>

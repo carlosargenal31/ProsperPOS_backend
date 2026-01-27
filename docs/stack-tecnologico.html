@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stack Tecnológico - ProsperPOS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            font-size: 42px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            font-size: 20px;
+            margin-bottom: 50px;
+        }
+
+        .stack-section {
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 32px;
+            color: #2d3748;
+            margin-bottom: 30px;
+            padding-left: 20px;
+            border-left: 6px solid #667eea;
+            font-weight: 600;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .tech-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+        }
+
+        .tech-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tech-card:hover::before {
+            opacity: 1;
+        }
+
+        .tech-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tech-icon img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .tech-name {
+            font-size: 22px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .tech-version {
+            font-size: 15px;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .tech-description {
+            font-size: 14px;
+            color: #718096;
+            line-height: 1.5;
+        }
+
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #667eea, transparent);
+            margin: 60px 0;
+        }
+
+        .svg-icon {
+            width: 80px;
+            height: 80px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Stack Tecnológico</h1>
+        <p class="subtitle">ProsperPOS - Sistema de Punto de Venta con Facturación Electrónica</p>
+
+        <!-- BACKEND -->
+        <div class="stack-section">
+            <h2 class="section-title">💻 Backend</h2>
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js">
+                    </div>
+                    <div class="tech-name">Node.js</div>
+                    <div class="tech-version">v16+</div>
+                    <div class="tech-description">Runtime JavaScript para servidor</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="24" height="24" fill="white"/>
+                            <path d="M12 2L2 7v10l10 5 10-5V7L12 2z" fill="#000000"/>
+                            <path d="M12 7l-5 2.5v5L12 17l5-2.5v-5L12 7z" fill="#FFFFFF"/>
+                            <text x="12" y="13" font-size="5" fill="#000000" font-weight="bold" text-anchor="middle">E</text>
+                        </svg>
+                    </div>
+                    <div class="tech-name">Express.js</div>
+                    <div class="tech-version">v4.21+</div>
+                    <div class="tech-description">Framework web minimalista y rápido</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="MySQL">
+                    </div>
+                    <div class="tech-name">MySQL</div>
+                    <div class="tech-version">v8.0+</div>
+                    <div class="tech-description">Sistema de gestión de base de datos</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <img src="https://cdn.worldvectorlogo.com/logos/jwt-3.svg" alt="JWT">
+                    </div>
+                    <div class="tech-name">JWT</div>
+                    <div class="tech-version">Latest</div>
+                    <div class="tech-description">JSON Web Tokens para autenticación</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="24" height="24" rx="4" fill="#23272F"/>
+                            <path d="M17 7h-3l-2 10h3l2-10zM11 7H8L6 17h3l2-10z" fill="#FFD700"/>
+                            <circle cx="12" cy="5" r="1" fill="#FFD700"/>
+                        </svg>
+                    </div>
+                    <div class="tech-name">Winston</div>
+                    <div class="tech-version">Latest</div>
+                    <div class="tech-description">Sistema de logging avanzado</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" alt="PDFKit">
+                    </div>
+                    <div class="tech-name">PDFKit</div>
+                    <div class="tech-version">Latest</div>
+                    <div class="tech-description">Generación de documentos PDF</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <img src="https://cdn-icons-png.flaticon.com/512/732/732220.png" alt="ExcelJS">
+                    </div>
+                    <div class="tech-name">ExcelJS</div>
+                    <div class="tech-version">Latest</div>
+                    <div class="tech-description">Manejo de archivos Excel</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="3" y="3" width="18" height="18" rx="2" stroke="#2D72B8" stroke-width="2" fill="none"/>
+                            <path d="M7 8h10M7 12h10M7 16h6" stroke="#2D72B8" stroke-width="1.5"/>
+                            <circle cx="17" cy="16" r="2" fill="#2D72B8"/>
+                        </svg>
+                    </div>
+                    <div class="tech-name">Tesseract.js</div>
+                    <div class="tech-version">Latest</div>
+                    <div class="tech-description">OCR - Reconocimiento óptico</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" fill="#CD3D3E"/>
+                            <path d="M8 8h8c1 0 2 1 2 2v4c0 1-1 2-2 2H8c-1 0-2-1-2-2v-4c0-1 1-2 2-2z" fill="white"/>
+                            <circle cx="10" cy="10" r="1.5" fill="#CD3D3E"/>
+                            <circle cx="14" cy="10" r="1.5" fill="#CD3D3E"/>
+                            <path d="M9 13h6" stroke="#CD3D3E" stroke-width="1" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="tech-name">Bull</div>
+                    <div class="tech-version">Latest</div>
+                    <div class="tech-description">Cola de trabajos con Redis</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="2" y="4" width="20" height="16" rx="2" fill="#0099CC"/>
+                            <rect x="4" y="6" width="16" height="2" fill="white"/>
+                            <path d="M4 10l8 4 8-4" stroke="white" stroke-width="1.5"/>
+                            <circle cx="12" cy="16" r="1.5" fill="white"/>
+                        </svg>
+                    </div>
+                    <div class="tech-name">Nodemailer</div>
+                    <div class="tech-version">Latest</div>
+                    <div class="tech-description">Envío de correos electrónicos</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="24" height="24" rx="4" fill="#4285F4"/>
+                            <path d="M6 8l6-3 6 3v8l-6 3-6-3V8z" fill="#FBBC04"/>
+                            <path d="M12 5v14" stroke="white" stroke-width="1.5"/>
+                            <path d="M6 8l6 7 6-7" stroke="white" stroke-width="1.5"/>
+                        </svg>
+                    </div>
+                    <div class="tech-name">Google Cloud Storage</div>
+                    <div class="tech-version">Latest</div>
+                    <div class="tech-description">Almacenamiento en la nube para imágenes</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" fill="#99CC00"/>
+                            <rect x="7" y="7" width="10" height="10" rx="2" fill="white"/>
+                            <rect x="9" y="9" width="6" height="6" fill="#99CC00"/>
+                            <circle cx="12" cy="12" r="2" fill="white"/>
+                        </svg>
+                    </div>
+                    <div class="tech-name">Sharp</div>
+                    <div class="tech-version">Latest</div>
+                    <div class="tech-description">Procesamiento y optimización de imágenes</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="4" y="8" width="16" height="8" rx="1" fill="#333333"/>
+                            <rect x="5" y="10" width="2" height="4" fill="white"/>
+                            <rect x="8" y="10" width="1" height="4" fill="white"/>
+                            <rect x="10" y="10" width="3" height="4" fill="white"/>
+                            <rect x="14" y="10" width="1" height="4" fill="white"/>
+                            <rect x="16" y="10" width="2" height="4" fill="white"/>
+                        </svg>
+                    </div>
+                    <div class="tech-name">JsBarcode</div>
+                    <div class="tech-version">Latest</div>
+                    <div class="tech-description">Generación de códigos de barra (frontend)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- FRONTEND -->
+        <div class="stack-section">
+            <h2 class="section-title">🎨 Frontend (Admin)</h2>
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg" alt="Vue.js">
+                    </div>
+                    <div class="tech-name">Vue.js</div>
+                    <div class="tech-version">v3.5+</div>
+                    <div class="tech-description">Framework progresivo con Composition API</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <img src="https://vitejs.dev/logo.svg" alt="Vite">
+                    </div>
+                    <div class="tech-name">Vite</div>
+                    <div class="tech-version">v6.3+</div>
+                    <div class="tech-description">Build tool ultrarrápido</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <img src="https://router.vuejs.org/logo.svg" alt="Vue Router">
+                    </div>
+                    <div class="tech-name">Vue Router</div>
+                    <div class="tech-version">v4.5+</div>
+                    <div class="tech-description">Enrutamiento oficial de Vue</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <img src="https://pinia.vuejs.org/logo.svg" alt="Pinia">
+                    </div>
+                    <div class="tech-name">Pinia</div>
+                    <div class="tech-version">Latest</div>
+                    <div class="tech-description">Gestión de estado intuitiva</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-original.svg" alt="Bootstrap">
+                    </div>
+                    <div class="tech-name">Bootstrap</div>
+                    <div class="tech-version">v5.3+</div>
+                    <div class="tech-description">Framework CSS responsive</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <img src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" alt="Ant Design Vue">
+                    </div>
+                    <div class="tech-name">Ant Design Vue</div>
+                    <div class="tech-version">v4.2+</div>
+                    <div class="tech-description">Componentes UI empresariales</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <img src="https://apexcharts.com/media/apexcharts-logo.png" alt="ApexCharts">
+                    </div>
+                    <div class="tech-name">ApexCharts</div>
+                    <div class="tech-version">Latest</div>
+                    <div class="tech-description">Gráficos interactivos modernos</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <img src="https://vee-validate.logaretm.com/v4/logo.png" alt="VeeValidate">
+                    </div>
+                    <div class="tech-name">VeeValidate</div>
+                    <div class="tech-version">Latest</div>
+                    <div class="tech-description">Validación de formularios</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <img src="https://axios-http.com/assets/logo.svg" alt="Axios">
+                    </div>
+                    <div class="tech-name">Axios</div>
+                    <div class="tech-version">Latest</div>
+                    <div class="tech-description">Cliente HTTP basado en promesas</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <img src="https://sweetalert2.github.io/images/SweetAlert2.png" alt="SweetAlert2">
+                    </div>
+                    <div class="tech-name">SweetAlert2</div>
+                    <div class="tech-version">Latest</div>
+                    <div class="tech-description">Alertas y notificaciones elegantes</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="5" y="3" width="14" height="18" rx="1" fill="#E74C3C"/>
+                            <path d="M8 7h8M8 11h8M8 15h5" stroke="white" stroke-width="1.5"/>
+                            <rect x="7" y="5" width="10" height="2" fill="white"/>
+                        </svg>
+                    </div>
+                    <div class="tech-name">jsPDF</div>
+                    <div class="tech-version">Latest</div>
+                    <div class="tech-description">Generación de PDFs en el navegador</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="4" y="8" width="16" height="8" rx="1" fill="#2C3E50"/>
+                            <rect x="5" y="10" width="2" height="4" fill="white"/>
+                            <rect x="8" y="10" width="1" height="4" fill="white"/>
+                            <rect x="10" y="10" width="3" height="4" fill="white"/>
+                            <rect x="14" y="10" width="1" height="4" fill="white"/>
+                            <rect x="16" y="10" width="2" height="4" fill="white"/>
+                        </svg>
+                    </div>
+                    <div class="tech-name">JsBarcode</div>
+                    <div class="tech-version">Latest</div>
+                    <div class="tech-description">Códigos de barra en el navegador</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- HERRAMIENTAS -->
+        <div class="stack-section">
+            <h2 class="section-title">🛠️ Herramientas y DevOps</h2>
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg" alt="Redis">
+                    </div>
+                    <div class="tech-name">Redis</div>
+                    <div class="tech-version">v6.0+</div>
+                    <div class="tech-description">Cache en memoria y cola de trabajos</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="24" height="24" rx="4" fill="#2B037A"/>
+                            <text x="12" y="16" font-size="10" fill="white" font-weight="bold" text-anchor="middle">PM2</text>
+                            <circle cx="6" cy="8" r="2" fill="#00D9FF"/>
+                            <circle cx="12" cy="8" r="2" fill="#00D9FF"/>
+                            <circle cx="18" cy="8" r="2" fill="#00D9FF"/>
+                        </svg>
+                    </div>
+                    <div class="tech-name">PM2</div>
+                    <div class="tech-version">Latest</div>
+                    <div class="tech-description">Gestor de procesos Node.js</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nginx/nginx-original.svg" alt="Nginx">
+                    </div>
+                    <div class="tech-name">Nginx</div>
+                    <div class="tech-version">v1.20+</div>
+                    <div class="tech-description">Servidor web y proxy inverso</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" fill="#000000"/>
+                            <path d="M12 4v16M4 12h16" stroke="white" stroke-width="1.5"/>
+                            <circle cx="12" cy="8" r="1.5" fill="white"/>
+                            <circle cx="12" cy="16" r="1.5" fill="white"/>
+                            <circle cx="8" cy="12" r="1.5" fill="white"/>
+                            <circle cx="16" cy="12" r="1.5" fill="white"/>
+                        </svg>
+                    </div>
+                    <div class="tech-name">Helmet</div>
+                    <div class="tech-version">Latest</div>
+                    <div class="tech-description">Seguridad HTTP headers</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" fill="#338833"/>
+                            <text x="12" y="16" font-size="8" fill="white" font-weight="bold" text-anchor="middle">bcrypt</text>
+                            <path d="M8 10h8M8 14h8" stroke="white" stroke-width="1"/>
+                        </svg>
+                    </div>
+                    <div class="tech-name">Bcrypt</div>
+                    <div class="tech-version">Latest</div>
+                    <div class="tech-description">Hash seguro de contraseñas</div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <svg class="svg-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="4" y="6" width="16" height="12" rx="2" fill="#FF6B6B"/>
+                            <path d="M8 10v4M12 10v4M16 10v4" stroke="white" stroke-width="2"/>
+                            <circle cx="12" cy="4" r="2" fill="#4ECDC4"/>
+                            <path d="M12 6L12 6" stroke="#4ECDC4" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <div class="tech-name">Multer</div>
+                    <div class="tech-version">Latest</div>
+                    <div class="tech-description">Manejo de archivos multipart</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 60px; text-align: center; color: #718096; font-size: 14px;">
+            <p><strong>ProsperPOS</strong> - Sistema empresarial desarrollado con tecnologías modernas</p>
+            <p style="margin-top: 10px;">Cumplimiento SAR Honduras • Multi-almacén • Facturación Electrónica</p>
+        </div>
+    </div>
+
+    <script>
+        // Contador de imágenes cargadas
+        let loadedImages = 0;
+        const totalImages = document.querySelectorAll('.tech-icon img').length;
+
+        document.querySelectorAll('.tech-icon img').forEach(img => {
+            img.onload = function() {
+                loadedImages++;
+                console.log(`✅ Imagen cargada: ${this.alt} (${loadedImages}/${totalImages})`);
+            };
+
+            img.onerror = function() {
+                console.error('❌ Error cargando imagen:', this.alt, this.src);
+            };
+        });
+
+        console.log('🚀 Stack Tecnológico ProsperPOS - Versión final');
+        console.log('📸 Para capturar: F12 > Ctrl+Shift+P > "screenshot" > "Capture full size screenshot"');
+    </script>
+</body>
+</html>

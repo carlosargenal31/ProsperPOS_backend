@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flujo de Autenticación JWT - ProsperPOS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 50px;
+            font-size: 1.1em;
+        }
+
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        /* Sección de Login */
+        .section {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 30px;
+            border-left: 5px solid #667eea;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            color: #667eea;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .number {
+            background: #667eea;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .flow-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .step {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+
+        .step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .step-number {
+            position: absolute;
+            top: -15px;
+            left: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .step-title {
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 10px;
+            margin-top: 10px;
+            font-size: 1.1em;
+        }
+
+        .step-description {
+            color: #4a5568;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .step-code {
+            background: #2d3748;
+            color: #68d391;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            margin-top: 10px;
+            overflow-x: auto;
+        }
+
+        .arrow-down {
+            text-align: center;
+            color: #667eea;
+            font-size: 2em;
+            margin: 10px 0;
+        }
+
+        /* Tokens Box */
+        .tokens-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .token-card {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+        }
+
+        .token-card.refresh {
+            background: linear-gradient(135deg, #4299e1, #3182ce);
+            box-shadow: 0 4px 15px rgba(66, 153, 225, 0.3);
+        }
+
+        .token-card h3 {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .token-card p {
+            font-size: 0.9em;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+
+        .token-card .token-time {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        /* Request Flow */
+        .request-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .flow-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .flow-box.client {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+        }
+
+        .flow-box.middleware {
+            background: linear-gradient(135deg, #ffd89b, #19547b);
+            color: white;
+        }
+
+        .flow-box.resource {
+            background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+        }
+
+        .flow-arrow {
+            font-size: 2em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        /* Security Features */
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .security-item {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-top: 4px solid #e53e3e;
+        }
+
+        .security-item.warning {
+            border-top-color: #ed8936;
+        }
+
+        .security-item.success {
+            border-top-color: #48bb78;
+        }
+
+        .security-item h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .security-item ul {
+            list-style: none;
+            color: #4a5568;
+            font-size: 0.95em;
+        }
+
+        .security-item ul li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .security-item ul li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #48bb78;
+            font-weight: bold;
+        }
+
+        /* Legend */
+        .legend {
+            background: #edf2f7;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .legend h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+
+        .legend-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9em;
+            color: #4a5568;
+        }
+
+        .legend-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .request-flow {
+                flex-direction: column;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+
+            .tokens-box {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Flujo de Autenticación JWT</h1>
+        <p class="subtitle">Sistema de Autenticación y Autorización - ProsperPOS</p>
+
+        <div class="flow-container">
+            <!-- FASE 1: LOGIN -->
+            <div class="section">
+                <div class="section-title">
+                    <div class="number">1</div>
+                    <span>Inicio de Sesión (Login)</span>
+                </div>
+
+                <div class="flow-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-title">Cliente envía credenciales</div>
+                        <div class="step-description">
+                            El usuario ingresa email y contraseña desde el formulario de login
+                        </div>
+                        <div class="step-code">POST /api/auth/login<br>{ email, password }</div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-title">Validación de credenciales</div>
+                        <div class="step-description">
+                            El servidor verifica el usuario en la base de datos y compara el hash de la contraseña con bcrypt
+                        </div>
+                        <div class="step-code">bcrypt.compare(password, hash)</div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-title">Verificación de permisos</div>
+                        <div class="step-description">
+                            Se obtienen los roles y permisos del usuario desde la base de datos (RBAC)
+                        </div>
+                        <div class="step-code">getUserWithPermissions(userId)</div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-title">Generación de tokens</div>
+                        <div class="step-description">
+                            Se generan Access Token (15 min) y Refresh Token (7 días) con JWT
+                        </div>
+                        <div class="step-code">jwt.sign(payload, SECRET)</div>
+                    </div>
+                </div>
+
+                <div class="tokens-box">
+                    <div class="token-card">
+                        <h3>🎫 Access Token</h3>
+                        <p>Token de corta duración usado para acceder a recursos protegidos</p>
+                        <div class="token-time">⏱️ Duración: 15 minutos</div>
+                        <p style="margin-top: 10px; font-size: 0.85em;">Payload: { userId, email, roles, permissions }</p>
+                    </div>
+
+                    <div class="token-card refresh">
+                        <h3>🔄 Refresh Token</h3>
+                        <p>Token de larga duración usado para obtener nuevos Access Tokens</p>
+                        <div class="token-time">⏱️ Duración: 7 días</div>
+                        <p style="margin-top: 10px; font-size: 0.85em;">Almacenado en: Base de datos (tabla refresh_tokens)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="arrow-down">⬇️</div>
+
+            <!-- FASE 2: USO DE RECURSOS -->
+            <div class="section" style="border-left-color: #48bb78;">
+                <div class="section-title" style="color: #48bb78;">
+                    <div class="number" style="background: #48bb78;">2</div>
+                    <span>Acceso a Recursos Protegidos</span>
+                </div>
+
+                <div class="request-flow">
+                    <div class="flow-box client">
+                        <h3>👤 Cliente</h3>
+                        <p>Envía petición con Access Token en header</p>
+                        <div class="step-code" style="margin-top: 10px;">
+                            Authorization:<br>Bearer &lt;token&gt;
+                        </div>
+                    </div>
+
+                    <div class="flow-arrow">→</div>
+
+                    <div class="flow-box middleware">
+                        <h3>🛡️ Middleware</h3>
+                        <p>verifyToken() valida el JWT y extrae el payload</p>
+                        <div class="step-code" style="margin-top: 10px;">
+                            jwt.verify(token, SECRET)
+                        </div>
+                    </div>
+
+                    <div class="flow-arrow">→</div>
+
+                    <div class="flow-box middleware">
+                        <h3>🔑 checkPermission()</h3>
+                        <p>Verifica que el usuario tenga el permiso requerido</p>
+                        <div class="step-code" style="margin-top: 10px;">
+                            hasPermission(resource, action)
+                        </div>
+                    </div>
+
+                    <div class="flow-arrow">→</div>
+
+                    <div class="flow-box resource">
+                        <h3>✅ Recurso</h3>
+                        <p>El controlador procesa la petición y retorna la respuesta</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="arrow-down">⬇️</div>
+
+            <!-- FASE 3: RENOVACIÓN DE TOKEN -->
+            <div class="section" style="border-left-color: #ed8936;">
+                <div class="section-title" style="color: #ed8936;">
+                    <div class="number" style="background: #ed8936;">3</div>
+                    <span>Renovación de Token (Access Token expirado)</span>
+                </div>
+
+                <div class="flow-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-title">Token expirado</div>
+                        <div class="step-description">
+                            El Access Token expira después de 15 minutos. El servidor retorna error 401
+                        </div>
+                        <div class="step-code">Error: Token expired</div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-title">Cliente solicita renovación</div>
+                        <div class="step-description">
+                            El cliente envía el Refresh Token al endpoint de renovación
+                        </div>
+                        <div class="step-code">POST /api/auth/refresh<br>{ refreshToken }</div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-title">Validación del Refresh Token</div>
+                        <div class="step-description">
+                            Se verifica que el Refresh Token exista en la base de datos y no haya expirado
+                        </div>
+                        <div class="step-code">findRefreshToken(token)</div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-title">Nuevo Access Token</div>
+                        <div class="step-description">
+                            Se genera un nuevo Access Token con 15 minutos de validez
+                        </div>
+                        <div class="step-code">jwt.sign(payload, SECRET, 15m)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="arrow-down">⬇️</div>
+
+            <!-- FASE 4: LOGOUT -->
+            <div class="section" style="border-left-color: #e53e3e;">
+                <div class="section-title" style="color: #e53e3e;">
+                    <div class="number" style="background: #e53e3e;">4</div>
+                    <span>Cierre de Sesión (Logout)</span>
+                </div>
+
+                <div class="flow-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-title">Cliente solicita logout</div>
+                        <div class="step-description">
+                            El usuario cierra sesión desde la aplicación
+                        </div>
+                        <div class="step-code">POST /api/auth/logout</div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-title">Eliminación de Refresh Token</div>
+                        <div class="step-description">
+                            Se elimina el Refresh Token de la base de datos
+                        </div>
+                        <div class="step-code">DELETE FROM refresh_tokens</div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-title">Cliente limpia tokens</div>
+                        <div class="step-description">
+                            El cliente elimina ambos tokens del almacenamiento local
+                        </div>
+                        <div class="step-code">localStorage.clear()</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEGURIDAD -->
+            <div class="section" style="border-left-color: #9f7aea;">
+                <div class="section-title" style="color: #9f7aea;">
+                    <div class="number" style="background: #9f7aea;">🔒</div>
+                    <span>Características de Seguridad</span>
+                </div>
+
+                <div class="security-grid">
+                    <div class="security-item">
+                        <h3>🔐 Encriptación</h3>
+                        <ul>
+                            <li>Contraseñas hasheadas con bcrypt (salt rounds: 10)</li>
+                            <li>Tokens firmados con secreto JWT</li>
+                            <li>HTTPS en producción</li>
+                        </ul>
+                    </div>
+
+                    <div class="security-item warning">
+                        <h3>🛡️ Protección contra ataques</h3>
+                        <ul>
+                            <li>Helmet.js (headers de seguridad)</li>
+                            <li>CORS configurado</li>
+                            <li>Rate limiting (express-rate-limit)</li>
+                            <li>XSS protection</li>
+                        </ul>
+                    </div>
+
+                    <div class="security-item success">
+                        <h3>✅ Control de acceso (RBAC)</h3>
+                        <ul>
+                            <li>Roles: Administrador, Vendedor, Gerente, etc.</li>
+                            <li>Permisos granulares por recurso</li>
+                            <li>Middleware checkPermission()</li>
+                            <li>Validación en cada endpoint</li>
+                        </ul>
+                    </div>
+
+                    <div class="security-item">
+                        <h3>🔄 Gestión de sesiones</h3>
+                        <ul>
+                            <li>Refresh tokens en base de datos</li>
+                            <li>Expiración automática</li>
+                            <li>Revocación manual (logout)</li>
+                            <li>Un refresh token por sesión</li>
+                        </ul>
+                    </div>
+
+                    <div class="security-item warning">
+                        <h3>📝 Auditoría</h3>
+                        <ul>
+                            <li>Logs con Winston</li>
+                            <li>Registro de intentos de login</li>
+                            <li>Tracking de cambios críticos</li>
+                            <li>Monitoreo de tokens expirados</li>
+                        </ul>
+                    </div>
+
+                    <div class="security-item success">
+                        <h3>⚙️ Configuración</h3>
+                        <ul>
+                            <li>Variables de entorno (.env)</li>
+                            <li>Secretos no versionados</li>
+                            <li>Diferentes configs por ambiente</li>
+                            <li>Validación con express-validator</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LEYENDA -->
+            <div class="legend">
+                <h3>📋 Leyenda y Archivos Clave</h3>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #667eea, #764ba2);"></div>
+                        <span><strong>Controladores:</strong> backend/src/controllers/auth.controller.js</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #48bb78, #38a169);"></div>
+                        <span><strong>Servicios:</strong> backend/src/services/auth.service.js</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #ed8936, #dd6b20);"></div>
+                        <span><strong>Middlewares:</strong> backend/src/middlewares/auth.middleware.js</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #4299e1, #3182ce);"></div>
+                        <span><strong>Modelos:</strong> backend/src/models/user.model.js, refresh-token.model.js</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #e53e3e, #c53030);"></div>
+                        <span><strong>Rutas:</strong> backend/src/routes/auth.routes.js</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #9f7aea, #805ad5);"></div>
+                        <span><strong>Utilidades:</strong> backend/src/utils/jwt.util.js</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

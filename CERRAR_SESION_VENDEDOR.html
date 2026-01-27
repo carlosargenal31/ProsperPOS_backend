@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cerrar Sesión - ProsperPOS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 500px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .success {
+            color: #28a745;
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #666;
+            font-size: 18px;
+            margin: 15px 0;
+        }
+        .big-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FF9F43;
+            margin: 30px 0;
+        }
+        button {
+            background: #FF9F43;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #e8903b;
+            transform: scale(1.05);
+        }
+        .checklist {
+            text-align: left;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .checklist li {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .check {
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success">✅</div>
+        <h1>¡Permisos Agregados Exitosamente!</h1>
+
+        <p>Se agregaron <strong>9 permisos</strong> al rol vendedor:</p>
+
+        <div class="checklist">
+            <ul>
+                <li><span class="check">✅</span> warehouses.read</li>
+                <li><span class="check">✅</span> bank_accounts.read</li>
+                <li><span class="check">✅</span> categories.read</li>
+                <li><span class="check">✅</span> tax_rates.read</li>
+                <li><span class="check">✅</span> sales.update</li>
+                <li><span class="check">✅</span> shipments.create</li>
+                <li><span class="check">✅</span> resolutions.read</li>
+                <li><span class="check">✅</span> offers.read</li>
+                <li><span class="check">✅</span> shipments.read</li>
+            </ul>
+        </div>
+
+        <p class="big-text">SIGUIENTE PASO:</p>
+
+        <p>Para que los permisos se apliquen, debes cerrar sesión y volver a iniciar sesión.</p>
+
+        <button onclick="cerrarSesion()">Cerrar Sesión Ahora</button>
+
+        <p style="margin-top: 30px; font-size: 14px; color: #999;">
+            Después de cerrar sesión, vuelve a iniciar con el usuario vendedor.<br>
+            Los errores 403 deberían desaparecer.
+        </p>
+
+        <div id="resultado" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        function cerrarSesion() {
+            const resultado = document.getElementById('resultado');
+
+            // Limpiar localStorage
+            localStorage.clear();
+
+            resultado.innerHTML = `
+                <div style="background: #d4edda; padding: 15px; border-radius: 8px; margin-top: 20px;">
+                    <p style="color: #155724; font-weight: bold; margin: 0;">
+                        ✅ Sesión cerrada correctamente
+                    </p>
+                    <p style="color: #155724; margin: 10px 0 0 0;">
+                        Redirigiendo a la página de inicio de sesión...
+                    </p>
+                </div>
+            `;
+
+            // Redirigir a la página de login después de 2 segundos
+            setTimeout(() => {
+                window.location.href = 'http://localhost:3001/sign-in';
+            }, 2000);
+        }
+
+        // Auto-ejecutar al cargar la página si el usuario lo desea
+        window.onload = function() {
+            // Verificar si hay usuario logueado
+            const user = localStorage.getItem('user');
+            if (user) {
+                const userData = JSON.parse(user);
+                const info = document.createElement('p');
+                info.style.background = '#fff3cd';
+                info.style.padding = '15px';
+                info.style.borderRadius = '8px';
+                info.style.marginTop = '20px';
+                info.style.color = '#856404';
+                info.innerHTML = `
+                    <strong>Usuario actual:</strong> ${userData.username || 'Desconocido'}<br>
+                    <strong>Roles:</strong> ${userData.roles ? userData.roles.join(', ') : 'N/A'}
+                `;
+                document.querySelector('.container').appendChild(info);
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Forzar Actualización de Sesión</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #f5576c;
+            text-align: center;
+        }
+        .action {
+            background: #f8f9fa;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #f5576c;
+        }
+        .result {
+            background: #e9ecef;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            color: #721c24;
+        }
+        .warning {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            color: #856404;
+        }
+        button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        code {
+            background: #f4f4f4;
+            padding: 3px 8px;
+            border-radius: 4px;
+            color: #c7254e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 FORZAR ACTUALIZACIÓN DE SESIÓN</h1>
+
+        <div class="action warning">
+            <h3>⚠️ IMPORTANTE</h3>
+            <p>Esto cerrará tu sesión actual y te pedirá que vuelvas a iniciar sesión con nuevos datos actualizados desde el servidor.</p>
+        </div>
+
+        <button onclick="ejecutar()">🚀 EJECUTAR ACTUALIZACIÓN AHORA</button>
+
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        function ejecutar() {
+            const resultado = document.getElementById('resultado');
+            let html = '';
+
+            // Paso 1: Guardar credenciales actuales
+            const userStr = localStorage.getItem('user');
+            let email = '';
+
+            if (userStr) {
+                try {
+                    const user = JSON.parse(userStr);
+                    email = user.email || '';
+                    html += `
+                        <div class="result success">
+                            <h3>✅ Paso 1: Información del usuario guardada</h3>
+                            <p><strong>Email:</strong> ${email}</p>
+                            <p><strong>Roles actuales (ANTES):</strong> ${JSON.stringify(user.roles)}</p>
+                        </div>
+                    `;
+                } catch (e) {
+                    html += `
+                        <div class="result error">
+                            <h3>❌ Error al leer usuario</h3>
+                            <p>No se pudo parsear los datos del usuario.</p>
+                        </div>
+                    `;
+                }
+            }
+
+            // Paso 2: Limpiar localStorage
+            localStorage.clear();
+            sessionStorage.clear();
+
+            html += `
+                <div class="result success">
+                    <h3>✅ Paso 2: Cache limpiado</h3>
+                    <p>localStorage y sessionStorage eliminados.</p>
+                </div>
+            `;
+
+            // Paso 3: Instrucciones
+            html += `
+                <div class="result warning">
+                    <h3>📋 Paso 3: Ahora debes hacer lo siguiente:</h3>
+                    <ol>
+                        <li><strong>Cierra TODAS las pestañas</strong> de ProsperPOS</li>
+                        <li>Abre una <strong>nueva pestaña</strong></li>
+                        <li>Ve a: <a href="http://localhost:3001/vue/template/sign-in" target="_blank" style="color: #007bff; font-weight: bold;">http://localhost:3001/vue/template/sign-in</a></li>
+                        <li>Inicia sesión con tu usuario vendedor:
+                            <ul>
+                                <li>Email: <code>${email || 'carlosargenal3101@gmail.com'}</code></li>
+                                <li>Password: <code>TU_CONTRASEÑA</code></li>
+                            </ul>
+                        </li>
+                        <li>Una vez iniciada la sesión, <strong>presiona F12</strong></li>
+                        <li>Ve a la pestaña <strong>Console</strong></li>
+                        <li>Busca los logs que dicen: <code>🔍 [LOGO DEBUG]</code></li>
+                        <li>Verifica que diga: <code>✅ Usuario es VENDEDOR</code></li>
+                        <li>Haz clic en el <strong>logo de ProsperPOS</strong> (arriba a la izquierda)</li>
+                        <li>Deberías ser redirigido a: <code>/sales-report/sales-by-seller</code></li>
+                    </ol>
+                </div>
+            `;
+
+            html += `
+                <div class="result warning">
+                    <h3>🎯 RESULTADO ESPERADO</h3>
+                    <p>Después de iniciar sesión, en la consola (F12 → Console) deberías ver:</p>
+                    <code>
+🔍 [LOGO DEBUG] Usuario actual: {id: X, email: "...", ...}
+🔍 [LOGO DEBUG] Roles: ["vendedor"]
+✅ [LOGO DEBUG] Usuario es VENDEDOR, redirigiendo a /sales-report/sales-by-seller
+                    </code>
+                    <p style="margin-top: 15px;">Si ves esto, significa que <strong>el problema estaba en el localStorage antiguo</strong> y ahora debería funcionar correctamente.</p>
+                </div>
+            `;
+
+            resultado.innerHTML = html;
+
+            // Esperar 3 segundos y recargar
+            setTimeout(() => {
+                if (confirm('¿Quieres abrir la página de login ahora?')) {
+                    window.open('http://localhost:3001/vue/template/sign-in', '_blank');
+                }
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flujo de Datos - ProsperPOS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            font-size: 42px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            font-size: 20px;
+            margin-bottom: 50px;
+        }
+
+        .flow-diagram {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 30px;
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .flow-layer {
+            flex: 1;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            border: 3px solid #e2e8f0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .flow-layer:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .layer-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .layer-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .layer-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .layer-subtitle {
+            font-size: 14px;
+            color: #718096;
+        }
+
+        .layer-content {
+            background: #f7fafc;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .component-item {
+            background: white;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+            font-size: 14px;
+            color: #2d3748;
+            transition: all 0.2s ease;
+        }
+
+        .component-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+        }
+
+        .component-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .arrow {
+            position: relative;
+            width: 60px;
+            flex-shrink: 0;
+        }
+
+        .arrow-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: translateY(-50%);
+        }
+
+        .arrow-head {
+            position: absolute;
+            top: 50%;
+            right: -2px;
+            width: 0;
+            height: 0;
+            border-left: 12px solid #764ba2;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            transform: translateY(-50%);
+        }
+
+        .arrow-label {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            font-weight: 600;
+            color: #667eea;
+            background: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .process-flow {
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .process-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 40px;
+        }
+
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .process-step {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 12px;
+            padding: 25px;
+            border: 2px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .process-step::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 36px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: #718096;
+            line-height: 1.6;
+        }
+
+        .tech-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 10px;
+            margin-right: 5px;
+        }
+
+        /* Colores específicos por capa */
+        .layer-client { border-color: #48bb78; }
+        .layer-client .component-item { border-left-color: #48bb78; }
+
+        .layer-middleware { border-color: #ed8936; }
+        .layer-middleware .component-item { border-left-color: #ed8936; }
+
+        .layer-controller { border-color: #667eea; }
+        .layer-controller .component-item { border-left-color: #667eea; }
+
+        .layer-service { border-color: #9f7aea; }
+        .layer-service .component-item { border-left-color: #9f7aea; }
+
+        .layer-database { border-color: #e53e3e; }
+        .layer-database .component-item { border-left-color: #e53e3e; }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+            }
+        }
+
+        @media (max-width: 1400px) {
+            .flow-diagram {
+                flex-wrap: wrap;
+            }
+            .arrow {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Flujo de Datos del Sistema</h1>
+        <p class="subtitle">Arquitectura Cliente-Servidor de ProsperPOS</p>
+
+        <!-- DIAGRAMA PRINCIPAL -->
+        <div class="flow-diagram">
+            <!-- CAPA 1: CLIENTE -->
+            <div class="flow-layer layer-client">
+                <div class="layer-header">
+                    <div class="layer-icon">💻</div>
+                    <div class="layer-title">Cliente</div>
+                    <div class="layer-subtitle">Capa de Presentación</div>
+                </div>
+                <div class="layer-content">
+                    <div class="component-item">
+                        <strong>📱 Interfaz de Usuario</strong><br>
+                        Vue 3 Components
+                    </div>
+                    <div class="component-item">
+                        <strong>🗺️ Vue Router</strong><br>
+                        Navegación de rutas
+                    </div>
+                    <div class="component-item">
+                        <strong>🍍 Pinia Store</strong><br>
+                        Estado global
+                    </div>
+                    <div class="component-item">
+                        <strong>🌐 Axios</strong><br>
+                        Cliente HTTP
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 10px;">
+                    <span class="tech-badge">Vue 3</span>
+                    <span class="tech-badge">Vite</span>
+                </div>
+            </div>
+
+            <!-- FLECHA 1 -->
+            <div class="arrow">
+                <div class="arrow-line"></div>
+                <div class="arrow-head"></div>
+                <div class="arrow-label">HTTP/REST</div>
+            </div>
+
+            <!-- CAPA 2: MIDDLEWARES -->
+            <div class="flow-layer layer-middleware">
+                <div class="layer-header">
+                    <div class="layer-icon">🛡️</div>
+                    <div class="layer-title">Middlewares</div>
+                    <div class="layer-subtitle">Seguridad y Validación</div>
+                </div>
+                <div class="layer-content">
+                    <div class="component-item">
+                        <strong>🔐 Autenticación</strong><br>
+                        Verificación JWT
+                    </div>
+                    <div class="component-item">
+                        <strong>🎫 Autorización</strong><br>
+                        Control de permisos
+                    </div>
+                    <div class="component-item">
+                        <strong>✅ Validación</strong><br>
+                        Validación de datos
+                    </div>
+                    <div class="component-item">
+                        <strong>⚡ Rate Limiting</strong><br>
+                        Control de tráfico
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 10px;">
+                    <span class="tech-badge">JWT</span>
+                    <span class="tech-badge">Helmet</span>
+                </div>
+            </div>
+
+            <!-- FLECHA 2 -->
+            <div class="arrow">
+                <div class="arrow-line"></div>
+                <div class="arrow-head"></div>
+                <div class="arrow-label">Validado</div>
+            </div>
+
+            <!-- CAPA 3: CONTROLADORES -->
+            <div class="flow-layer layer-controller">
+                <div class="layer-header">
+                    <div class="layer-icon">⚙️</div>
+                    <div class="layer-title">Controladores</div>
+                    <div class="layer-subtitle">Lógica de Negocio</div>
+                </div>
+                <div class="layer-content">
+                    <div class="component-item">
+                        <strong>📦 Product Controller</strong><br>
+                        Gestión de productos
+                    </div>
+                    <div class="component-item">
+                        <strong>🛒 POS Controller</strong><br>
+                        Punto de venta
+                    </div>
+                    <div class="component-item">
+                        <strong>👥 Customer Controller</strong><br>
+                        Gestión de clientes
+                    </div>
+                    <div class="component-item">
+                        <strong>📊 Dashboard Controller</strong><br>
+                        Métricas y reportes
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 10px;">
+                    <span class="tech-badge">Express.js</span>
+                    <span class="tech-badge">Node.js</span>
+                </div>
+            </div>
+
+            <!-- FLECHA 3 -->
+            <div class="arrow">
+                <div class="arrow-line"></div>
+                <div class="arrow-head"></div>
+                <div class="arrow-label">Procesa</div>
+            </div>
+
+            <!-- CAPA 4: SERVICIOS -->
+            <div class="flow-layer layer-service">
+                <div class="layer-header">
+                    <div class="layer-icon">🔧</div>
+                    <div class="layer-title">Servicios</div>
+                    <div class="layer-subtitle">Lógica de Datos</div>
+                </div>
+                <div class="layer-content">
+                    <div class="component-item">
+                        <strong>📝 CRUD Operations</strong><br>
+                        Operaciones de datos
+                    </div>
+                    <div class="component-item">
+                        <strong>💼 Business Logic</strong><br>
+                        Reglas de negocio
+                    </div>
+                    <div class="component-item">
+                        <strong>🔄 Transacciones</strong><br>
+                        Integridad de datos
+                    </div>
+                    <div class="component-item">
+                        <strong>📤 Models</strong><br>
+                        Acceso a datos
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 10px;">
+                    <span class="tech-badge">Services</span>
+                    <span class="tech-badge">Models</span>
+                </div>
+            </div>
+
+            <!-- FLECHA 4 -->
+            <div class="arrow">
+                <div class="arrow-line"></div>
+                <div class="arrow-head"></div>
+                <div class="arrow-label">SQL</div>
+            </div>
+
+            <!-- CAPA 5: BASE DE DATOS -->
+            <div class="flow-layer layer-database">
+                <div class="layer-header">
+                    <div class="layer-icon">🗄️</div>
+                    <div class="layer-title">Base de Datos</div>
+                    <div class="layer-subtitle">Persistencia</div>
+                </div>
+                <div class="layer-content">
+                    <div class="component-item">
+                        <strong>📋 Tablas</strong><br>
+                        60+ tablas
+                    </div>
+                    <div class="component-item">
+                        <strong>👁️ Vistas</strong><br>
+                        Consultas optimizadas
+                    </div>
+                    <div class="component-item">
+                        <strong>⚡ Triggers</strong><br>
+                        Automatización
+                    </div>
+                    <div class="component-item">
+                        <strong>📊 Stored Procedures</strong><br>
+                        Lógica compleja
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 10px;">
+                    <span class="tech-badge">MySQL 8.0</span>
+                    <span class="tech-badge">InnoDB</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- FLUJO DETALLADO POR PASOS -->
+        <div class="process-flow">
+            <h2 class="process-title">🔄 Proceso Completo de una Petición</h2>
+
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Usuario Interactúa</div>
+                    <div class="step-description">
+                        El usuario realiza una acción en la interfaz (ej: crear venta, buscar producto).
+                        Vue Router gestiona la navegación y Pinia actualiza el estado.
+                    </div>
+                </div>
+
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Petición HTTP</div>
+                    <div class="step-description">
+                        Axios envía una petición HTTP (GET, POST, PUT, DELETE) al backend con el
+                        token JWT en el header Authorization.
+                    </div>
+                </div>
+
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <div class="step-title">CORS y Seguridad</div>
+                    <div class="step-description">
+                        Express valida el origen de la petición (CORS), aplica headers de seguridad
+                        (Helmet) y verifica límites de peticiones.
+                    </div>
+                </div>
+
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Autenticación JWT</div>
+                    <div class="step-description">
+                        El middleware de autenticación verifica la firma del token JWT, valida su
+                        expiración y carga los datos del usuario en req.user.
+                    </div>
+                </div>
+
+                <div class="process-step">
+                    <div class="step-number">5</div>
+                    <div class="step-title">Verificación de Permisos</div>
+                    <div class="step-description">
+                        El middleware de autorización verifica que el usuario tenga los permisos
+                        necesarios para ejecutar la acción solicitada (RBAC).
+                    </div>
+                </div>
+
+                <div class="process-step">
+                    <div class="step-number">6</div>
+                    <div class="step-title">Validación de Datos</div>
+                    <div class="step-description">
+                        Express-validator o Joi validan los datos de entrada (req.body, req.params,
+                        req.query) contra esquemas predefinidos.
+                    </div>
+                </div>
+
+                <div class="process-step">
+                    <div class="step-number">7</div>
+                    <div class="step-title">Controlador Procesa</div>
+                    <div class="step-description">
+                        El controlador correspondiente recibe la petición validada, extrae los
+                        parámetros y llama al servicio apropiado.
+                    </div>
+                </div>
+
+                <div class="process-step">
+                    <div class="step-number">8</div>
+                    <div class="step-title">Servicio Ejecuta</div>
+                    <div class="step-description">
+                        El servicio aplica la lógica de negocio, valida reglas específicas,
+                        e interactúa con los modelos para acceder a los datos.
+                    </div>
+                </div>
+
+                <div class="process-step">
+                    <div class="step-number">9</div>
+                    <div class="step-title">Transacción en BD</div>
+                    <div class="step-description">
+                        Los modelos ejecutan queries SQL parametrizadas. Las operaciones críticas
+                        se envuelven en transacciones para garantizar integridad.
+                    </div>
+                </div>
+
+                <div class="process-step">
+                    <div class="step-number">10</div>
+                    <div class="step-title">Triggers Automáticos</div>
+                    <div class="step-description">
+                        Los triggers de MySQL actualizan automáticamente tablas relacionadas
+                        (ej: actualizar stock tras una venta).
+                    </div>
+                </div>
+
+                <div class="process-step">
+                    <div class="step-number">11</div>
+                    <div class="step-title">Respuesta Formateada</div>
+                    <div class="step-description">
+                        El servicio retorna los datos al controlador, que los formatea en una
+                        respuesta JSON estandarizada con status y data/error.
+                    </div>
+                </div>
+
+                <div class="process-step">
+                    <div class="step-number">12</div>
+                    <div class="step-title">Cliente Actualiza UI</div>
+                    <div class="step-description">
+                        Axios recibe la respuesta, actualiza el store de Pinia y Vue re-renderiza
+                        los componentes afectados de forma reactiva.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PIE DE PÁGINA -->
+        <div style="margin-top: 60px; text-align: center; color: #718096; font-size: 14px;">
+            <p><strong>ProsperPOS</strong> - Arquitectura robusta y escalable</p>
+            <p style="margin-top: 10px;">Separación de responsabilidades • Seguridad multinivel • Trazabilidad completa</p>
+        </div>
+    </div>
+
+    <script>
+        console.log('🚀 Diagrama de Flujo de Datos - ProsperPOS');
+        console.log('📸 Para capturar: F12 > Ctrl+Shift+P > "screenshot" > "Capture full size screenshot"');
+    </script>
+</body>
+</html>

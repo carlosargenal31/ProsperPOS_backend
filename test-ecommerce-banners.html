@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test E-commerce Banners</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .banner {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .banner img {
+            max-width: 100%;
+            height: auto;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test E-commerce Banners API</h1>
+
+    <div id="status"></div>
+    <div id="banners-container"></div>
+    <div id="products-container"></div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api/v1';
+
+        async function testBanners() {
+            const statusDiv = document.getElementById('status');
+            const bannersContainer = document.getElementById('banners-container');
+
+            try {
+                statusDiv.innerHTML = '<p>Cargando banners...</p>';
+
+                const response = await fetch(`${API_URL}/banners/active`);
+                const data = await response.json();
+
+                if (data.success) {
+                    statusDiv.innerHTML = '<p class="success">✅ Banners cargados exitosamente!</p>';
+
+                    bannersContainer.innerHTML = '<h2>Banners:</h2>';
+                    data.data.forEach((banner, index) => {
+                        bannersContainer.innerHTML += `
+                            <div class="banner">
+                                <h3>Banner ${index + 1}</h3>
+                                <p><strong>Título:</strong> ${banner.title}</p>
+                                <p><strong>Subtítulo:</strong> ${banner.subtitle}</p>
+                                <p><strong>Botón:</strong> ${banner.button_text}</p>
+                                <p><strong>Enlace:</strong> ${banner.button_link}</p>
+                                <img src="${banner.image_url}" alt="${banner.title}">
+                            </div>
+                        `;
+                    });
+
+                    bannersContainer.innerHTML += '<h3>JSON Response:</h3><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                } else {
+                    statusDiv.innerHTML = '<p class="error">❌ Error al cargar banners</p>';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '<p class="error">❌ Error: ' + error.message + '</p>';
+                console.error('Error:', error);
+            }
+        }
+
+        async function testFeaturedProducts() {
+            const productsContainer = document.getElementById('products-container');
+
+            try {
+                const response = await fetch(`${API_URL}/ecommerce/products/featured?limit=5`);
+                const data = await response.json();
+
+                if (data.success) {
+                    productsContainer.innerHTML = '<h2>Productos Destacados:</h2>';
+                    productsContainer.innerHTML += '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                }
+            } catch (error) {
+                productsContainer.innerHTML = '<p class="error">❌ Error al cargar productos: ' + error.message + '</p>';
+                console.error('Error:', error);
+            }
+        }
+
+        // Ejecutar pruebas al cargar la página
+        window.addEventListener('load', () => {
+            testBanners();
+            testFeaturedProducts();
+        });
+    </script>
+</body>
+</html>

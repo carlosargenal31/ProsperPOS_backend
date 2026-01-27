@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Roles y Permisos (RBAC) - ProsperPOS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+
+        /* Estructura RBAC */
+        .rbac-structure {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .rbac-title {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .rbac-flow {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .rbac-element {
+            background: white;
+            color: #2d3748;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 200px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .rbac-element h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .rbac-element p {
+            font-size: 0.9em;
+            color: #4a5568;
+        }
+
+        .rbac-arrow {
+            font-size: 2.5em;
+            color: white;
+        }
+
+        /* Roles Cards */
+        .roles-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            color: #2d3748;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .roles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .role-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 15px;
+            padding: 25px;
+            color: white;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .role-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .role-card.admin {
+            background: linear-gradient(135deg, #e53e3e, #c53030);
+        }
+
+        .role-card.gerente {
+            background: linear-gradient(135deg, #ed8936, #dd6b20);
+        }
+
+        .role-card.vendedor {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+        }
+
+        .role-card.cajero {
+            background: linear-gradient(135deg, #4299e1, #3182ce);
+        }
+
+        .role-card.almacenero {
+            background: linear-gradient(135deg, #9f7aea, #805ad5);
+        }
+
+        .role-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .role-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .role-description {
+            font-size: 0.95em;
+            margin-bottom: 20px;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .role-permissions {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .role-permissions h4 {
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        .role-permissions ul {
+            list-style: none;
+            font-size: 0.85em;
+        }
+
+        .role-permissions ul li {
+            padding: 4px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .role-permissions ul li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        /* Permissions Matrix */
+        .permissions-matrix {
+            margin-bottom: 40px;
+            overflow-x: auto;
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .matrix-table thead {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .matrix-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .matrix-table th:first-child {
+            text-align: left;
+        }
+
+        .matrix-table tbody tr {
+            border-bottom: 1px solid #e2e8f0;
+            transition: background 0.2s;
+        }
+
+        .matrix-table tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        .matrix-table td {
+            padding: 12px 15px;
+            text-align: center;
+        }
+
+        .matrix-table td:first-child {
+            font-weight: 600;
+            color: #2d3748;
+            text-align: left;
+        }
+
+        .permission-check {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            line-height: 25px;
+            border-radius: 50%;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .permission-check.yes {
+            background: #48bb78;
+            color: white;
+        }
+
+        .permission-check.no {
+            background: #e2e8f0;
+            color: #a0aec0;
+        }
+
+        /* Resources Section */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .resource-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .resource-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .resource-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .resource-name {
+            font-size: 1.2em;
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .resource-actions {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .action-badge {
+            background: #667eea;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75em;
+            font-weight: 500;
+        }
+
+        .action-badge.create {
+            background: #48bb78;
+        }
+
+        .action-badge.read {
+            background: #4299e1;
+        }
+
+        .action-badge.update {
+            background: #ed8936;
+        }
+
+        .action-badge.delete {
+            background: #e53e3e;
+        }
+
+        /* Implementation */
+        .implementation-section {
+            background: #f7fafc;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+        }
+
+        .code-example {
+            background: #2d3748;
+            color: #68d391;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 15px 0;
+            line-height: 1.6;
+        }
+
+        .code-comment {
+            color: #a0aec0;
+        }
+
+        .code-keyword {
+            color: #63b3ed;
+        }
+
+        .code-string {
+            color: #fbd38d;
+        }
+
+        /* Database Schema */
+        .db-schema {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .table-schema {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .table-fields {
+            padding: 15px;
+        }
+
+        .field-row {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.9em;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .field-row:last-child {
+            border-bottom: none;
+        }
+
+        .field-name {
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        .field-type {
+            color: #718096;
+            font-size: 0.85em;
+        }
+
+        .field-key {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.75em;
+            margin-left: 5px;
+        }
+
+        .field-key.fk {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        /* Legend */
+        .legend {
+            background: #edf2f7;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        .legend h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9em;
+        }
+
+        .legend-badge {
+            width: 40px;
+            height: 25px;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .rbac-flow {
+                flex-direction: column;
+            }
+
+            .rbac-arrow {
+                transform: rotate(90deg);
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .roles-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔑 Sistema de Roles y Permisos (RBAC)</h1>
+        <p class="subtitle">Control de Acceso Basado en Roles - ProsperPOS</p>
+
+        <!-- RBAC Structure -->
+        <div class="rbac-structure">
+            <div class="rbac-title">📊 Estructura del Sistema RBAC</div>
+            <div class="rbac-flow">
+                <div class="rbac-element">
+                    <h3>👤 Usuario</h3>
+                    <p>Cada usuario tiene uno o más roles asignados</p>
+                </div>
+                <div class="rbac-arrow">→</div>
+                <div class="rbac-element">
+                    <h3>🎭 Rol</h3>
+                    <p>Define un conjunto de permisos agrupados</p>
+                </div>
+                <div class="rbac-arrow">→</div>
+                <div class="rbac-element">
+                    <h3>🔐 Permiso</h3>
+                    <p>Define acciones específicas sobre recursos</p>
+                </div>
+                <div class="rbac-arrow">→</div>
+                <div class="rbac-element">
+                    <h3>📦 Recurso</h3>
+                    <p>Entidad del sistema (productos, ventas, etc.)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Roles Cards -->
+        <div class="roles-section">
+            <div class="section-title">🎭 Roles del Sistema</div>
+
+            <div class="roles-grid">
+                <div class="role-card admin">
+                    <div class="role-icon">👑</div>
+                    <div class="role-name">Administrador</div>
+                    <div class="role-description">
+                        Acceso completo al sistema. Puede gestionar usuarios, configuraciones, y todos los módulos del sistema.
+                    </div>
+                    <div class="role-permissions">
+                        <h4>Permisos principales:</h4>
+                        <ul>
+                            <li>Gestión de usuarios y roles</li>
+                            <li>Configuración del sistema</li>
+                            <li>Acceso a todos los módulos</li>
+                            <li>Reportes y auditoría</li>
+                            <li>Configuración de sucursales</li>
+                            <li>Gestión de permisos</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="role-card gerente">
+                    <div class="role-icon">👔</div>
+                    <div class="role-name">Gerente</div>
+                    <div class="role-description">
+                        Supervisa operaciones diarias, autoriza descuentos, gestiona inventario, genera reportes financieros y contables.
+                    </div>
+                    <div class="role-permissions">
+                        <h4>Permisos principales:</h4>
+                        <ul>
+                            <li>Autorizar descuentos especiales</li>
+                            <li>Gestión de inventario</li>
+                            <li>Reportes de ventas y compras</li>
+                            <li>Gestión de proveedores</li>
+                            <li>Devoluciones y notas de crédito</li>
+                            <li>Reportes financieros y contables</li>
+                            <li>Libro de compras y ventas</li>
+                            <li>Exportar datos contables</li>
+                            <li>Consultar facturas SAR</li>
+                            <li>Estados de cuenta</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="role-card vendedor">
+                    <div class="role-icon">🛍️</div>
+                    <div class="role-name">Vendedor</div>
+                    <div class="role-description">
+                        Procesa ventas, gestiona clientes, realiza cotizaciones, maneja caja y procesa pagos del punto de venta.
+                    </div>
+                    <div class="role-permissions">
+                        <h4>Permisos principales:</h4>
+                        <ul>
+                            <li>Crear y procesar ventas</li>
+                            <li>Gestionar clientes</li>
+                            <li>Crear cotizaciones</li>
+                            <li>Consultar productos</li>
+                            <li>Imprimir facturas</li>
+                            <li>Procesar pagos</li>
+                            <li>Apertura y cierre de caja</li>
+                            <li>Registrar gastos de caja</li>
+                            <li>Imprimir tickets</li>
+                            <li>Devoluciones simples</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="role-card almacenero">
+                    <div class="role-icon">📦</div>
+                    <div class="role-name">Almacenero</div>
+                    <div class="role-description">
+                        Gestiona inventario físico, traslados entre bodegas y ajustes de inventario.
+                    </div>
+                    <div class="role-permissions">
+                        <h4>Permisos principales:</h4>
+                        <ul>
+                            <li>Inventario físico</li>
+                            <li>Ajustes de inventario</li>
+                            <li>Traslados entre bodegas</li>
+                            <li>Recepción de compras</li>
+                            <li>Consultar stock</li>
+                            <li>Reportes de inventario</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Permissions Matrix -->
+        <div class="permissions-matrix">
+            <div class="section-title">📋 Matriz de Permisos por Rol</div>
+            <table class="matrix-table">
+                <thead>
+                    <tr>
+                        <th>Recurso / Acción</th>
+                        <th>👑 Admin</th>
+                        <th>👔 Gerente</th>
+                        <th>🛍️ Vendedor</th>
+                        <th>📦 Almacenero</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Usuarios - Crear/Editar/Eliminar</td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Roles y Permisos - Gestionar</td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Productos - Crear/Editar/Eliminar</td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Productos - Consultar</td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Ventas - Crear/Procesar</td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Ventas - Ver todas</td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Ventas - Aplicar descuentos</td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Devoluciones - Procesar</td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Notas de Crédito - Crear</td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Inventario - Ajustes</td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Inventario Físico - Realizar</td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Compras - Gestionar</td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Proveedores - Gestionar</td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Clientes - Gestionar</td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Reportes Financieros - Ver</td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Libro Compras/Ventas - Exportar</td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Configuración Sistema - Modificar</td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Facturación SAR - Gestionar</td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Caja - Abrir/Cerrar</td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check yes">✓</span></td>
+                        <td><span class="permission-check no">✗</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Resources -->
+        <div class="roles-section">
+            <div class="section-title">📦 Recursos y Acciones del Sistema</div>
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <div class="resource-icon">👥</div>
+                    <div class="resource-name">users</div>
+                    <div class="resource-actions">
+                        <span class="action-badge create">create</span>
+                        <span class="action-badge read">read</span>
+                        <span class="action-badge update">update</span>
+                        <span class="action-badge delete">delete</span>
+                    </div>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🎭</div>
+                    <div class="resource-name">roles</div>
+                    <div class="resource-actions">
+                        <span class="action-badge create">create</span>
+                        <span class="action-badge read">read</span>
+                        <span class="action-badge update">update</span>
+                        <span class="action-badge delete">delete</span>
+                    </div>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">📦</div>
+                    <div class="resource-name">products</div>
+                    <div class="resource-actions">
+                        <span class="action-badge create">create</span>
+                        <span class="action-badge read">read</span>
+                        <span class="action-badge update">update</span>
+                        <span class="action-badge delete">delete</span>
+                    </div>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🛒</div>
+                    <div class="resource-name">sales</div>
+                    <div class="resource-actions">
+                        <span class="action-badge create">create</span>
+                        <span class="action-badge read">read</span>
+                        <span class="action-badge update">update</span>
+                        <span class="action-badge delete">delete</span>
+                        <span class="action-badge" style="background: #9f7aea;">discount</span>
+                    </div>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🔄</div>
+                    <div class="resource-name">returns</div>
+                    <div class="resource-actions">
+                        <span class="action-badge create">create</span>
+                        <span class="action-badge read">read</span>
+                        <span class="action-badge update">update</span>
+                    </div>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">📝</div>
+                    <div class="resource-name">credit_notes</div>
+                    <div class="resource-actions">
+                        <span class="action-badge create">create</span>
+                        <span class="action-badge read">read</span>
+                    </div>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">📊</div>
+                    <div class="resource-name">inventory</div>
+                    <div class="resource-actions">
+                        <span class="action-badge read">read</span>
+                        <span class="action-badge" style="background: #9f7aea;">adjust</span>
+                        <span class="action-badge" style="background: #38b2ac;">transfer</span>
+                    </div>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🛍️</div>
+                    <div class="resource-name">purchases</div>
+                    <div class="resource-actions">
+                        <span class="action-badge create">create</span>
+                        <span class="action-badge read">read</span>
+                        <span class="action-badge update">update</span>
+                        <span class="action-badge delete">delete</span>
+                    </div>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">🏢</div>
+                    <div class="resource-name">suppliers</div>
+                    <div class="resource-actions">
+                        <span class="action-badge create">create</span>
+                        <span class="action-badge read">read</span>
+                        <span class="action-badge update">update</span>
+                        <span class="action-badge delete">delete</span>
+                    </div>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">👤</div>
+                    <div class="resource-name">customers</div>
+                    <div class="resource-actions">
+                        <span class="action-badge create">create</span>
+                        <span class="action-badge read">read</span>
+                        <span class="action-badge update">update</span>
+                        <span class="action-badge delete">delete</span>
+                    </div>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">📄</div>
+                    <div class="resource-name">invoices</div>
+                    <div class="resource-actions">
+                        <span class="action-badge create">create</span>
+                        <span class="action-badge read">read</span>
+                        <span class="action-badge" style="background: #9f7aea;">print</span>
+                    </div>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">📈</div>
+                    <div class="resource-name">reports</div>
+                    <div class="resource-actions">
+                        <span class="action-badge read">read</span>
+                        <span class="action-badge" style="background: #38b2ac;">export</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Database Schema -->
+        <div class="roles-section">
+            <div class="section-title">🗄️ Estructura de Base de Datos</div>
+            <div class="db-schema">
+                <div class="table-schema">
+                    <div class="table-header">📋 users</div>
+                    <div class="table-fields">
+                        <div class="field-row">
+                            <span class="field-name">id <span class="field-key">PK</span></span>
+                            <span class="field-type">INT</span>
+                        </div>
+                        <div class="field-row">
+                            <span class="field-name">email</span>
+                            <span class="field-type">VARCHAR(255)</span>
+                        </div>
+                        <div class="field-row">
+                            <span class="field-name">password</span>
+                            <span class="field-type">VARCHAR(255)</span>
+                        </div>
+                        <div class="field-row">
+                            <span class="field-name">name</span>
+                            <span class="field-type">VARCHAR(255)</span>
+                        </div>
+                        <div class="field-row">
+                            <span class="field-name">role_id <span class="field-key fk">FK</span></span>
+                            <span class="field-type">INT</span>
+                        </div>
+                        <div class="field-row">
+                            <span class="field-name">is_active</span>
+                            <span class="field-type">BOOLEAN</span>
+                        </div>
+                        <div class="field-row">
+                            <span class="field-name">created_at</span>
+                            <span class="field-type">TIMESTAMP</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-schema">
+                    <div class="table-header">🎭 roles</div>
+                    <div class="table-fields">
+                        <div class="field-row">
+                            <span class="field-name">id <span class="field-key">PK</span></span>
+                            <span class="field-type">INT</span>
+                        </div>
+                        <div class="field-row">
+                            <span class="field-name">name</span>
+                            <span class="field-type">VARCHAR(100)</span>
+                        </div>
+                        <div class="field-row">
+                            <span class="field-name">description</span>
+                            <span class="field-type">TEXT</span>
+                        </div>
+                        <div class="field-row">
+                            <span class="field-name">is_active</span>
+                            <span class="field-type">BOOLEAN</span>
+                        </div>
+                        <div class="field-row">
+                            <span class="field-name">created_at</span>
+                            <span class="field-type">TIMESTAMP</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-schema">
+                    <div class="table-header">🔑 permissions</div>
+                    <div class="table-fields">
+                        <div class="field-row">
+                            <span class="field-name">id <span class="field-key">PK</span></span>
+                            <span class="field-type">INT</span>
+                        </div>
+                        <div class="field-row">
+                            <span class="field-name">resource</span>
+                            <span class="field-type">VARCHAR(100)</span>
+                        </div>
+                        <div class="field-row">
+                            <span class="field-name">action</span>
+                            <span class="field-type">VARCHAR(50)</span>
+                        </div>
+                        <div class="field-row">
+                            <span class="field-name">description</span>
+                            <span class="field-type">TEXT</span>
+                        </div>
+                        <div class="field-row">
+                            <span class="field-name">created_at</span>
+                            <span class="field-type">TIMESTAMP</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-schema">
+                    <div class="table-header">🔗 role_permissions</div>
+                    <div class="table-fields">
+                        <div class="field-row">
+                            <span class="field-name">id <span class="field-key">PK</span></span>
+                            <span class="field-type">INT</span>
+                        </div>
+                        <div class="field-row">
+                            <span class="field-name">role_id <span class="field-key fk">FK</span></span>
+                            <span class="field-type">INT</span>
+                        </div>
+                        <div class="field-row">
+                            <span class="field-name">permission_id <span class="field-key fk">FK</span></span>
+                            <span class="field-type">INT</span>
+                        </div>
+                        <div class="field-row">
+                            <span class="field-name">created_at</span>
+                            <span class="field-type">TIMESTAMP</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Implementation -->
+        <div class="implementation-section">
+            <div class="section-title">💻 Implementación del Sistema</div>
+
+            <h3 style="color: #2d3748; margin: 20px 0 10px 0;">1. Middleware de Verificación de Permisos</h3>
+            <div class="code-example">
+<span class="code-comment">// backend/src/middlewares/auth.middleware.js</span>
+
+<span class="code-keyword">const</span> checkPermission = (resource, action) => {
+  <span class="code-keyword">return</span> <span class="code-keyword">async</span> (req, res, next) => {
+    <span class="code-keyword">try</span> {
+      <span class="code-comment">// El usuario ya fue validado por verifyToken()</span>
+      <span class="code-keyword">const</span> userId = req.user.id;
+
+      <span class="code-comment">// Obtener permisos del usuario desde el token JWT</span>
+      <span class="code-keyword">const</span> permissions = req.user.permissions || [];
+
+      <span class="code-comment">// Verificar si tiene el permiso requerido</span>
+      <span class="code-keyword">const</span> hasPermission = permissions.some(
+        p => p.resource === resource && p.action === action
+      );
+
+      <span class="code-keyword">if</span> (!hasPermission) {
+        <span class="code-keyword">return</span> res.status(<span class="code-string">403</span>).json({
+          error: <span class="code-string">'No tienes permisos para realizar esta acción'</span>
+        });
+      }
+
+      next();
+    } <span class="code-keyword">catch</span> (error) {
+      res.status(<span class="code-string">500</span>).json({ error: error.message });
+    }
+  };
+};
+            </div>
+
+            <h3 style="color: #2d3748; margin: 20px 0 10px 0;">2. Uso en Rutas</h3>
+            <div class="code-example">
+<span class="code-comment">// backend/src/routes/products.routes.js</span>
+
+<span class="code-keyword">const</span> express = require(<span class="code-string">'express'</span>);
+<span class="code-keyword">const</span> router = express.Router();
+<span class="code-keyword">const</span> { verifyToken, checkPermission } = require(<span class="code-string">'../middlewares/auth'</span>);
+<span class="code-keyword">const</span> productController = require(<span class="code-string">'../controllers/product.controller'</span>);
+
+<span class="code-comment">// Todos necesitan estar autenticados</span>
+router.use(verifyToken);
+
+<span class="code-comment">// Consultar productos - Todos los roles autenticados</span>
+router.get(<span class="code-string">'/'</span>,
+  checkPermission(<span class="code-string">'products'</span>, <span class="code-string">'read'</span>),
+  productController.getAll
+);
+
+<span class="code-comment">// Crear producto - Solo Admin y Gerente</span>
+router.post(<span class="code-string">'/'</span>,
+  checkPermission(<span class="code-string">'products'</span>, <span class="code-string">'create'</span>),
+  productController.create
+);
+
+<span class="code-comment">// Actualizar producto - Solo Admin y Gerente</span>
+router.put(<span class="code-string">'/:id'</span>,
+  checkPermission(<span class="code-string">'products'</span>, <span class="code-string">'update'</span>),
+  productController.update
+);
+
+<span class="code-comment">// Eliminar producto - Solo Admin</span>
+router.delete(<span class="code-string">'/:id'</span>,
+  checkPermission(<span class="code-string">'products'</span>, <span class="code-string">'delete'</span>),
+  productController.delete
+);
+            </div>
+
+            <h3 style="color: #2d3748; margin: 20px 0 10px 0;">3. Consulta de Permisos en el Login</h3>
+            <div class="code-example">
+<span class="code-comment">// backend/src/services/auth.service.js</span>
+
+<span class="code-keyword">const</span> getUserWithPermissions = <span class="code-keyword">async</span> (userId) => {
+  <span class="code-keyword">const</span> query = <span class="code-string">`
+    SELECT
+      u.id, u.email, u.name, u.role_id,
+      r.name as role_name,
+      p.resource, p.action
+    FROM users u
+    INNER JOIN roles r ON u.role_id = r.id
+    INNER JOIN role_permissions rp ON r.id = rp.role_id
+    INNER JOIN permissions p ON rp.permission_id = p.id
+    WHERE u.id = ? AND u.is_active = 1
+  `</span>;
+
+  <span class="code-keyword">const</span> [rows] = <span class="code-keyword">await</span> db.query(query, [userId]);
+
+  <span class="code-comment">// Agrupar permisos</span>
+  <span class="code-keyword">const</span> user = {
+    id: rows[0].id,
+    email: rows[0].email,
+    name: rows[0].name,
+    role: rows[0].role_name,
+    permissions: rows.map(r => ({
+      resource: r.resource,
+      action: r.action
+    }))
+  };
+
+  <span class="code-keyword">return</span> user;
+};
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <h3>📌 Archivos Clave del Sistema RBAC</h3>
+            <div class="legend-grid">
+                <div class="legend-item">
+                    <span><strong>Controladores:</strong> backend/src/controllers/auth.controller.js</span>
+                </div>
+                <div class="legend-item">
+                    <span><strong>Servicios:</strong> backend/src/services/auth.service.js</span>
+                </div>
+                <div class="legend-item">
+                    <span><strong>Middlewares:</strong> backend/src/middlewares/auth.middleware.js</span>
+                </div>
+                <div class="legend-item">
+                    <span><strong>Modelos:</strong> backend/src/models/user.model.js, role.model.js</span>
+                </div>
+                <div class="legend-item">
+                    <span><strong>Migraciones:</strong> backend/migrations/create-rbac-tables.sql</span>
+                </div>
+                <div class="legend-item">
+                    <span><strong>Seeds:</strong> backend/seeds/rbac-initial-data.sql</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

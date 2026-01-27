@@ -1,0 +1,37 @@
+numberToWords(num) {
+  const units = ['', 'UNO', 'DOS', 'TRES', 'CUATRO', 'CINCO', 'SEIS', 'SIETE', 'OCHO', 'NUEVE'];
+  const tens = ['', 'DIEZ', 'VEINTE', 'TREINTA', 'CUARENTA', 'CINCUENTA', 'SESENTA', 'SETENTA', 'OCHENTA', 'NOVENTA'];
+  const teens = ['DIEZ', 'ONCE', 'DOCE', 'TRECE', 'CATORCE', 'QUINCE', 'DIECISÉIS', 'DIECISIETE', 'DIECIOCHO', 'DIECINUEVE'];
+  const hundreds = ['', 'CIENTO', 'DOSCIENTOS', 'TRESCIENTOS', 'CUATROCIENTOS', 'QUINIENTOS', 'SEISCIENTOS', 'SETECIENTOS', 'OCHOCIENTOS', 'NOVECIENTOS'];
+  if (num === 0) return 'CERO';
+  const integer = Math.floor(num);
+  if (integer < 10) return units[integer];
+  if (integer < 20) return teens[integer - 10];
+  if (integer < 100) {
+    const ten = Math.floor(integer / 10);
+    const unit = integer % 10;
+    return tens[ten] + (unit > 0 ? ' Y ' + units[unit] : '');
+  }
+  if (integer < 1000) {
+    const hundred = Math.floor(integer / 100);
+    const remainder = integer % 100;
+    let result = hundred === 1 && remainder === 0 ? 'CIEN' : hundreds[hundred];
+    if (remainder > 0) result += ' ' + this.numberToWords(remainder);
+    return result;
+  }
+  if (integer < 1000000) {
+    const thousands = Math.floor(integer / 1000);
+    const remainder = integer % 1000;
+    let result = thousands === 1 ? 'MIL' : this.numberToWords(thousands) + ' MIL';
+    if (remainder > 0) result += ' ' + this.numberToWords(remainder);
+    return result;
+  }
+  if (integer < 1000000000) {
+    const millions = Math.floor(integer / 1000000);
+    const remainder = integer % 1000000;
+    let result = millions === 1 ? 'UN MILLÓN' : this.numberToWords(millions) + ' MILLONES';
+    if (remainder > 0) result += ' ' + this.numberToWords(remainder);
+    return result;
+  }
+  return 'NÚMERO MUY GRANDE';
+},

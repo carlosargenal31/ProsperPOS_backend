@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignar Rol de Bodega</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 4px solid #667eea;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+        .info {
+            background: #e3f2fd;
+            border-left: 5px solid #2196f3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background: #e8f5e9;
+            border-left: 5px solid #4caf50;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .warning {
+            background: #fff3e0;
+            border-left: 5px solid #ff9800;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .error {
+            background: #ffebee;
+            border-left: 5px solid #f44336;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .form-group {
+            margin: 25px 0;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        input[type="text"],
+        input[type="email"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 10px 5px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .secondary-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .sql-block {
+            margin: 20px 0;
+        }
+        .copy-btn {
+            float: right;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+        #output {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 2px;
+        }
+        .badge-success {
+            background: #4caf50;
+            color: white;
+        }
+        .badge-primary {
+            background: #2196f3;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏭 Asignar Rol de Bodega a Usuario</h1>
+
+        <div class="info">
+            <strong>📋 Información:</strong>
+            <p>Esta herramienta te ayudará a asignar el rol de <strong>Personal de Bodega</strong> a un usuario existente.</p>
+            <p>El rol incluye <span class="badge badge-success">25 permisos</span> para gestionar inventario completamente.</p>
+        </div>
+
+        <div class="form-group">
+            <label for="userId">ID del Usuario:</label>
+            <input type="text" id="userId" placeholder="Ej: 5">
+            <small style="color: #666; display: block; margin-top: 5px;">
+                Si no conoces el ID, haz clic en "Buscar Usuarios" abajo
+            </small>
+        </div>
+
+        <div class="form-group">
+            <label for="username">Nombre de Usuario (opcional):</label>
+            <input type="text" id="username" placeholder="Ej: bodeguero1">
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email (opcional):</label>
+            <input type="email" id="email" placeholder="Ej: bodega@empresa.com">
+        </div>
+
+        <div style="margin: 30px 0;">
+            <button onclick="buscarUsuarios()">🔍 Buscar Usuarios</button>
+            <button onclick="generarSQL()" class="secondary-btn">📝 Generar SQL</button>
+        </div>
+
+        <div id="userList"></div>
+
+        <div id="sqlOutput"></div>
+
+        <div class="sql-block">
+            <h2>📝 SQL Manual</h2>
+            <div class="warning">
+                <strong>⚠️ Importante:</strong> Ejecuta estos comandos en tu base de datos si prefieres hacerlo manualmente.
+            </div>
+
+            <h3>1. Buscar usuarios disponibles</h3>
+            <button class="copy-btn" onclick="copyToClipboard('sql1')">📋 Copiar</button>
+            <pre id="sql1">SELECT id, username, email FROM users ORDER BY id;</pre>
+
+            <h3>2. Asignar rol de bodega al usuario</h3>
+            <button class="copy-btn" onclick="copyToClipboard('sql2')">📋 Copiar</button>
+            <pre id="sql2">-- Reemplaza USER_ID con el ID del usuario
+INSERT INTO user_roles (user_id, role_id, created_at)
+VALUES (USER_ID, 12, NOW());</pre>
+
+            <h3>3. Actualizar permisos del usuario</h3>
+            <button class="copy-btn" onclick="copyToClipboard('sql3')">📋 Copiar</button>
+            <pre id="sql3">-- Reemplaza USER_ID con el ID del usuario
+UPDATE users
+SET permissions = '["products.read","products.create","products.update","products.delete","products.import","products.export","categories.read","categories.create","categories.update","categories.delete","brands.read","brands.create","brands.update","brands.delete","inventory.read","inventory.adjust","inventory.transfer","inventory.count","inventory.movements","reports.inventory","reports.export","shipments.read","shipments.create","shipments.delete","dashboard.view"]'
+WHERE id = USER_ID;</pre>
+
+            <h3>4. Verificar asignación</h3>
+            <button class="copy-btn" onclick="copyToClipboard('sql4')">📋 Copiar</button>
+            <pre id="sql4">-- Reemplaza USER_ID con el ID del usuario
+SELECT u.id, u.username, u.email, r.name as role
+FROM users u
+JOIN user_roles ur ON u.id = ur.user_id
+JOIN roles r ON ur.role_id = r.id
+WHERE u.id = USER_ID;</pre>
+        </div>
+
+        <div class="success">
+            <h3>✅ Pasos Finales</h3>
+            <ol>
+                <li>Ejecuta el SQL generado en tu base de datos</li>
+                <li>El usuario debe <strong>cerrar sesión</strong></li>
+                <li>El usuario debe <strong>iniciar sesión nuevamente</strong></li>
+                <li>Será redirigido automáticamente a <code>/inventory/product-list</code></li>
+                <li>El botón POS no será visible</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function buscarUsuarios() {
+            const userList = document.getElementById('userList');
+            userList.innerHTML = `
+                <div class="info">
+                    <h3>🔍 Buscando usuarios...</h3>
+                    <p>Para ver todos los usuarios, ejecuta este SQL en tu base de datos:</p>
+                    <pre>SELECT id, username, email FROM users WHERE is_active = 1 ORDER BY id;</pre>
+                    <p>Luego ingresa el ID del usuario en el campo de arriba y haz clic en "Generar SQL".</p>
+                </div>
+            `;
+        }
+
+        function generarSQL() {
+            const userId = document.getElementById('userId').value.trim();
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+
+            if (!userId) {
+                document.getElementById('sqlOutput').innerHTML = `
+                    <div class="error">
+                        <strong>❌ Error:</strong> Debes ingresar el ID del usuario.
+                    </div>
+                `;
+                return;
+            }
+
+            const permissions = JSON.stringify([
+                "products.read","products.create","products.update","products.delete","products.import","products.export",
+                "categories.read","categories.create","categories.update","categories.delete",
+                "brands.read","brands.create","brands.update","brands.delete",
+                "inventory.read","inventory.adjust","inventory.transfer","inventory.count","inventory.movements",
+                "reports.inventory","reports.export",
+                "shipments.read","shipments.create","shipments.delete",
+                "dashboard.view"
+            ]);
+
+            const sql = `-- ============================================
+-- ASIGNAR ROL DE BODEGA AL USUARIO ${userId}
+-- ============================================
+
+-- 1. Verificar que el usuario existe
+SELECT id, username, email FROM users WHERE id = ${userId};
+
+-- 2. Asignar el rol de bodega (ID: 12)
+INSERT INTO user_roles (user_id, role_id, created_at)
+VALUES (${userId}, 12, NOW());
+
+-- 3. Actualizar permisos del usuario
+UPDATE users
+SET permissions = '${permissions}'
+WHERE id = ${userId};
+
+-- 4. Verificar la asignación
+SELECT u.id, u.username, u.email, r.name as role, r.id as role_id
+FROM users u
+JOIN user_roles ur ON u.id = ur.user_id
+JOIN roles r ON ur.role_id = r.id
+WHERE u.id = ${userId};
+
+-- ============================================
+-- ✅ LISTO! El usuario ahora es Personal de Bodega
+-- ============================================`;
+
+            document.getElementById('sqlOutput').innerHTML = `
+                <div class="success">
+                    <h2>✅ SQL Generado</h2>
+                    <button class="copy-btn" onclick="copyGeneratedSQL()">📋 Copiar Todo</button>
+                    <pre id="generatedSQL">${sql}</pre>
+                </div>
+                <div class="info">
+                    <h3>📋 Siguiente Paso:</h3>
+                    <ol>
+                        <li>Copia el SQL de arriba (haz clic en "Copiar Todo")</li>
+                        <li>Ejecútalo en tu base de datos MySQL</li>
+                        <li>El usuario debe cerrar sesión e iniciar sesión nuevamente</li>
+                    </ol>
+                </div>
+            `;
+        }
+
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ SQL copiado al portapapeles');
+            });
+        }
+
+        function copyGeneratedSQL() {
+            const element = document.getElementById('generatedSQL');
+            const text = element.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ SQL completo copiado al portapapeles');
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Forzar Recarga</title>
+    <script>
+        // Limpiar todo el localStorage y sessionStorage
+        localStorage.clear();
+        sessionStorage.clear();
+
+        // Limpiar todas las cookies
+        document.cookie.split(";").forEach(function(c) {
+            document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+
+        // Forzar recarga sin caché
+        if (window.location.search !== '?nocache=' + Date.now()) {
+            window.location.href = window.location.origin + '/?nocache=' + Date.now();
+        } else {
+            alert('¡Caché limpiado! Ahora navega normalmente.');
+        }
+    </script>
+</head>
+<body>
+    <h1>Limpiando caché...</h1>
+</body>
+</html>

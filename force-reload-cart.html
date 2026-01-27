@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Force Reload Cart</title>
+</head>
+<body>
+    <h1>Verificando y forzando recarga...</h1>
+    <pre id="log"></pre>
+
+    <script>
+        const log = document.getElementById('log');
+
+        // First, check what's actually in localStorage
+        log.textContent = '1. Verificando localStorage...\n\n';
+        const cartStr = localStorage.getItem('ecommerce_cart');
+
+        if (!cartStr) {
+            log.textContent += '❌ No hay carrito en localStorage!\n';
+            log.textContent += 'Inyectando carrito correcto...\n\n';
+        } else {
+            log.textContent += '✓ Carrito encontrado en localStorage:\n';
+            const cart = JSON.parse(cartStr);
+            log.textContent += JSON.stringify(cart, null, 2);
+            log.textContent += '\n\n';
+
+            // Check if items have category_id
+            const hasIds = cart.every(item => item.category_id && item.subcategory_id);
+            if (hasIds) {
+                log.textContent += '✓ Todos los items tienen category_id y subcategory_id\n\n';
+            } else {
+                log.textContent += '❌ ALGUNOS ITEMS NO TIENEN category_id o subcategory_id\n\n';
+            }
+        }
+
+        // Force inject correct cart
+        log.textContent += '2. Inyectando carrito correcto AHORA...\n\n';
+
+        const correctCart = [
+            {
+                product_id: 1017,
+                code: "FF-0051-9",
+                name: "CERAMICA 46014 46X46CM (1.90MT2-9PZS)",
+                image: "https://storage.googleapis.com/prosperpos-images/products/product_1017_main.jpeg",
+                category: "CERAMICA PARA PISO",
+                category_id: 4,
+                subcategory: "CERAMICAS 46X46CM",
+                subcategory_id: 22,
+                brand: "KARINA",
+                price: "360.00",
+                tax_rate: 15,
+                quantity: 10,
+                unit: "MT.2"
+            },
+            {
+                product_id: 128,
+                code: "C-0128-9",
+                name: "CERAMICA BAñO MENORCA AZUL LISA 25X33CM (1.42MT2-17PZS)",
+                image: "https://ferrebaratilloimage.s3.us-east-2.amazonaws.com/115966.png",
+                category: "PAREDES",
+                category_id: 2,
+                subcategory: "PAREDES BAÑO 25X33CM",
+                subcategory_id: 10,
+                brand: "HISPACENSA",
+                price: "350.00",
+                tax_rate: 15,
+                quantity: 10,
+                unit: "MT.2"
+            }
+        ];
+
+        localStorage.setItem('ecommerce_cart', JSON.stringify(correctCart));
+        log.textContent += '✓ Carrito guardado\n\n';
+
+        // Verify it was saved
+        const verify = JSON.parse(localStorage.getItem('ecommerce_cart'));
+        log.textContent += '3. Verificando que se guardó correctamente...\n\n';
+        log.textContent += JSON.stringify(verify, null, 2);
+        log.textContent += '\n\n';
+
+        // Dispatch event
+        window.dispatchEvent(new Event('cart-updated'));
+        log.textContent += '✓ Evento cart-updated disparado\n\n';
+
+        // Force navigate to cart page with cache bust
+        log.textContent += '4. Redirigiendo a carrito con cache bust...\n';
+        setTimeout(() => {
+            window.location.href = 'http://localhost:3002/cart?t=' + Date.now();
+        }, 1000);
+    </script>
+</body>
+</html>

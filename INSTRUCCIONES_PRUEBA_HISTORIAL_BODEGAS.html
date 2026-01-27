@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba - Historial de Existencias con Bodegas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff9800 0%, #ff6b00 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .status {
+            background: #e8f5e9;
+            border-left: 5px solid #4caf50;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+
+        .status h2 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h3 {
+            color: #ff9800;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #ff9800;
+        }
+
+        .steps {
+            background: #f5f5f5;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .step {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ff9800;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .step:hover {
+            transform: translateX(5px);
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #ff9800;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .step-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .step-description {
+            color: #666;
+            line-height: 1.6;
+            margin-left: 45px;
+        }
+
+        .feature-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .feature-box h4 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            background: rgba(255,255,255,0.2);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+        }
+
+        .screenshot-placeholder {
+            background: #f0f7ff;
+            border: 3px dashed #ff9800;
+            padding: 40px;
+            text-align: center;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .screenshot-placeholder h4 {
+            color: #ff9800;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .alert {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .alert-title {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            background: #333;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        .badge-success {
+            background: #4caf50;
+            color: white;
+        }
+
+        .badge-info {
+            background: #2196f3;
+            color: white;
+        }
+
+        .badge-warning {
+            background: #ff9800;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏢 Historial de Existencias por Bodegas</h1>
+            <p>Guía de Prueba - Sistema Actualizado</p>
+        </div>
+
+        <div class="content">
+            <div class="status">
+                <h2>✅ Estado: IMPLEMENTACIÓN COMPLETADA</h2>
+                <p><strong>Fecha:</strong> 23 de Enero, 2026</p>
+                <p><strong>Desarrollador:</strong> Carlos Argeñal</p>
+                <div style="margin-top: 15px;">
+                    <span class="badge badge-success">Backend Actualizado</span>
+                    <span class="badge badge-success">Frontend Actualizado</span>
+                    <span class="badge badge-success">Exportación Mejorada</span>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>📋 Pasos para Probar la Nueva Funcionalidad</h3>
+
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-title">
+                            <span class="step-number">1</span>
+                            Acceder al Módulo
+                        </div>
+                        <div class="step-description">
+                            Navega a: <strong>Menú → Reportes → Inventario → Historial de Existencias</strong>
+                            <br><br>
+                            URL directa: <code style="background: #f5f5f5; padding: 5px 10px; border-radius: 3px;">http://localhost:3000/inventory-report/stock-history</code>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-title">
+                            <span class="step-number">2</span>
+                            Configurar el Período de Fechas
+                        </div>
+                        <div class="step-description">
+                            Por defecto, el sistema muestra el <strong>mes actual</strong>. Puedes cambiarlo usando el selector de rango de fechas.
+                            <br><br>
+                            Ejemplos útiles:
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>"Últimos 7 Días" - Ver movimientos recientes</li>
+                                <li>"Este Mes" - Reporte mensual completo</li>
+                                <li>"Mes Pasado" - Análisis del período anterior</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-title">
+                            <span class="step-number">3</span>
+                            Activar la Agrupación por Bodegas
+                        </div>
+                        <div class="step-description">
+                            <strong>⚠️ IMPORTANTE:</strong> Localiza el checkbox <strong>"Agrupar por Bodegas"</strong> en la sección de filtros.
+                            <br><br>
+                            <span class="badge badge-info">Por defecto está ACTIVADO</span>
+                            <br><br>
+                            Prueba con ambas opciones:
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>✅ <strong>Marcado:</strong> Verás los productos organizados por bodega (BODEGA 101, BODEGA 102, etc.)</li>
+                                <li>☐ <strong>Desmarcado:</strong> Verás todos los productos en una tabla plana con columna de bodega</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-title">
+                            <span class="step-number">4</span>
+                            Generar el Reporte
+                        </div>
+                        <div class="step-description">
+                            Haz clic en el botón naranja <strong>"Generar Reporte"</strong>
+                            <br><br>
+                            El sistema cargará los datos y mostrará:
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>📦 Productos agrupados por bodega (si está activado)</li>
+                                <li>🏷️ Categoría y Subcategoría de cada producto</li>
+                                <li>📊 Subtotales por cada bodega</li>
+                                <li>✅ Totales generales al final</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-title">
+                            <span class="step-number">5</span>
+                            Verificar la Información Mostrada
+                        </div>
+                        <div class="step-description">
+                            <strong>Formato Agrupado por Bodegas:</strong>
+                            <div class="screenshot-placeholder">
+                                <h4>Vista Esperada - Agrupado</h4>
+                                <p>
+                                    🏢 <strong>BODEGA 101 TIENDA</strong> (Header con fondo azul claro y borde naranja)<br>
+                                    └─ Tabla con productos de esa bodega<br>
+                                    └─ Cada producto muestra: Código | Nombre | 🏷️ Categoría / Subcategoría | Cantidades<br>
+                                    └─ <span style="background: #fff9e6; padding: 2px 8px; border-radius: 3px;"><strong>SUBTOTAL - BODEGA 101</strong></span><br><br>
+
+                                    🏢 <strong>BODEGA 102 TALLER</strong><br>
+                                    └─ Misma estructura...<br><br>
+
+                                    <span style="background: #4caf50; color: white; padding: 5px 15px; border-radius: 3px;"><strong>✅ TOTALES GENERALES</strong></span>
+                                </p>
+                            </div>
+
+                            <strong>Formato Sin Agrupar:</strong>
+                            <div class="screenshot-placeholder">
+                                <h4>Vista Esperada - Sin Agrupar</h4>
+                                <p>
+                                    Tabla única con columnas:<br>
+                                    Código | Nombre | <span class="badge badge-warning">🏢 Bodega</span> | 🏷️ Categoría/Subcategoría | Cantidades<br><br>
+
+                                    Un mismo producto aparecerá en <strong>múltiples filas</strong> si está en varias bodegas.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-title">
+                            <span class="step-number">6</span>
+                            Probar la Exportación
+                        </div>
+                        <div class="step-description">
+                            Haz clic en el botón verde <strong>"Guardar Reporte"</strong> y prueba los diferentes formatos:
+                            <br><br>
+                            <strong>1. Excel (.xlsx):</strong>
+                            <ul style="margin-left: 20px; margin-top: 5px;">
+                                <li>Headers de bodega claramente visibles</li>
+                                <li>Columna de Categoría / Subcategoría</li>
+                                <li>Subtotales por bodega en formato agrupado</li>
+                                <li>Totales generales al final</li>
+                            </ul>
+                            <br>
+                            <strong>2. PDF:</strong>
+                            <ul style="margin-left: 20px; margin-top: 5px;">
+                                <li>Diseño profesional con logo de la empresa</li>
+                                <li>Agrupación visual por bodegas</li>
+                                <li>Colores diferenciados para headers y totales</li>
+                            </ul>
+                            <br>
+                            <strong>3. Imagen (PNG):</strong>
+                            <ul style="margin-left: 20px; margin-top: 5px;">
+                                <li>Captura exacta del reporte generado</li>
+                                <li>Ideal para compartir rápidamente</li>
+                            </ul>
+                            <br>
+                            <strong>4. Imprimir:</strong>
+                            <ul style="margin-left: 20px; margin-top: 5px;">
+                                <li>Vista previa optimizada para impresión</li>
+                                <li>Mantiene la estructura de agrupación</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>🎯 Escenario de Prueba Sugerido</h3>
+
+                <div class="alert">
+                    <div class="alert-title">💡 Prueba Práctica Recomendada</div>
+                    Imagina que tienes el producto <strong>"CERAMICA 46001 46X46CM"</strong> que está en:
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>BODEGA 101 TIENDA:</strong> 20 unidades</li>
+                        <li><strong>BODEGA 102 TALLER:</strong> 38 unidades</li>
+                    </ul>
+
+                    <br><strong>Con agrupación ACTIVADA verás:</strong>
+                    <div class="code-block">
+🏢 BODEGA 101 TIENDA
+   FF-0042-9 | CERAMICA 46001... | 🏷️ PISO / 46X46CM | Stock: 20
+
+   SUBTOTAL - BODEGA 101: 20
+
+🏢 BODEGA 102 TALLER
+   FF-0042-9 | CERAMICA 46001... | 🏷️ PISO / 46X46CM | Stock: 38
+
+   SUBTOTAL - BODEGA 102: 38
+
+✅ TOTALES GENERALES: 58
+                    </div>
+
+                    <br><strong>Con agrupación DESACTIVADA verás:</strong>
+                    <div class="code-block">
+FF-0042-9 | CERAMICA 46001... | 🏢 BODEGA 101 | 🏷️ PISO / 46X46CM | Stock: 20
+FF-0042-9 | CERAMICA 46001... | 🏢 BODEGA 102 | 🏷️ PISO / 46X46CM | Stock: 38
+
+TOTALES: 58
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>✨ Nuevas Características Implementadas</h3>
+
+                <div class="feature-box">
+                    <h4>🏢 Agrupación por Bodegas</h4>
+                    <ul class="feature-list">
+                        <li>Separación visual clara entre inventarios de cada bodega</li>
+                        <li>Headers destacados con iconos y colores distintivos</li>
+                        <li>Subtotales automáticos por bodega</li>
+                        <li>Opción de toggle para activar/desactivar agrupación</li>
+                    </ul>
+                </div>
+
+                <div class="feature-box">
+                    <h4>🏷️ Información de Categorías</h4>
+                    <ul class="feature-list">
+                        <li>Columna de Categoría / Subcategoría siempre visible</li>
+                        <li>Badges con colores diferenciados (azul para categoría, gris para subcategoría)</li>
+                        <li>Iconos visuales para mejor identificación</li>
+                    </ul>
+                </div>
+
+                <div class="feature-box">
+                    <h4>📊 Totales Mejorados</h4>
+                    <ul class="feature-list">
+                        <li>Subtotales por bodega (fondo amarillo claro)</li>
+                        <li>Totales generales destacados (fondo verde con texto blanco)</li>
+                        <li>Cálculos automáticos de: Cant. Inicial, Cargos, Descargos, Ventas, Stock Final</li>
+                    </ul>
+                </div>
+
+                <div class="feature-box">
+                    <h4>💾 Exportación Actualizada</h4>
+                    <ul class="feature-list">
+                        <li>Excel: Formato agrupado con headers y subtotales</li>
+                        <li>PDF: Diseño profesional con agrupación visual</li>
+                        <li>Imagen: Captura fiel del reporte generado</li>
+                        <li>Impresión: Optimizada para papel</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>🔍 Qué Verificar</h3>
+
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-title">
+                            ✓ Columna de Bodega Presente
+                        </div>
+                        <div class="step-description">
+                            En modo agrupado: Verifica que cada sección tenga un header de bodega<br>
+                            En modo sin agrupar: Verifica que exista la columna "Bodega" con badge naranja
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-title">
+                            ✓ Categoría y Subcategoría Visibles
+                        </div>
+                        <div class="step-description">
+                            Cada producto debe mostrar badges de categoría (azul) y subcategoría (gris)
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-title">
+                            ✓ Productos Duplicados en Bodegas
+                        </div>
+                        <div class="step-description">
+                            Si un producto está en 2 bodegas, debe aparecer en ambas secciones (modo agrupado) o en 2 filas (modo sin agrupar)
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-title">
+                            ✓ Subtotales Correctos
+                        </div>
+                        <div class="step-description">
+                            La suma de subtotales de todas las bodegas debe coincidir con el total general
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-title">
+                            ✓ Exportaciones Funcionales
+                        </div>
+                        <div class="step-description">
+                            Prueba que Excel, PDF e Imagen se descarguen correctamente y mantengan la estructura
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert">
+                <div class="alert-title">⚠️ Importante</div>
+                Si el checkbox "Agrupar por Bodegas" no aparece, verifica que:
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>El frontend se haya recargado completamente (Ctrl + F5)</li>
+                    <li>El backend esté corriendo en el puerto 3001</li>
+                    <li>No haya errores en la consola del navegador (F12)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Sistema ProsperPOS</strong></p>
+            <p>Módulo de Historial de Existencias v2.0</p>
+            <p>Desarrollado por Carlos Argeñal - 2026</p>
+            <p style="margin-top: 15px; opacity: 0.8;">
+                📄 Documentación completa: HISTORIAL_EXISTENCIAS_BODEGAS_COMPLETADO.md
+            </p>
+        </div>
+    </div>
+</body>
+</html>

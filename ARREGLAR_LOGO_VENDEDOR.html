@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Arreglar Logo para Vendedor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #667eea;
+            border-radius: 8px;
+        }
+        .result {
+            background: #e9ecef;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            font-size: 14px;
+        }
+        .success {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            color: #155724;
+        }
+        .warning {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            color: #856404;
+        }
+        .error {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            color: #721c24;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 5px;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        code {
+            background: #f4f4f4;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #c7254e;
+        }
+        .action-buttons {
+            text-align: center;
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Arreglar Redirección del Logo - Vendedor</h1>
+
+        <div class="step">
+            <h3>🎯 Objetivo:</h3>
+            <p>Hacer que el logo de ProsperPOS te lleve a <code>/sales-report/sales-by-seller</code> cuando eres vendedor.</p>
+        </div>
+
+        <div class="action-buttons">
+            <button onclick="paso1_verificar()">Paso 1: Verificar Problema</button>
+            <button onclick="paso2_limpiarCache()" class="btn-warning">Paso 2: Limpiar Caché</button>
+            <button onclick="paso3_cerrarSesion()" class="btn-warning">Paso 3: Cerrar Sesión</button>
+            <button onclick="paso4_verificarFinal()" class="btn-success">Paso 4: Verificar Solución</button>
+        </div>
+
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        function paso1_verificar() {
+            const resultado = document.getElementById('resultado');
+            let html = '';
+
+            // Verificar usuario
+            const userStr = localStorage.getItem('user');
+
+            if (!userStr) {
+                html = `
+                    <div class="result error">
+                        <h3>❌ ERROR: No hay sesión iniciada</h3>
+                        <p>Por favor, inicia sesión primero en ProsperPOS.</p>
+                        <p>Ve a: <a href="http://localhost:3001/vue/template/sign-in" target="_blank">Iniciar Sesión</a></p>
+                    </div>
+                `;
+                resultado.innerHTML = html;
+                return;
+            }
+
+            let user;
+            try {
+                user = JSON.parse(userStr);
+            } catch (error) {
+                html = `
+                    <div class="result error">
+                        <h3>❌ ERROR: Datos corruptos</h3>
+                        <p>Error al parsear usuario: ${error.message}</p>
+                        <p><strong>Solución:</strong> Haz clic en "Paso 3: Cerrar Sesión"</p>
+                    </div>
+                `;
+                resultado.innerHTML = html;
+                return;
+            }
+
+            // Mostrar información del usuario
+            html += '<div class="result success">';
+            html += '<h3>✅ Usuario Actual</h3>';
+            html += '<p><strong>Email:</strong> ' + (user.email || 'No disponible') + '</p>';
+            html += '<p><strong>Nombre:</strong> ' + (user.name || 'No disponible') + '</p>';
+            html += '<p><strong>Roles:</strong> ' + (user.roles ? JSON.stringify(user.roles) : 'No disponible') + '</p>';
+            html += '</div>';
+
+            // Verificar si es vendedor
+            const esVendedor = user.roles && (user.roles.includes('cashier') || user.roles.includes('vendedor'));
+
+            if (!esVendedor) {
+                html += `
+                    <div class="result warning">
+                        <h3>⚠️ NO ERES VENDEDOR</h3>
+                        <p>Tus roles: ${JSON.stringify(user.roles)}</p>
+                        <p>Para que el logo te redirija a "Ventas por Vendedor", necesitas tener el rol <code>vendedor</code> o <code>cashier</code>.</p>
+                        <p><strong>Solución:</strong> Contacta al administrador para que te asigne el rol correcto.</p>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="result success">
+                        <h3>✅ ERES VENDEDOR</h3>
+                        <p>Tienes los roles correctos para que el logo funcione.</p>
+                        <p><strong>Ruta esperada:</strong> <code>/sales-report/sales-by-seller</code></p>
+                        <p><strong>URL completa:</strong> <code>http://localhost:3001/vue/template/sales-report/sales-by-seller</code></p>
+                        <hr>
+                        <p><strong>Si el logo NO te lleva a esa ruta, continúa con los siguientes pasos:</strong></p>
+                        <ol>
+                            <li>Paso 2: Limpiar Caché del navegador</li>
+                            <li>Paso 3: Cerrar Sesión y volver a iniciar</li>
+                        </ol>
+                    </div>
+                `;
+            }
+
+            resultado.innerHTML = html;
+        }
+
+        function paso2_limpiarCache() {
+            const resultado = document.getElementById('resultado');
+
+            resultado.innerHTML = `
+                <div class="result warning">
+                    <h3>🧹 Limpiar Caché del Navegador</h3>
+                    <p><strong>IMPORTANTE:</strong> Este paso NO cierra tu sesión.</p>
+                    <hr>
+                    <h4>Instrucciones:</h4>
+                    <ol>
+                        <li><strong>Presiona:</strong> <code>Ctrl + Shift + R</code> (Windows/Linux) o <code>Cmd + Shift + R</code> (Mac)</li>
+                        <li>Espera a que la página se recargue completamente</li>
+                        <li>Vuelve a hacer clic en el logo de ProsperPOS</li>
+                    </ol>
+                    <hr>
+                    <p>Si después de esto el logo sigue sin funcionar, continúa con <strong>Paso 3</strong>.</p>
+                </div>
+            `;
+        }
+
+        function paso3_cerrarSesion() {
+            if (confirm('⚠️ Esto cerrará tu sesión y eliminará todos los datos de localStorage.\n\n¿Estás seguro de continuar?')) {
+                localStorage.clear();
+                sessionStorage.clear();
+
+                document.getElementById('resultado').innerHTML = `
+                    <div class="result success">
+                        <h3>✅ Sesión cerrada correctamente</h3>
+                        <p><strong>Datos eliminados.</strong> Ahora:</p>
+                        <ol>
+                            <li>Ve a ProsperPOS: <a href="http://localhost:3001/vue/template/sign-in" target="_blank">Iniciar Sesión</a></li>
+                            <li>Inicia sesión con tu usuario vendedor</li>
+                            <li>Haz clic en el logo de ProsperPOS</li>
+                            <li>Verifica que te lleve a "Ventas por Vendedor"</li>
+                        </ol>
+                    </div>
+                `;
+            }
+        }
+
+        function paso4_verificarFinal() {
+            const userStr = localStorage.getItem('user');
+
+            if (!userStr) {
+                document.getElementById('resultado').innerHTML = `
+                    <div class="result warning">
+                        <h3>⚠️ No hay sesión iniciada</h3>
+                        <p>Por favor, inicia sesión primero y luego vuelve a verificar.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let user;
+            try {
+                user = JSON.parse(userStr);
+            } catch (error) {
+                document.getElementById('resultado').innerHTML = `
+                    <div class="result error">
+                        <h3>❌ Error al verificar</h3>
+                        <p>Ejecuta "Paso 3: Cerrar Sesión" y vuelve a iniciar sesión.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const esVendedor = user.roles && (user.roles.includes('cashier') || user.roles.includes('vendedor'));
+
+            let html = '<div class="result ' + (esVendedor ? 'success' : 'error') + '">';
+            html += '<h3>' + (esVendedor ? '✅ VERIFICACIÓN EXITOSA' : '❌ VERIFICACIÓN FALLIDA') + '</h3>';
+
+            if (esVendedor) {
+                html += '<p>Tienes los roles correctos: ' + JSON.stringify(user.roles) + '</p>';
+                html += '<p><strong>El logo DEBERÍA redirigirte a:</strong></p>';
+                html += '<code>http://localhost:3001/vue/template/sales-report/sales-by-seller</code>';
+                html += '<hr>';
+                html += '<h4>Prueba Final:</h4>';
+                html += '<ol>';
+                html += '<li>Ve a ProsperPOS</li>';
+                html += '<li>Haz clic en el logo (esquina superior izquierda)</li>';
+                html += '<li>Verifica que te lleve a "Ventas por Vendedor"</li>';
+                html += '</ol>';
+                html += '<p>Si AÚN no funciona después de todos estos pasos, puede haber un problema en el código del componente.</p>';
+            } else {
+                html += '<p>NO tienes el rol de vendedor.</p>';
+                html += '<p>Tus roles actuales: ' + JSON.stringify(user.roles) + '</p>';
+                html += '<p><strong>Solución:</strong> Contacta al administrador para que te asigne el rol <code>vendedor</code> o <code>cashier</code>.</p>';
+            }
+            html += '</div>';
+
+            document.getElementById('resultado').innerHTML = html;
+        }
+    </script>
+</body>
+</html>

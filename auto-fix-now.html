@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Arreglando Carrito...</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #1e1e1e;
+            color: #4ec9b0;
+            padding: 40px;
+            font-size: 16px;
+        }
+        .success { color: #4ec9b0; }
+        .error { color: #f48771; }
+        .info { color: #dcdcaa; }
+    </style>
+</head>
+<body>
+    <h1>⚡ Arreglando carrito automáticamente...</h1>
+    <pre id="output"></pre>
+
+    <script>
+        const output = document.getElementById('output');
+
+        function log(msg, type = 'info') {
+            const line = document.createElement('div');
+            line.className = type;
+            line.textContent = msg;
+            output.appendChild(line);
+        }
+
+        // Fixed cart data with correct category_id and subcategory_id
+        const fixedCart = [
+            {
+                product_id: 1017,
+                code: "FF-0051-9",
+                name: "CERAMICA 46014 46X46CM (1.90MT2-9PZS)",
+                image: "https://storage.googleapis.com/prosperpos-images/products/product_1017_main.jpeg",
+                category: "CERAMICA PARA PISO",
+                category_id: 4,
+                subcategory: "CERAMICAS 46X46CM",
+                subcategory_id: 22,
+                brand: "KARINA",
+                price: "360.00",
+                tax_rate: 15,
+                quantity: 10,
+                unit: "MT.2"
+            },
+            {
+                product_id: 128,
+                code: "C-0128-9",
+                name: "CERAMICA BAñO MENORCA AZUL LISA 25X33CM (1.42MT2-17PZS)",
+                image: "https://ferrebaratilloimage.s3.us-east-2.amazonaws.com/115966.png",
+                category: "PAREDES",
+                category_id: 2,
+                subcategory: "PAREDES BAÑO 25X33CM",
+                subcategory_id: 10,
+                brand: "HISPACENSA",
+                price: "350.00",
+                tax_rate: 15,
+                quantity: 10,
+                unit: "MT.2"
+            }
+        ];
+
+        log('✓ Carrito correcto preparado');
+        log('✓ Producto 1017: category_id=4, subcategory_id=22');
+        log('✓ Producto 128: category_id=2, subcategory_id=10', 'success');
+        log('');
+        log('💾 Guardando en localStorage...');
+
+        // Save to localStorage
+        localStorage.setItem('ecommerce_cart', JSON.stringify(fixedCart));
+        localStorage.removeItem('applied_coupon');
+        localStorage.removeItem('active_offers');
+
+        log('✓ Carrito guardado', 'success');
+        log('✓ Cupones anteriores eliminados');
+        log('✓ Ofertas anteriores eliminadas');
+        log('');
+        log('🔍 ANÁLISIS:');
+        log('  Cupón 000006 "Baños" requiere: category_id=2, subcategory_id=10');
+        log('  Producto 128 tiene: category_id=2, subcategory_id=10', 'success');
+        log('  ✓ EL CUPÓN DEBERÍA FUNCIONAR CON EL PRODUCTO 128', 'success');
+        log('');
+        log('  Oferta "Ceramica piso de Interior" requiere: category_id=4, subcategory_id=22');
+        log('  Producto 1017 tiene: category_id=4, subcategory_id=22', 'success');
+        log('  ✓ LA OFERTA DEBERÍA APLICAR AL PRODUCTO 1017', 'success');
+        log('');
+        log('=' .repeat(60), 'success');
+        log('✓ ¡CARRITO ARREGLADO!', 'success');
+        log('=' .repeat(60), 'success');
+        log('');
+        log('🔄 Abriendo página del carrito en 2 segundos...');
+
+        // Dispatch event
+        window.dispatchEvent(new Event('cart-updated'));
+
+        // Open cart page
+        setTimeout(() => {
+            window.open('http://localhost:3002/cart', '_blank');
+            log('');
+            log('✓ Página abierta. Ahora:');
+            log('  1. Ve a la página del carrito que se abrió');
+            log('  2. Recarga la página (F5)');
+            log('  3. Las ofertas deberían aparecer automáticamente');
+            log('  4. Prueba el cupón 000006');
+        }, 2000);
+    </script>
+</body>
+</html>

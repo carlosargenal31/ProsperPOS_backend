@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Probar Navegación Vendedor - ProsperPOS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin-bottom: 10px;
+        }
+        .header p {
+            opacity: 0.9;
+        }
+        .content {
+            padding: 40px;
+        }
+        .section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 5px solid #667eea;
+        }
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+        .checklist {
+            list-style: none;
+        }
+        .checklist li {
+            padding: 12px;
+            background: white;
+            margin: 8px 0;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        .checklist li:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        button.orange {
+            background: #FF9F43;
+        }
+        button.orange:hover {
+            background: #e8903b;
+        }
+        button.green {
+            background: #28a745;
+        }
+        button.green:hover {
+            background: #218838;
+        }
+        button.red {
+            background: #dc3545;
+        }
+        button.red:hover {
+            background: #c82333;
+        }
+        .icon {
+            font-size: 20px;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .steps {
+            counter-reset: step-counter;
+        }
+        .step {
+            counter-increment: step-counter;
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            position: relative;
+            padding-left: 70px;
+        }
+        .step::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #FF9F43;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .step h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        #resultado {
+            margin-top: 30px;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .table th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Probar Navegación Vendedor</h1>
+            <p>Guía interactiva para verificar todas las correcciones</p>
+        </div>
+
+        <div class="content">
+            <div class="info">
+                <h3>✅ Cambios Implementados:</h3>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>✅ Manual de Vendedor ahora visible en "Ayuda"</li>
+                    <li>✅ "Cerrar Sesión" movido a sección "Ayuda"</li>
+                    <li>✅ Logo ProsperPOS → Ventas por Vendedor (para vendedor)</li>
+                    <li>✅ Flecha ← en POS → Ventas por Vendedor (NO dashboard admin)</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2>🚀 Pasos Rápidos</h2>
+                <div class="buttons">
+                    <button onclick="limpiarCache()">
+                        <span class="icon">🧹</span>
+                        Limpiar Caché
+                    </button>
+                    <button class="orange" onclick="cerrarSesion()">
+                        <span class="icon">🔓</span>
+                        Cerrar Sesión
+                    </button>
+                    <button class="green" onclick="irLogin()">
+                        <span class="icon">🔑</span>
+                        Ir a Login
+                    </button>
+                    <button onclick="irPOS()">
+                        <span class="icon">🛒</span>
+                        Abrir POS
+                    </button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>📋 Lista de Verificación</h2>
+                <div class="steps">
+                    <div class="step">
+                        <h3>Verificar Sidebar</h3>
+                        <ul class="checklist">
+                            <li>
+                                <input type="checkbox" class="checkbox" id="check1">
+                                <label for="check1">Aparecen 4 secciones: Ventas, Inventario, Ajustes, Ayuda</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" class="checkbox" id="check2">
+                                <label for="check2">NO aparece "Gestión de Usuarios"</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" class="checkbox" id="check3">
+                                <label for="check3">En "Ayuda" hay: Manual Vendedor y Cerrar Sesión</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" class="checkbox" id="check4">
+                                <label for="check4">Los submenús (Archivos, Procesos) se expanden al hacer clic</label>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="step">
+                        <h3>Verificar Manual de Usuario</h3>
+                        <ul class="checklist">
+                            <li>
+                                <input type="checkbox" class="checkbox" id="check5">
+                                <label for="check5">Hacer clic en "Manual Vendedor" en sección Ayuda</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" class="checkbox" id="check6">
+                                <label for="check6">Se descarga o abre el PDF manual-vendedor.pdf</label>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="step">
+                        <h3>Verificar Navegación con Logo</h3>
+                        <ul class="checklist">
+                            <li>
+                                <input type="checkbox" class="checkbox" id="check7">
+                                <label for="check7">Hacer clic en el logo "ProsperPOS" (arriba izquierda)</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" class="checkbox" id="check8">
+                                <label for="check8">Te lleva a "Ventas por Vendedor" (NO dashboard admin)</label>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="step">
+                        <h3>Verificar Navegación en POS</h3>
+                        <ul class="checklist">
+                            <li>
+                                <input type="checkbox" class="checkbox" id="check9">
+                                <label for="check9">Ir a POS Invoice (Ventas → POS Facturación)</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" class="checkbox" id="check10">
+                                <label for="check10">Hacer clic en la flecha ← (arriba izquierda)</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" class="checkbox" id="check11">
+                                <label for="check11">Te lleva a "Ventas por Vendedor" (NO dashboard admin)</label>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="step">
+                        <h3>Verificar Cerrar Sesión</h3>
+                        <ul class="checklist">
+                            <li>
+                                <input type="checkbox" class="checkbox" id="check12">
+                                <label for="check12">En el sidebar, ir a "Ayuda"</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" class="checkbox" id="check13">
+                                <label for="check13">"Cerrar Sesión" está en Ayuda (NO en Ajustes)</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" class="checkbox" id="check14">
+                                <label for="check14">Hacer clic cierra la sesión correctamente</label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🗺️ Mapa de Navegación por Rol</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Acción</th>
+                            <th>Vendedor va a...</th>
+                            <th>Admin va a...</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>🏠 Click en Logo ProsperPOS</td>
+                            <td>Ventas por Vendedor</td>
+                            <td>Dashboard Admin</td>
+                        </tr>
+                        <tr>
+                            <td>← Flecha en POS</td>
+                            <td>Ventas por Vendedor</td>
+                            <td>Dashboard Admin</td>
+                        </tr>
+                        <tr>
+                            <td>🔑 Login Exitoso</td>
+                            <td>POS Invoice</td>
+                            <td>Dashboard Admin</td>
+                        </tr>
+                        <tr>
+                            <td>📖 Manual Visible</td>
+                            <td>Manual Vendedor</td>
+                            <td>Manual Administrador</td>
+                        </tr>
+                        <tr>
+                            <td>🚪 Cerrar Sesión ubicado en...</td>
+                            <td>Ayuda</td>
+                            <td>Ayuda</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="warning">
+                <h3>⚠️ Si algo no funciona:</h3>
+                <ol style="margin-left: 20px; margin-top: 10px;">
+                    <li><strong>Limpiar caché:</strong> Ctrl + Shift + R o Ctrl + Shift + Del</li>
+                    <li><strong>Cerrar sesión y volver a iniciar</strong> como vendedor</li>
+                    <li><strong>Verificar consola del navegador:</strong> F12 → Console (buscar errores en rojo)</li>
+                    <li><strong>Verificar que el frontend esté corriendo:</strong> http://localhost:3001</li>
+                </ol>
+            </div>
+
+            <div class="success">
+                <h3>✅ Todo Correcto Si:</h3>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>✅ Todas las 14 casillas están marcadas</li>
+                    <li>✅ El manual de vendedor se descarga correctamente</li>
+                    <li>✅ El logo y la flecha llevan a "Ventas por Vendedor"</li>
+                    <li>✅ "Cerrar Sesión" está en la sección "Ayuda"</li>
+                </ul>
+            </div>
+
+            <div id="resultado"></div>
+        </div>
+    </div>
+
+    <script>
+        function limpiarCache() {
+            const resultado = document.getElementById('resultado');
+            resultado.innerHTML = `
+                <div class="info">
+                    <h3>🧹 Limpiar Caché del Navegador</h3>
+                    <p><strong>Opción 1 (Rápida):</strong></p>
+                    <p>Presiona <code>Ctrl + Shift + R</code></p>
+                    <p style="margin-top: 10px;"><strong>Opción 2 (Completa):</strong></p>
+                    <p>Presiona <code>Ctrl + Shift + Del</code> → Marca "Caché" → Borrar datos</p>
+                </div>
+            `;
+
+            // Forzar recarga sin caché después de 2 segundos
+            setTimeout(() => {
+                location.reload(true);
+            }, 2000);
+        }
+
+        function cerrarSesion() {
+            const resultado = document.getElementById('resultado');
+
+            // Limpiar todo el almacenamiento
+            localStorage.clear();
+            sessionStorage.clear();
+
+            resultado.innerHTML = `
+                <div class="success">
+                    <h3>✅ Sesión Cerrada</h3>
+                    <p>Todos los datos de sesión han sido borrados.</p>
+                    <p style="margin-top: 15px;">Redirigiendo a la página de login en 2 segundos...</p>
+                </div>
+            `;
+
+            setTimeout(() => {
+                window.location.href = 'http://localhost:3001/sign-in';
+            }, 2000);
+        }
+
+        function irLogin() {
+            window.location.href = 'http://localhost:3001/sign-in';
+        }
+
+        function irPOS() {
+            window.location.href = 'http://localhost:3001/pos-invoice';
+        }
+
+        // Mostrar información del usuario actual
+        window.onload = function() {
+            const user = localStorage.getItem('user');
+            if (user) {
+                try {
+                    const userData = JSON.parse(user);
+                    const userInfo = document.createElement('div');
+                    userInfo.className = 'warning';
+                    userInfo.innerHTML = `
+                        <h3>👤 Usuario Actual:</h3>
+                        <p><strong>Usuario:</strong> ${userData.username || 'Desconocido'}</p>
+                        <p><strong>Roles:</strong> ${userData.roles ? userData.roles.join(', ') : 'N/A'}</p>
+                        <p style="margin-top: 15px; color: #856404;">
+                            <strong>💡 Nota:</strong> Si acabas de hacer cambios en el código, cierra sesión y vuelve a iniciar para cargar los cambios.
+                        </p>
+                    `;
+                    document.querySelector('.content').insertBefore(userInfo, document.querySelector('.section'));
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                }
+            } else {
+                const noUserInfo = document.createElement('div');
+                noUserInfo.className = 'info';
+                noUserInfo.innerHTML = `
+                    <h3>ℹ️ No hay sesión activa</h3>
+                    <p>Haz clic en "Ir a Login" para iniciar sesión como vendedor.</p>
+                `;
+                document.querySelector('.content').insertBefore(noUserInfo, document.querySelector('.section'));
+            }
+
+            // Contar checks marcados
+            const checkboxes = document.querySelectorAll('.checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateProgress);
+            });
+        };
+
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('.checkbox');
+            const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const total = checkboxes.length;
+            const percentage = Math.round((checked / total) * 100);
+
+            let resultado = document.getElementById('resultado');
+            if (!resultado.querySelector('.progress-info')) {
+                const progressDiv = document.createElement('div');
+                progressDiv.className = 'progress-info';
+                resultado.appendChild(progressDiv);
+            }
+
+            const progressInfo = resultado.querySelector('.progress-info');
+
+            if (checked === total) {
+                progressInfo.innerHTML = `
+                    <div class="success">
+                        <h3>🎉 ¡Todas las verificaciones completadas!</h3>
+                        <p>El sistema está funcionando correctamente.</p>
+                        <p><strong>Progreso:</strong> ${checked} / ${total} (${percentage}%)</p>
+                    </div>
+                `;
+            } else {
+                progressInfo.innerHTML = `
+                    <div class="info">
+                        <h3>📊 Progreso de Verificación</h3>
+                        <p><strong>Completadas:</strong> ${checked} / ${total} (${percentage}%)</p>
+                        <p>Continúa marcando las casillas a medida que verificas cada función.</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

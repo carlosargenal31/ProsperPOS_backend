@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Cart Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button.danger {
+            background: #dc3545;
+        }
+        button.danger:hover {
+            background: #c82333;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            max-height: 400px;
+        }
+        .success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .warning {
+            background: #fff3cd;
+            border-color: #ffeaa7;
+            color: #856404;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Arreglar Datos del Carrito</h1>
+
+    <div class="section">
+        <h2>Estado Actual del Carrito</h2>
+        <div id="status"></div>
+        <pre id="cartData"></pre>
+    </div>
+
+    <div class="section">
+        <h2>Acciones</h2>
+        <button onclick="checkCart()">Revisar Carrito</button>
+        <button onclick="fixCart()" style="background: #28a745;">Arreglar Carrito (Agregar IDs faltantes)</button>
+        <button onclick="clearCart()" class="danger">Vaciar Carrito Completamente</button>
+        <div id="result"></div>
+    </div>
+
+    <div class="section">
+        <h2>Instrucciones</h2>
+        <ol>
+            <li><strong>Opción 1: Arreglar Carrito</strong> - Intenta agregar category_id y subcategory_id obteniendo la info de la API</li>
+            <li><strong>Opción 2: Vaciar Carrito</strong> - Elimina todo y agrega productos nuevamente desde el catálogo</li>
+        </ol>
+    </div>
+
+    <script>
+        function checkCart() {
+            const cart = localStorage.getItem('ecommerce_cart');
+            const statusDiv = document.getElementById('status');
+            const cartData = document.getElementById('cartData');
+
+            if (cart) {
+                try {
+                    const parsed = JSON.parse(cart);
+                    cartData.textContent = JSON.stringify(parsed, null, 2);
+
+                    // Check if cart items have category_id and subcategory_id
+                    const itemsWithoutIds = parsed.filter(item => !item.category_id || !item.subcategory_id);
+
+                    if (itemsWithoutIds.length > 0) {
+                        statusDiv.innerHTML = `
+                            <div class="warning">
+                                <strong>⚠️ Problema Detectado:</strong><br>
+                                ${itemsWithoutIds.length} de ${parsed.length} productos NO tienen category_id o subcategory_id.<br>
+                                Esto impedirá que funcionen las ofertas y cupones por categoría.
+                            </div>
+                        `;
+                    } else {
+                        statusDiv.innerHTML = `
+                            <div class="success">
+                                <strong>✓ Carrito OK:</strong><br>
+                                Todos los ${parsed.length} productos tienen los IDs necesarios.
+                            </div>
+                        `;
+                    }
+                } catch (e) {
+                    statusDiv.innerHTML = `<div class="error">Error al leer el carrito: ${e.message}</div>`;
+                    cartData.textContent = 'Error al parsear JSON';
+                }
+            } else {
+                statusDiv.innerHTML = '<div class="error">No hay carrito en localStorage</div>';
+                cartData.textContent = 'Carrito vacío';
+            }
+        }
+
+        async function fixCart() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="warning">Procesando...</div>';
+
+            const cart = localStorage.getItem('ecommerce_cart');
+            if (!cart) {
+                resultDiv.innerHTML = '<div class="error">No hay carrito para arreglar</div>';
+                return;
+            }
+
+            try {
+                const cartData = JSON.parse(cart);
+                let fixed = 0;
+                let errors = 0;
+
+                for (let item of cartData) {
+                    if (!item.category_id || !item.subcategory_id) {
+                        try {
+                            // Obtener datos del producto desde la API
+                            const response = await fetch(`http://localhost:3000/api/v1/ecommerce/products/${item.product_id}`);
+                            const data = await response.json();
+
+                            if (data.success && data.data) {
+                                item.category_id = data.data.category_id;
+                                item.subcategory_id = data.data.subcategory_id;
+                                item.category = data.data.category_name || item.category;
+                                item.subcategory = data.data.subcategory_name || item.subcategory;
+                                fixed++;
+                            } else {
+                                errors++;
+                            }
+                        } catch (e) {
+                            console.error(`Error fetching product ${item.product_id}:`, e);
+                            errors++;
+                        }
+                    }
+                }
+
+                // Guardar carrito actualizado
+                localStorage.setItem('ecommerce_cart', JSON.stringify(cartData));
+                window.dispatchEvent(new Event('cart-updated'));
+
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <strong>✓ Carrito Arreglado:</strong><br>
+                        ${fixed} productos actualizados<br>
+                        ${errors > 0 ? `${errors} errores encontrados` : ''}
+                    </div>
+                `;
+
+                // Actualizar vista
+                checkCart();
+            } catch (e) {
+                resultDiv.innerHTML = `<div class="error">Error: ${e.message}</div>`;
+            }
+        }
+
+        function clearCart() {
+            if (confirm('¿Estás seguro de que quieres vaciar completamente el carrito?')) {
+                localStorage.removeItem('ecommerce_cart');
+                localStorage.removeItem('applied_coupon');
+                localStorage.removeItem('active_offers');
+                window.dispatchEvent(new Event('cart-updated'));
+
+                document.getElementById('result').innerHTML = `
+                    <div class="success">
+                        <strong>✓ Carrito Vaciado:</strong><br>
+                        El carrito, cupones y ofertas han sido eliminados.<br>
+                        Agrega productos nuevamente desde el catálogo.
+                    </div>
+                `;
+
+                checkCart();
+            }
+        }
+
+        // Auto-check on load
+        window.onload = checkCart;
+    </script>
+</body>
+</html>

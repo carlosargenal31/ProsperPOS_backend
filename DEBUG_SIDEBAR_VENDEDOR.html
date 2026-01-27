@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Sidebar Vendedor - ProsperPOS</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            margin-top: 0;
+            border-bottom: 3px solid #FF9F43;
+            padding-bottom: 15px;
+        }
+        h2 {
+            color: #555;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .step {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #FF9F43;
+            border-radius: 5px;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #FF9F43;
+        }
+        .code-box {
+            background: #1e1e1e;
+            color: #dcdcdc;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 15px 0;
+        }
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .warning {
+            color: #ffc107;
+            font-weight: bold;
+        }
+        .info {
+            color: #17a2b8;
+            font-weight: bold;
+        }
+        button {
+            background: #FF9F43;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 10px 5px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #e8903b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 159, 67, 0.3);
+        }
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            padding: 10px;
+            margin: 5px 0;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .checklist li:before {
+            content: '☐ ';
+            font-size: 20px;
+            margin-right: 10px;
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .alert-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            color: #856404;
+        }
+        .alert-info {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            color: #0c5460;
+        }
+        .alert-success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🔍 Debug Sidebar Vendedor</h1>
+
+        <div class="alert alert-info">
+            <strong>ℹ️ Importante:</strong> Esta página te ayudará a identificar por qué el sidebar no aparece para el usuario vendedor.
+        </div>
+
+        <div class="step">
+            <h3>Paso 1: Verificar que estás logueado</h3>
+            <p>Primero, asegúrate de estar logueado en ProsperPOS como vendedor.</p>
+            <button onclick="checkLogin()">Verificar Login</button>
+            <div id="loginResult" style="margin-top: 15px;"></div>
+        </div>
+
+        <div class="step">
+            <h3>Paso 2: Verificar Roles del Usuario</h3>
+            <p>Vamos a verificar qué roles tiene tu usuario en localStorage.</p>
+            <button onclick="checkRoles()">Verificar Roles</button>
+            <div id="rolesResult" style="margin-top: 15px;"></div>
+        </div>
+
+        <div class="step">
+            <h3>Paso 3: Ver Logs del Sidebar</h3>
+            <div class="alert alert-warning">
+                <strong>⚠️ IMPORTANTE:</strong> Debes tener abierta la aplicación de ProsperPOS en otra pestaña como vendedor.
+            </div>
+            <p>Los logs de depuración se están mostrando en la consola del navegador.</p>
+            <ol>
+                <li>Ve a la pestaña de ProsperPOS donde estás logueado como vendedor</li>
+                <li>Presiona <strong>F12</strong> para abrir las herramientas de desarrollo</li>
+                <li>Ve a la pestaña <strong>Console</strong></li>
+                <li>Busca mensajes que comiencen con:
+                    <ul>
+                        <li><code>[canViewSection]</code></li>
+                        <li><code>[canViewSubmenuItem]</code></li>
+                        <li><code>FILTERING SIDEBAR FOR ROLES</code></li>
+                        <li><code>FILTERED SIDEBAR RESULT</code></li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <h2>📋 Qué Buscar en los Logs</h2>
+
+        <div class="step">
+            <h3>✅ Logs Esperados para Vendedor (cashier)</h3>
+            <div class="code-box">========================================
+FILTERING SIDEBAR FOR ROLES: ["cashier"]
+========================================
+[canViewSection] "Centro de Control": Cashier - false
+[canViewSection] "Ventas": Cashier - true
+[canViewSection] "Inventario": Cashier - true
+[canViewSection] "Compras": Cashier - false
+...
+[canViewSection] "Gestión de Usuarios": Cashier - true
+[canViewSection] "Ajustes": Cashier - true
+[canViewSection] "Ayuda": Cashier - true
+========================================
+FILTERED SIDEBAR RESULT:
+  Total sections: 5
+  - Ventas (3 menus)
+    - Archivos (2 items)
+    - Procesos (3 items)
+    - Reportes (3 items)
+  - Inventario (2 menus)
+    - Archivos (2 items)
+    - Reportes (2 items)
+  - Gestión de Usuarios (1 menus)
+    - Cerrar Sesión
+  - Ajustes (1 menus)
+    - Ajustes Generales (1 items)
+  - Ayuda (1 menus)
+    - Manual Vendedor
+========================================</div>
+        </div>
+
+        <div class="step">
+            <h3>❌ Problemas Comunes y Soluciones</h3>
+
+            <h4 class="error">Problema 1: "FILTERING SIDEBAR FOR ROLES: []" (array vacío)</h4>
+            <p><strong>Causa:</strong> El usuario no tiene roles asignados.</p>
+            <p><strong>Solución:</strong></p>
+            <ol>
+                <li>Cierra sesión</li>
+                <li>Asegúrate de que el backend esté corriendo</li>
+                <li>Inicia sesión de nuevo</li>
+            </ol>
+
+            <h4 class="error">Problema 2: "FILTERING SIDEBAR FOR ROLES: [&quot;Vendedor&quot;]" (nombre en lugar de slug)</h4>
+            <p><strong>Causa:</strong> El backend está enviando nombres de roles en lugar de slugs.</p>
+            <p><strong>Solución:</strong></p>
+            <ol>
+                <li>Reinicia el backend</li>
+                <li>Cierra sesión</li>
+                <li>Inicia sesión de nuevo</li>
+            </ol>
+
+            <h4 class="error">Problema 3: "Total sections: 0"</h4>
+            <p><strong>Causa:</strong> Ninguna sección pasó el filtro.</p>
+            <p><strong>Diagnóstico:</strong> Busca en los logs las líneas <code>[canViewSection]</code> para ver por qué todas están en FALSE.</p>
+            <p><strong>Posibles causas:</strong></p>
+            <ul>
+                <li>Roles incorrectos (ver Problema 1 y 2)</li>
+                <li>El archivo <code>sidebar-permissions.js</code> no se cargó correctamente</li>
+                <li>Los nombres de las secciones no coinciden exactamente</li>
+            </ul>
+
+            <h4 class="error">Problema 4: Secciones correctas pero sin menús (0 menus)</h4>
+            <p><strong>Causa:</strong> Los submenús están siendo filtrados completamente.</p>
+            <p><strong>Diagnóstico:</strong> Busca líneas <code>[canViewSubmenuItem]</code> para ver qué está pasando con cada item.</p>
+            <p><strong>Ejemplo de log esperado:</strong></p>
+            <div class="code-box">[canViewSubmenuItem] "Ventas" > "Archivos" > "Cupones": Cashier - true
+  - submenuItems: ["Cupones", "Ofertas"]
+[canViewSubmenuItem] "Ventas" > "Archivos" > "Ofertas": Cashier - true
+  - submenuItems: ["Cupones", "Ofertas"]</div>
+        </div>
+
+        <h2>🔧 Herramientas de Diagnóstico</h2>
+
+        <div class="step">
+            <h3>Ejecutar Diagnóstico Completo</h3>
+            <p>Ejecuta este código en la consola de la pestaña de ProsperPOS (F12 → Console):</p>
+            <div class="code-box">// Diagnóstico completo del sidebar
+const user = JSON.parse(localStorage.getItem('user'));
+console.log('=== DIAGNÓSTICO COMPLETO ===');
+console.log('');
+console.log('1. Usuario:', user?.username);
+console.log('2. Roles:', user?.roles);
+console.log('3. Tipo de roles:', typeof user?.roles);
+console.log('4. Es array?:', Array.isArray(user?.roles));
+console.log('');
+
+if (user?.roles) {
+    console.log('Verificando permisos de cada rol:');
+    user.roles.forEach(role => {
+        console.log(`  - Rol: "${role}"`);
+        console.log(`    Es cashier?: ${role === 'cashier'}`);
+        console.log(`    Es warehouse?: ${role === 'warehouse'}`);
+        console.log(`    Es admin?: ${role === 'admin'}`);
+    });
+} else {
+    console.error('❌ No hay roles en el usuario!');
+}
+
+console.log('');
+console.log('=== FIN DIAGNÓSTICO ===');</div>
+            <button onclick="copyDiagnosticCode()">Copiar Código</button>
+        </div>
+
+        <h2>📞 Checklist de Verificación</h2>
+
+        <ul class="checklist">
+            <li>Backend está corriendo en http://localhost:3000</li>
+            <li>Frontend está corriendo en http://localhost:3001</li>
+            <li>Caché del navegador limpiado (Ctrl + Shift + R)</li>
+            <li>Sesión cerrada y reiniciada</li>
+            <li>Iniciado sesión con usuario vendedor</li>
+            <li>Usuario tiene roles: ["cashier"]</li>
+            <li>Logs aparecen en consola (F12)</li>
+            <li>Logs muestran "Total sections: 5" o similar</li>
+            <li>Cada sección tiene al menos 1 menu</li>
+            <li>Sidebar es visible en la interfaz</li>
+        </ul>
+
+        <div class="alert alert-success" style="margin-top: 30px;">
+            <strong>✅ Si todos los checkboxes están marcados:</strong><br>
+            El sidebar debería estar funcionando. Si aún no aparece, puede ser un problema de CSS o del componente Vue que no está renderizando correctamente.
+        </div>
+
+        <div class="alert alert-warning" style="margin-top: 15px;">
+            <strong>⚠️ Si algún checkbox NO está marcado:</strong><br>
+            Corrige ese problema primero antes de continuar. Usa los logs de la consola para identificar exactamente dónde está fallando.
+        </div>
+    </div>
+
+    <script>
+        function checkLogin() {
+            const result = document.getElementById('loginResult');
+            const user = localStorage.getItem('user');
+
+            if (!user) {
+                result.innerHTML = '<p class="error">❌ No estás logueado. Por favor inicia sesión primero.</p>';
+                return;
+            }
+
+            try {
+                const userData = JSON.parse(user);
+                result.innerHTML = `
+                    <div class="alert alert-success">
+                        <strong>✅ Estás logueado como:</strong><br>
+                        Usuario: ${userData.username || 'N/A'}<br>
+                        Email: ${userData.email || 'N/A'}
+                    </div>
+                `;
+            } catch (e) {
+                result.innerHTML = '<p class="error">❌ Error al leer datos del usuario. El localStorage está corrupto.</p>';
+            }
+        }
+
+        function checkRoles() {
+            const result = document.getElementById('rolesResult');
+            const user = localStorage.getItem('user');
+
+            if (!user) {
+                result.innerHTML = '<p class="error">❌ No estás logueado. Inicia sesión primero.</p>';
+                return;
+            }
+
+            try {
+                const userData = JSON.parse(user);
+                const roles = userData.roles;
+
+                if (!roles) {
+                    result.innerHTML = `
+                        <div class="alert alert-warning">
+                            <strong>⚠️ No hay roles asignados</strong><br>
+                            El usuario no tiene roles. Esto hará que el sidebar no aparezca.<br>
+                            <strong>Solución:</strong> Cierra sesión, reinicia el backend e inicia sesión de nuevo.
+                        </div>
+                    `;
+                    return;
+                }
+
+                if (!Array.isArray(roles)) {
+                    result.innerHTML = `
+                        <div class="alert alert-warning">
+                            <strong>⚠️ Roles no es un array</strong><br>
+                            Valor actual: ${JSON.stringify(roles)}<br>
+                            Tipo: ${typeof roles}
+                        </div>
+                    `;
+                    return;
+                }
+
+                if (roles.length === 0) {
+                    result.innerHTML = `
+                        <div class="alert alert-warning">
+                            <strong>⚠️ Array de roles vacío</strong><br>
+                            El usuario tiene un array de roles pero está vacío.
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Verificar si son slugs o nombres
+                const isSlug = roles.every(r => ['admin', 'super_admin', 'cashier', 'warehouse'].includes(r));
+
+                let html = '<div class="alert alert-';
+                html += isSlug ? 'success' : 'warning';
+                html += '"><strong>';
+                html += isSlug ? '✅ Roles correctos' : '⚠️ Roles incorrectos';
+                html += '</strong><br>';
+                html += 'Roles: <code>' + JSON.stringify(roles) + '</code><br><br>';
+
+                if (isSlug) {
+                    html += '<strong>Tipo de usuario:</strong><br>';
+                    if (roles.includes('admin') || roles.includes('super_admin')) {
+                        html += '👑 Administrador - Debería ver TODO<br>';
+                    }
+                    if (roles.includes('cashier')) {
+                        html += '💰 Vendedor - Debería ver Ventas, Inventario limitado, Ayuda<br>';
+                    }
+                    if (roles.includes('warehouse')) {
+                        html += '📦 Bodega - Debería ver Inventario completo, Ayuda<br>';
+                    }
+                } else {
+                    html += '<br><strong class="error">❌ PROBLEMA:</strong> Los roles están usando NOMBRES en lugar de SLUGS<br>';
+                    html += '<strong>Solución:</strong><br>';
+                    html += '1. Cierra sesión<br>';
+                    html += '2. Reinicia el backend<br>';
+                    html += '3. Inicia sesión de nuevo<br>';
+                }
+
+                html += '</div>';
+                result.innerHTML = html;
+
+            } catch (e) {
+                result.innerHTML = '<p class="error">❌ Error al parsear usuario: ' + e.message + '</p>';
+            }
+        }
+
+        function copyDiagnosticCode() {
+            const code = `// Diagnóstico completo del sidebar
+const user = JSON.parse(localStorage.getItem('user'));
+console.log('=== DIAGNÓSTICO COMPLETO ===');
+console.log('');
+console.log('1. Usuario:', user?.username);
+console.log('2. Roles:', user?.roles);
+console.log('3. Tipo de roles:', typeof user?.roles);
+console.log('4. Es array?:', Array.isArray(user?.roles));
+console.log('');
+
+if (user?.roles) {
+    console.log('Verificando permisos de cada rol:');
+    user.roles.forEach(role => {
+        console.log(\`  - Rol: "\${role}"\`);
+        console.log(\`    Es cashier?: \${role === 'cashier'}\`);
+        console.log(\`    Es warehouse?: \${role === 'warehouse'}\`);
+        console.log(\`    Es admin?: \${role === 'admin'}\`);
+    });
+} else {
+    console.error('❌ No hay roles en el usuario!');
+}
+
+console.log('');
+console.log('=== FIN DIAGNÓSTICO ===');`;
+
+            navigator.clipboard.writeText(code).then(() => {
+                alert('✅ Código copiado! Pégalo en la consola de ProsperPOS (F12 → Console)');
+            }).catch(() => {
+                alert('❌ No se pudo copiar automáticamente. Copia manualmente el código de arriba.');
+            });
+        }
+    </script>
+</body>
+</html>

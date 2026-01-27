@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Solución Final - Arreglar Carrito</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .btn {
+            background: #ff6b35;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            display: block;
+            width: 100%;
+        }
+        .btn:hover {
+            background: #ff8c5a;
+        }
+        pre {
+            background: #2d2d2d;
+            color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 13px;
+        }
+        h1 {
+            color: #ff6b35;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Solución Final - Arreglar Carrito</h1>
+
+    <div id="status"></div>
+
+    <button class="btn" onclick="step1()">PASO 1: Ver qué categorías tienen los productos</button>
+    <pre id="step1Output">Esperando...</pre>
+
+    <button class="btn" onclick="step2()">PASO 2: Arreglar carrito con datos correctos</button>
+    <pre id="step2Output">Esperando...</pre>
+
+    <button class="btn" onclick="step3()">PASO 3: Verificar que funcionó</button>
+    <pre id="step3Output">Esperando...</pre>
+
+    <script>
+        async function step1() {
+            const output = document.getElementById('step1Output');
+            output.textContent = 'Consultando API...\n\n';
+
+            try {
+                // Get product 1017
+                const resp1017 = await fetch('http://localhost:3000/api/v1/ecommerce/products/1017');
+                const data1017 = await resp1017.json();
+
+                // Get product 128
+                const resp128 = await fetch('http://localhost:3000/api/v1/ecommerce/products/128');
+                const data128 = await resp128.json();
+
+                let result = '==============================================\n';
+                result += 'DATOS DE LOS PRODUCTOS EN LA BASE DE DATOS:\n';
+                result += '==============================================\n\n';
+
+                if (data1017.success) {
+                    const p = data1017.data;
+                    result += `PRODUCTO 1017 (${p.code}):\n`;
+                    result += `  Nombre: ${p.name}\n`;
+                    result += `  Category ID: ${p.category_id}\n`;
+                    result += `  Category Name: ${p.category_name}\n`;
+                    result += `  Subcategory ID: ${p.subcategory_id}\n`;
+                    result += `  Subcategory Name: ${p.subcategory_name}\n`;
+                    result += `  Precio: L ${p.sale_price}\n\n`;
+
+                    window.product1017 = {
+                        product_id: p.id,
+                        code: p.code,
+                        name: p.name,
+                        image: p.image,
+                        category: p.category_name || '',
+                        category_id: p.category_id || null,
+                        subcategory: p.subcategory_name || '',
+                        subcategory_id: p.subcategory_id || null,
+                        brand: p.brand_name || '',
+                        price: p.sale_price,
+                        tax_rate: p.tax_rate || 0,
+                        quantity: 10,
+                        unit: p.unit || 'UND'
+                    };
+                }
+
+                if (data128.success) {
+                    const p = data128.data;
+                    result += `PRODUCTO 128 (${p.code}):\n`;
+                    result += `  Nombre: ${p.name}\n`;
+                    result += `  Category ID: ${p.category_id}\n`;
+                    result += `  Category Name: ${p.category_name}\n`;
+                    result += `  Subcategory ID: ${p.subcategory_id}\n`;
+                    result += `  Subcategory Name: ${p.subcategory_name}\n`;
+                    result += `  Precio: L ${p.sale_price}\n\n`;
+
+                    window.product128 = {
+                        product_id: p.id,
+                        code: p.code,
+                        name: p.name,
+                        image: p.image,
+                        category: p.category_name || '',
+                        category_id: p.category_id || null,
+                        subcategory: p.subcategory_name || '',
+                        subcategory_id: p.subcategory_id || null,
+                        brand: p.brand_name || '',
+                        price: p.sale_price,
+                        tax_rate: p.tax_rate || 0,
+                        quantity: 10,
+                        unit: p.unit || 'UND'
+                    };
+                }
+
+                result += '==============================================\n';
+                result += 'CUPÓN 000006 "Baños" REQUIERE:\n';
+                result += '==============================================\n';
+                result += '  Category ID (grupo_id): 2\n';
+                result += '  Subcategory ID (subgrupo_id): 10\n\n';
+
+                result += '==============================================\n';
+                result += 'OFERTAS ACTIVAS REQUIEREN:\n';
+                result += '==============================================\n';
+                result += '  Oferta "Ceramica piso de Interior":\n';
+                result += '    Category ID: 4, Subcategory ID: 22\n\n';
+                result += '  Oferta "BLACK WEEK PAREDES":\n';
+                result += '    Category ID: 2, Subcategory ID: 8\n\n';
+
+                result += '==============================================\n';
+                result += '✅ Ahora haz clic en PASO 2\n';
+                result += '==============================================\n';
+
+                output.textContent = result;
+            } catch (error) {
+                output.textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function step2() {
+            const output = document.getElementById('step2Output');
+
+            if (!window.product1017 || !window.product128) {
+                output.textContent = '❌ Primero ejecuta el PASO 1';
+                return;
+            }
+
+            try {
+                const newCart = [window.product1017, window.product128];
+
+                let result = '==============================================\n';
+                result += 'NUEVO CARRITO CON DATOS COMPLETOS:\n';
+                result += '==============================================\n\n';
+                result += JSON.stringify(newCart, null, 2);
+                result += '\n\n';
+
+                // Save to localStorage
+                localStorage.setItem('ecommerce_cart', JSON.stringify(newCart));
+                localStorage.removeItem('applied_coupon');
+                localStorage.removeItem('active_offers');
+                window.dispatchEvent(new Event('cart-updated'));
+
+                result += '✅ Carrito guardado en localStorage\n';
+                result += '✅ Cupones y ofertas anteriores eliminados\n\n';
+                result += '==============================================\n';
+                result += '✅ Ahora haz clic en PASO 3 para verificar\n';
+                result += '==============================================\n';
+
+                output.textContent = result;
+            } catch (error) {
+                output.textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        async function step3() {
+            const output = document.getElementById('step3Output');
+            output.textContent = 'Verificando...\n\n';
+
+            try {
+                const cart = JSON.parse(localStorage.getItem('ecommerce_cart'));
+
+                let result = '==============================================\n';
+                result += 'VERIFICACIÓN DEL CARRITO:\n';
+                result += '==============================================\n\n';
+                result += `Productos en carrito: ${cart.length}\n\n`;
+
+                cart.forEach((item, i) => {
+                    result += `[${i + 1}] Producto ${item.product_id}:\n`;
+                    result += `    ✓ Code: ${item.code}\n`;
+                    result += `    ✓ Name: ${item.name}\n`;
+                    result += `    ✓ Category ID: ${item.category_id} ${item.category_id ? '✅' : '❌ FALTA'}\n`;
+                    result += `    ✓ Subcategory ID: ${item.subcategory_id} ${item.subcategory_id ? '✅' : '❌ FALTA'}\n`;
+                    result += `    ✓ Price: ${item.price}\n`;
+                    result += `    ✓ Quantity: ${item.quantity}\n\n`;
+                });
+
+                // Test active offers
+                result += '==============================================\n';
+                result += 'PROBANDO OFERTAS ACTIVAS:\n';
+                result += '==============================================\n\n';
+
+                const offersResp = await fetch('http://localhost:3000/api/v1/ecommerce/cart/active-offers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        cart: {
+                            items: cart.map(item => ({
+                                product_id: item.product_id,
+                                price: item.price,
+                                quantity: item.quantity,
+                                category_id: item.category_id,
+                                subcategory_id: item.subcategory_id
+                            }))
+                        }
+                    })
+                });
+
+                const offersData = await offersResp.json();
+                if (offersData.data?.offers && offersData.data.offers.length > 0) {
+                    result += `✅ ${offersData.data.offers.length} OFERTAS ENCONTRADAS:\n\n`;
+                    offersData.data.offers.forEach((offer, i) => {
+                        result += `  [${i + 1}] ${offer.name}\n`;
+                        result += `      Descuento: -L ${offer.discount_amount}\n\n`;
+                    });
+                } else {
+                    result += '⚠️ No hay ofertas aplicables a estos productos\n\n';
+                }
+
+                // Test coupon
+                result += '==============================================\n';
+                result += 'PROBANDO CUPÓN 000006:\n';
+                result += '==============================================\n\n';
+
+                const couponResp = await fetch('http://localhost:3000/api/v1/ecommerce/cart/validate-coupon', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        code: '000006',
+                        cart: {
+                            items: cart.map(item => ({
+                                product_id: item.product_id,
+                                price: item.price,
+                                quantity: item.quantity,
+                                category_id: item.category_id,
+                                subcategory_id: item.subcategory_id
+                            }))
+                        }
+                    })
+                });
+
+                const couponData = await couponResp.json();
+                if (couponResp.ok && couponData.data?.coupon) {
+                    result += `✅ CUPÓN VÁLIDO\n`;
+                    result += `    Código: ${couponData.data.coupon.code}\n`;
+                    result += `    Nombre: ${couponData.data.coupon.name}\n`;
+                    result += `    Descuento: -L ${couponData.data.coupon.discount_amount}\n\n`;
+                } else {
+                    result += `⚠️ ${couponData.message}\n`;
+                    if (couponData.debug) {
+                        result += '\nDETALLES:\n';
+                        result += JSON.stringify(couponData.debug, null, 2);
+                    }
+                    result += '\n\n';
+                }
+
+                result += '==============================================\n';
+                result += '✅ AHORA RECARGA LA PÁGINA DEL CARRITO (F5)\n';
+                result += '==============================================\n';
+
+                output.textContent = result;
+
+                document.getElementById('status').innerHTML = `
+                    <div class="success">
+                        <h2>✅ ¡Listo!</h2>
+                        <p>Cierra esta ventana y <strong>recarga la página del carrito (F5)</strong></p>
+                        <p>Ahora deberían aparecer las ofertas y podrás aplicar el cupón.</p>
+                    </div>
+                `;
+            } catch (error) {
+                output.textContent = `❌ Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
