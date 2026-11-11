@@ -2,7 +2,7 @@
 // PROSPERPOS - SERVICIO DE USUARIOS (CORREGIDO)
 // ===================================================================
 
-const UserModel = require('../models/User.model');
+const UserModel = require('../models/user.model');
 const logger = require('../utils/logger');
 const { query } = require('../utils/database');
 

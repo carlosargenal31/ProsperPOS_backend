@@ -5,8 +5,8 @@
 // src/controllers/pos.controller.js
 const db = require('../utils/database');
 const POSService = require('../services/pos.service');
-const Sale = require('../models/Sale.model');
-const Product = require('../models/Product.model');
+const Sale = require('../models/sale.model');
+const Product = require('../models/product.model');
 const { successResponse, errorResponse } = require('../utils/response');
 const { logError, logInfo } = require('../utils/logger');
 

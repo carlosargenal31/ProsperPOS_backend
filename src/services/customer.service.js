@@ -2,7 +2,7 @@
 // PROSPERPOS - SERVICIO DE CLIENTES
 // ===================================================================
 
-const CustomerModel = require('../models/Customer.model');
+const CustomerModel = require('../models/customer.model');
 const { ValidationError, DatabaseError } = require('../middleware/error.middleware');
 const logger = require('../utils/logger');
 const { query } = require('../utils/database');

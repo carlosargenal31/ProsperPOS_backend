@@ -5,6 +5,10 @@
 // ===================================================================
 
 require('dotenv').config();
+
+// Toda la lógica de fechas asume la hora de Honduras (UTC-6).
+// En servidores en la nube (UTC) hay que fijarla explícitamente.
+process.env.TZ = process.env.TZ || 'America/Tegucigalpa';
 const { app, initializeApp } = require('./app');
 const logger = require('./src/utils/logger');
 

@@ -102,7 +102,8 @@ const ShipmentModel = {
           v.marca as vehicle_make,
           v.modelo as vehicle_model_name,
           CONCAT(u1.first_name, ' ', u1.last_name) as created_by_name,
-          CONCAT(u2.first_name, ' ', u2.last_name) as delivered_by_name
+          CONCAT(u2.first_name, ' ', u2.last_name) as delivered_by_name,
+          inv.invoice_number as invoice_number
         FROM shipments s
         LEFT JOIN customers c ON s.customer_id = c.id
         LEFT JOIN warehouses w ON s.origin_warehouse_id = w.id
@@ -110,6 +111,7 @@ const ShipmentModel = {
         LEFT JOIN vehicles v ON s.vehicle_id = v.id
         LEFT JOIN users u1 ON s.created_by = u1.id
         LEFT JOIN users u2 ON s.delivered_by = u2.id
+        LEFT JOIN invoices inv ON s.invoice_id = inv.id
         WHERE s.id = ?
       `;
 
@@ -172,7 +174,7 @@ const ShipmentModel = {
 
       const insertQuery = `
         INSERT INTO shipments (
-          shipment_number, invoice_id, sale_id, document_type, status,
+          shipment_number, invoice_id, sale_id, document_type, delivery_type, status,
           customer_id, customer_name, customer_phone, customer_document,
           receiver_name, receiver_phone, receiver_id_document,
           receiver_alt_name, receiver_alt_phone, receiver_alt_id_document,
@@ -187,7 +189,7 @@ const ShipmentModel = {
           emission_date, estimated_delivery_date, departure_time,
           notes, special_instructions, package_quantity, total_weight,
           declared_value, created_by
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
       const values = [
@@ -195,6 +197,7 @@ const ShipmentModel = {
         shipmentData.invoice_id || null,
         shipmentData.sale_id || null,
         shipmentData.document_type || 'guia_remision',
+        shipmentData.delivery_type === 'recoger' ? 'recoger' : 'enviar',
         shipmentData.status || 'pendiente',
         shipmentData.customer_id || null,
         shipmentData.customer_name,
@@ -297,14 +300,15 @@ const ShipmentModel = {
 
       // Construir dinámicamente los campos a actualizar
       const allowedFields = [
-        'status', 'customer_id', 'customer_name', 'customer_phone',
+        'status', 'delivery_type', 'customer_id', 'customer_name', 'customer_phone',
         'customer_document', 'receiver_name', 'receiver_phone',
         'receiver_id_document', 'receiver_alt_name', 'receiver_alt_phone',
         'receiver_alt_id_document', 'receiver_alt2_name', 'receiver_alt2_phone',
         'receiver_alt2_id_document', 'origin_warehouse_id', 'origin_warehouse_name',
         'origin_branch_id', 'origin_address', 'origin_city', 'origin_state',
         'destination_address', 'destination_reference', 'destination_city',
-        'destination_state', 'destination_coordinates', 'driver_name',
+        'destination_state', 'destination_coordinates', 'driver_employee_id',
+        'assistant_employee_id', 'assistant_name', 'assistant_phone', 'driver_name',
         'driver_phone', 'driver_id', 'driver_license', 'vehicle_id',
         'vehicle_plate', 'vehicle_type', 'vehicle_brand', 'vehicle_model',
         'emission_date', 'estimated_delivery_date', 'actual_delivery_date',
@@ -316,7 +320,8 @@ const ShipmentModel = {
       for (const field of allowedFields) {
         if (shipmentData.hasOwnProperty(field)) {
           updateFields.push(`${field} = ?`);
-          values.push(shipmentData[field]);
+          const value = shipmentData[field];
+          values.push(value === '' || value === undefined ? null : value);
         }
       }
 

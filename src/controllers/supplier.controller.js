@@ -587,7 +587,7 @@ class SupplierController {
         return errorResponse(res, 'RTN es requerido', 400);
       }
 
-      const Supplier = require('../models/Supplier.model');
+      const Supplier = require('../models/supplier.model');
       const isValid = Supplier.validateRTN(rtn);
       
       return successResponse(

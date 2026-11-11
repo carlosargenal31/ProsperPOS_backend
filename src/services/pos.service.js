@@ -4,8 +4,8 @@
 
 // src/services/pos.service.js
 const db = require('../utils/database');
-const Sale = require('../models/Sale.model');
-const Product = require('../models/Product.model');
+const Sale = require('../models/sale.model');
+const Product = require('../models/product.model');
 const InventoryService = require('./inventory.service');
 const { logError, logInfo } = require('../utils/logger');
 

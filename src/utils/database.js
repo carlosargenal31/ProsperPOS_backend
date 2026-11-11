@@ -9,12 +9,33 @@ const logger = require('./logger');
 // CONFIGURACIÓN DE CONEXIÓN
 // ===================================================================
 
+// En Railway se puede usar una sola variable DATABASE_URL / MYSQL_URL
+// (mysql://usuario:clave@host:puerto/base). Si no existe, se usan DB_*.
+function parseDatabaseUrl() {
+  const raw = process.env.DATABASE_URL || process.env.MYSQL_URL;
+  if (!raw) return {};
+  try {
+    const url = new URL(raw);
+    return {
+      host: url.hostname,
+      port: url.port || 3306,
+      user: decodeURIComponent(url.username),
+      password: decodeURIComponent(url.password),
+      database: url.pathname.replace(/^\//, '')
+    };
+  } catch (error) {
+    return {};
+  }
+}
+
+const urlConfig = parseDatabaseUrl();
+
 const dbConfig = {
-  host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 3306,
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'prosperpos',
+  host: urlConfig.host || process.env.DB_HOST || 'localhost',
+  port: urlConfig.port || process.env.DB_PORT || 3306,
+  user: urlConfig.user || process.env.DB_USER || 'root',
+  password: urlConfig.password !== undefined ? urlConfig.password : (process.env.DB_PASSWORD || ''),
+  database: urlConfig.database || process.env.DB_NAME || 'prosperpos',
   connectionLimit: parseInt(process.env.DB_CONNECTION_LIMIT) || 10,
   acquireTimeout: 60000,
   timeout: 60000,

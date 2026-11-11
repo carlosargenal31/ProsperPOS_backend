@@ -107,6 +107,7 @@ const ShipmentService = {
       }
 
       return {
+        id: Number(id),
         message: 'Envío actualizado exitosamente'
       };
     } catch (error) {

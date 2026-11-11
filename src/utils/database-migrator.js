@@ -23,6 +23,7 @@ class DatabaseMigrator {
       await this.createFavoritesTable();
       await this.createOrdersTables();
       await this.createEcommerceSettingsTable();
+      await this.addShipmentDeliveryType();
       logger.info('✅ Migraciones completadas exitosamente');
     } catch (error) {
       logger.error('❌ Error en migraciones:', error);
@@ -594,6 +595,30 @@ class DatabaseMigrator {
     } catch (error) {
       await connection.rollback();
       throw error;
+    } finally {
+      connection.release();
+    }
+  }
+
+  static async addShipmentDeliveryType() {
+    const connection = await db.getConnection();
+    try {
+      const [tables] = await connection.execute(
+        `SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'shipments'`
+      );
+      if (tables.length === 0) return;
+      const [columns] = await connection.execute(
+        `SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+         WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'shipments' AND COLUMN_NAME = 'delivery_type'`
+      );
+      if (columns.length === 0) {
+        await connection.execute(
+          `ALTER TABLE shipments ADD COLUMN delivery_type VARCHAR(20) NOT NULL DEFAULT 'enviar' COMMENT 'enviar | recoger' AFTER document_type`
+        );
+        logger.info('✅ Columna delivery_type agregada a shipments');
+      }
+    } catch (error) {
+      logger.error('❌ Error al agregar delivery_type a shipments:', error);
     } finally {
       connection.release();
     }
@@ -1245,4 +1270,4 @@ class DatabaseMigrator {
   }
 }
 
-module.exports = DatabaseMigrator;
+module.exports = DatabaseMigrator;

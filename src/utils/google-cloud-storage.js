@@ -9,10 +9,19 @@ const logger = require('./logger');
 class GoogleCloudStorageService {
   constructor() {
     // Inicializar cliente de Google Cloud Storage
-    this.storage = new Storage({
-      projectId: process.env.GCP_PROJECT_ID,
-      keyFilename: process.env.GCS_KEYFILE_PATH
-    });
+    // En producción (Railway) las credenciales llegan como JSON en GCS_CREDENTIALS_JSON;
+    // en local se usa el archivo indicado en GCS_KEYFILE_PATH.
+    const storageOptions = { projectId: process.env.GCP_PROJECT_ID };
+    if (process.env.GCS_CREDENTIALS_JSON) {
+      try {
+        storageOptions.credentials = JSON.parse(process.env.GCS_CREDENTIALS_JSON);
+      } catch (error) {
+        logger.error('GCS_CREDENTIALS_JSON no es un JSON válido');
+      }
+    } else if (process.env.GCS_KEYFILE_PATH) {
+      storageOptions.keyFilename = process.env.GCS_KEYFILE_PATH;
+    }
+    this.storage = new Storage(storageOptions);
 
     this.bucketName = process.env.GCS_BUCKET_NAME;
     this.bucket = this.storage.bucket(this.bucketName);

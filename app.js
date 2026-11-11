@@ -90,12 +90,18 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false // Para permitir uploads
 }));
 
-// CORS - permitir múltiples orígenes (template y ecommerce)
+// CORS - permitir múltiples orígenes (POS y tienda en línea)
+// En producción: FRONTEND_URL (POS), ECOMMERCE_URL (tienda) y/o CORS_ORIGINS
+// (lista separada por comas).
 const allowedOrigins = [
-  'http://localhost:3001', // Template/Admin
-  'http://localhost:3002', // E-commerce
-  process.env.FRONTEND_URL
-].filter(Boolean);
+  'http://localhost:3001', // POS (desarrollo)
+  'http://localhost:3002', // Tienda (desarrollo)
+  process.env.FRONTEND_URL,
+  process.env.ECOMMERCE_URL,
+  ...(process.env.CORS_ORIGINS || '').split(',')
+]
+  .map(origin => (origin || '').trim().replace(/\/$/, ''))
+  .filter(Boolean);
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -156,7 +162,7 @@ app.use(express.urlencoded({
 // Archivos estáticos
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/docs', express.static(path.join(__dirname, 'docs')));
-app.use('/manuales', express.static(path.join(__dirname, '../template/public/manuales')));
+app.use('/manuales', express.static(process.env.MANUALES_DIR || path.join(__dirname, '../client/public/manuales')));
 
 // ===================================================================
 // LOGGING
@@ -191,8 +197,8 @@ app.use((req, res, next) => {
 // RUTAS PRINCIPALES
 // ===================================================================
 
-// Health check (incluye estado de base de datos)
-app.get('/health', async (req, res) => {
+// Health check (incluye estado de base de datos). También en /api/health para Railway.
+app.get(['/health', '/api/health'], async (req, res) => {
   const uptime = process.uptime();
   const memoryUsage = process.memoryUsage();
   

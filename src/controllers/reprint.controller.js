@@ -5,6 +5,16 @@
 const logger = require('../utils/logger');
 const db = require('../utils/database');
 
+
+/**
+ * Una venta es EXONERADA cuando no cobró ISV y trae datos de exoneración
+ * (orden de compra exenta, constancia de registro de exonerado o registro SAG).
+ */
+function isExonerated(doc, taxAmount) {
+  const hasExonerationData = Boolean(doc.orden_compra || doc.constancia_exonerado || doc.registro_sag);
+  return hasExonerationData && Math.abs(parseFloat(taxAmount || 0)) < 0.005;
+}
+
 class ReprintController {
   /**
    * Buscar documentos para reimpresión por tipo
@@ -398,6 +408,9 @@ class ReprintController {
         cn.correlative,
         i.customer_rtn,
         i.invoice_number,
+        i.orden_compra,
+        i.constancia_exonerado,
+        i.registro_sag,
         b.nombre as branch_name,
         r.cai,
         r.numero_resolucion,
@@ -426,9 +439,11 @@ class ReprintController {
 
     creditNote.subtotal_bruto = subtotalBruto;
     creditNote.descuento = descuento;
+    const cnExonerada = isExonerated(creditNote, taxAmount);
+    creditNote.is_exonerated = cnExonerada;
     creditNote.importe_exento = 0;
-    creditNote.importe_exonerado = 0;
-    creditNote.importe_gravado_15 = subtotalNeto;
+    creditNote.importe_exonerado = cnExonerada ? subtotalNeto : 0;
+    creditNote.importe_gravado_15 = cnExonerada ? 0 : subtotalNeto;
     creditNote.importe_gravado_18 = 0;
     creditNote.isv_15 = taxAmount;
     creditNote.isv_18 = 0;
@@ -462,6 +477,9 @@ class ReprintController {
         i.customer_rtn,
         i.invoice_number,
         i.shipping_cost,
+        i.orden_compra,
+        i.constancia_exonerado,
+        i.registro_sag,
         b.nombre as branch_name
       FROM sales_returns sr
       LEFT JOIN invoices i ON sr.invoice_id = i.id
@@ -485,9 +503,11 @@ class ReprintController {
 
     returnData.subtotal_bruto = subtotalBruto;
     returnData.descuento = descuento;
+    const devExonerada = isExonerated(returnData, taxAmount);
+    returnData.is_exonerated = devExonerada;
     returnData.importe_exento = 0;
-    returnData.importe_exonerado = 0;
-    returnData.importe_gravado_15 = subtotalNeto;
+    returnData.importe_exonerado = devExonerada ? subtotalNeto : 0;
+    returnData.importe_gravado_15 = devExonerada ? 0 : subtotalNeto;
     returnData.importe_gravado_18 = 0;
     returnData.isv_15 = taxAmount;
     returnData.isv_18 = 0;
@@ -546,14 +566,6 @@ class ReprintController {
       invoice.issue_date = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
     }
 
-    // DEBUG: Ver campos adicionales
-    console.log('=== DEBUG REPRINT INVOICE ===');
-    console.log('Invoice ID:', invoice.id);
-    console.log('Invoice Number:', invoice.invoice_number);
-    console.log('orden_compra:', invoice.orden_compra);
-    console.log('constancia_exonerado:', invoice.constancia_exonerado);
-    console.log('registro_sag:', invoice.registro_sag);
-    console.log('============================');
 
     // AGREGAR DESGLOSE DE IMPUESTOS
     const subtotalBruto = parseFloat(invoice.subtotal || 0);
@@ -565,9 +577,11 @@ class ReprintController {
     // En el futuro se pueden agregar campos para exento, exonerado y 18%
     invoice.subtotal_bruto = subtotalBruto;
     invoice.descuento = descuento;
+    const facExonerada = isExonerated(invoice, taxAmount);
+    invoice.is_exonerated = facExonerada;
     invoice.importe_exento = 0;
-    invoice.importe_exonerado = 0;
-    invoice.importe_gravado_15 = subtotalBruto - descuento;
+    invoice.importe_exonerado = facExonerada ? subtotalBruto - descuento : 0;
+    invoice.importe_gravado_15 = facExonerada ? 0 : subtotalBruto - descuento;
     invoice.importe_gravado_18 = 0;
     invoice.isv_15 = taxAmount;
     invoice.isv_18 = 0;

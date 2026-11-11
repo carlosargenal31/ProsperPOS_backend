@@ -2,7 +2,7 @@
 // PROSPERPOS - SERVICIO DE PERMISOS
 // ===================================================================
 
-const PermissionModel = require('../models/Permission.model');
+const PermissionModel = require('../models/permission.model');
 const { ValidationError, DatabaseError, NotFoundError } = require('../middleware/error.middleware');
 const logger = require('../utils/logger');
 const { query } = require('../utils/database');

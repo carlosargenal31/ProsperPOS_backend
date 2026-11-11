@@ -2,7 +2,7 @@
 // PROSPERPOS - SERVICIO DE PROVEEDORES COMPLETO
 // ===================================================================
 
-const Supplier = require('../models/Supplier.model');
+const Supplier = require('../models/supplier.model');
 const logger = require('../utils/logger');
 const { validationResult } = require('express-validator');
 
