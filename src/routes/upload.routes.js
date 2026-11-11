@@ -66,6 +66,18 @@ router.post('/category', upload.single('file'), UploadController.uploadCategoryI
 router.delete('/category/:categoryId', UploadController.deleteCategoryImage);
 
 // ===================================================================
+// RUTAS DE USUARIOS (AVATARES)
+// ===================================================================
+
+/**
+ * @route   POST /api/upload/user/avatar
+ * @desc    Subir avatar de usuario
+ * @access  Private
+ * @body    userId
+ */
+router.post('/user/avatar', upload.single('file'), UploadController.uploadUserAvatar);
+
+// ===================================================================
 // RUTAS GENERALES
 // ===================================================================
 

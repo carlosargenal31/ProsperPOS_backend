@@ -147,8 +147,12 @@ class EcommerceCouponController {
       let applicableItems = [];
 
       if (coupon.tipo_aplicacion === 'grupo') {
+        // Si tiene articulo_id específico, SOLO aplicar a ese producto
+        if (coupon.articulo_id) {
+          applicableItems = cart.items.filter(item => item.product_id === coupon.articulo_id);
+        }
         // Si tiene grupo_id Y subgrupo_id, debe cumplir AMBAS
-        if (coupon.grupo_id && coupon.subgrupo_id) {
+        else if (coupon.grupo_id && coupon.subgrupo_id) {
           applicableItems = cart.items.filter(item =>
             item.category_id === coupon.grupo_id &&
             item.subcategory_id === coupon.subgrupo_id
@@ -161,10 +165,6 @@ class EcommerceCouponController {
         // Si solo tiene subgrupo_id (subcategoría), filtra solo por subcategoría
         else if (coupon.subgrupo_id) {
           applicableItems = cart.items.filter(item => item.subcategory_id === coupon.subgrupo_id);
-        }
-        // Si tiene articulo_id específico
-        else if (coupon.articulo_id) {
-          applicableItems = cart.items.filter(item => item.product_id === coupon.articulo_id);
         }
         // Si no tiene ninguno, aplica a todos
         else {
@@ -328,8 +328,13 @@ class EcommerceCouponController {
         console.log(`Tipo de aplicación: ${offer.tipo_aplicacion}`);
 
         if (offer.tipo_aplicacion === 'grupo') {
+          // Si tiene producto_id específico, SOLO aplicar a ese producto
+          if (offer.producto_id) {
+            console.log(`  Filtro: Solo Producto ${offer.producto_id}`);
+            applicableItems = cart.items.filter(item => item.product_id === offer.producto_id);
+          }
           // Si tiene categoria_id Y subcategoria_id, debe cumplir AMBAS
-          if (offer.categoria_id && offer.subcategoria_id) {
+          else if (offer.categoria_id && offer.subcategoria_id) {
             console.log(`  Filtro: Categoría ${offer.categoria_id} Y Subcategoría ${offer.subcategoria_id}`);
             applicableItems = cart.items.filter(item =>
               item.category_id === offer.categoria_id &&
@@ -345,11 +350,6 @@ class EcommerceCouponController {
           else if (offer.subcategoria_id) {
             console.log(`  Filtro: Solo Subcategoría ${offer.subcategoria_id}`);
             applicableItems = cart.items.filter(item => item.subcategory_id === offer.subcategoria_id);
-          }
-          // Si tiene producto_id específico
-          else if (offer.producto_id) {
-            console.log(`  Filtro: Solo Producto ${offer.producto_id}`);
-            applicableItems = cart.items.filter(item => item.product_id === offer.producto_id);
           }
           // Si no tiene ninguno, aplica a todos
           else {
@@ -419,11 +419,51 @@ class EcommerceCouponController {
           }, 0);
 
           let discountAmount = 0;
-          if (offer.tipo_descuento === 'porcentaje') {
-            discountAmount = qualifiedSubtotal * (parseFloat(offer.valor_descuento) / 100);
-          } else {
-            // Para descuento por monto fijo, multiplicar por cantidad de items calificados
-            discountAmount = parseFloat(offer.valor_descuento) * itemsQualified.reduce((sum, item) => sum + item.quantity, 0);
+
+          // Para ofertas de tipo "multiple", usar descuentos individuales de offer_items
+          if (offer.tipo_aplicacion === 'multiple') {
+            const itemDiscountsQuery = `
+              SELECT product_id, descuento_porcentaje, descuento_monto
+              FROM offer_items
+              WHERE offer_id = ?
+            `;
+            const itemDiscounts = await db.query(itemDiscountsQuery, [offer.id]);
+            const discountMap = {};
+            itemDiscounts.forEach(item => {
+              discountMap[item.product_id] = {
+                percentage: parseFloat(item.descuento_porcentaje || 0),
+                amount: parseFloat(item.descuento_monto || 0)
+              };
+            });
+
+            // Calcular descuento sumando los descuentos individuales
+            discountAmount = itemsQualified.reduce((sum, item) => {
+              const itemDiscount = discountMap[item.product_id];
+              if (!itemDiscount) return sum;
+
+              const itemSubtotal = parseFloat(item.price) * item.quantity;
+              let itemDiscountAmount = 0;
+
+              // Si tiene descuento por monto, usar ese
+              if (itemDiscount.amount > 0) {
+                itemDiscountAmount = itemDiscount.amount * item.quantity;
+              }
+              // Si tiene descuento por porcentaje, calcular sobre el subtotal
+              else if (itemDiscount.percentage > 0) {
+                itemDiscountAmount = itemSubtotal * (itemDiscount.percentage / 100);
+              }
+
+              return sum + itemDiscountAmount;
+            }, 0);
+          }
+          // Para ofertas de grupo o generales, usar el descuento global de la oferta
+          else {
+            if (offer.tipo_descuento === 'porcentaje') {
+              discountAmount = qualifiedSubtotal * (parseFloat(offer.valor_descuento) / 100);
+            } else {
+              // Para descuento por monto fijo, multiplicar por cantidad de items calificados
+              discountAmount = parseFloat(offer.valor_descuento) * itemsQualified.reduce((sum, item) => sum + item.quantity, 0);
+            }
           }
 
           discountAmount = Math.min(discountAmount, qualifiedSubtotal);

@@ -159,12 +159,15 @@ class PurchaseReprintController {
    */
   static async getDocumentDetails(req, res) {
     try {
-      const { documentType, documentId } = req.params;
+      let { documentType, documentId } = req.params;
+
+      // Decodificar URL encoding si es necesario
+      documentType = decodeURIComponent(documentType).trim();
 
       console.log('=== getDocumentDetails ===');
       console.log('documentType:', documentType);
-      console.log('documentType (type):', typeof documentType);
-      console.log('documentType (encoded):', encodeURIComponent(documentType));
+      console.log('documentType (length):', documentType.length);
+      console.log('documentType (charCodes):', Array.from(documentType).map(c => c.charCodeAt(0)));
       console.log('documentId:', documentId);
 
       let documentData = null;
@@ -181,6 +184,7 @@ class PurchaseReprintController {
           break;
         default:
           console.log('No matching document type found');
+          console.log('Received:', JSON.stringify(documentType));
           return res.status(400).json({
             success: false,
             message: 'Tipo de documento no válido: ' + documentType
@@ -227,6 +231,7 @@ class PurchaseReprintController {
           pd.surcharge_amount as surcharge,
           pd.tax_amount as tax,
           pd.total_amount,
+          pd.notes,
           COALESCE(CONCAT(u.first_name, ' ', u.last_name), u.username, 'Sistema') as created_by_name
         FROM purchases_documents pd
         LEFT JOIN users u ON pd.created_by = u.id
@@ -297,18 +302,9 @@ class PurchaseReprintController {
 
       const returnData = results[0];
 
-      // Las devoluciones de compra no tienen items (solo monto)
-      // pero mantenemos la estructura por consistencia
-      const itemsSql = `
-        SELECT
-          pri.*
-        FROM purchase_return_items pri
-        WHERE pri.purchase_return_id = ?
-      `;
-
-      const items = await db.query(itemsSql, [id]);
-      console.log('Purchase return items found:', items?.length || 0);
-      returnData.items = items || [];
+      // Las devoluciones de compra NO tienen items (solo monto total)
+      // Por diseño del sistema, solo se registra el monto a devolver
+      returnData.items = [];
 
       return returnData;
     } catch (error) {
@@ -350,17 +346,9 @@ class PurchaseReprintController {
 
       const creditNote = results[0];
 
-      // Las notas de crédito de compra se basan en devoluciones
-      const itemsSql = `
-        SELECT
-          pri.*
-        FROM purchase_return_items pri
-        WHERE pri.purchase_return_id = ?
-      `;
-
-      const items = await db.query(itemsSql, [id]);
-      console.log('Credit note items found:', items?.length || 0);
-      creditNote.items = items || [];
+      // Las notas de crédito de compra NO tienen items (solo monto total)
+      // Por diseño del sistema, solo se registra el monto
+      creditNote.items = [];
 
       return creditNote;
     } catch (error) {

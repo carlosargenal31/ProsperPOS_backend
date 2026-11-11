@@ -771,7 +771,7 @@ class AuthService {
     try {
       const results = await db.query(`
         SELECT DISTINCT
-          r.name as role_name,
+          r.slug as role_slug,
           p.name as permission_name
         FROM users u
         INNER JOIN user_roles ur ON u.id = ur.user_id
@@ -781,7 +781,7 @@ class AuthService {
         WHERE u.id = ?
       `, [userId]);
 
-      const roles = [...new Set(results.map(r => r.role_name))];
+      const roles = [...new Set(results.map(r => r.role_slug))];
       const permissions = [...new Set(results.map(r => r.permission_name).filter(p => p))];
 
       return { roles, permissions };

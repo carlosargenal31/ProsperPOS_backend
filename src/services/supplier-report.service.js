@@ -69,7 +69,7 @@ class SupplierReportService {
           COUNT(DISTINCT CASE WHEN pd.status != 'Returned' THEN pd.id END) as total_purchases,
           SUM(CASE WHEN pd.status != 'Returned' THEN pd.net_amount ELSE 0 END) as total_neto,
           SUM(CASE WHEN pd.status != 'Returned' THEN pd.tax_amount ELSE 0 END) as total_isv,
-          SUM(CASE WHEN pd.status != 'Returned' THEN pd.total_amount ELSE 0 END) as total_con_isv,
+          SUM(CASE WHEN pd.status != 'Returned' THEN (pd.net_amount + pd.tax_amount) ELSE 0 END) as total_con_isv,
           SUM(CASE WHEN pd.status = 'Returned' THEN pd.total_amount ELSE 0 END) as devuelto,
           SUM(CASE WHEN pd.status != 'Returned' THEN pd.discount_amount ELSE 0 END) as total_descuento
         FROM purchases_documents pd

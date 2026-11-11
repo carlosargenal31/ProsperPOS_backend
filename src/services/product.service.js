@@ -53,16 +53,19 @@ class ProductService {
           p.subcategory_id,
           p.brand_id,
           p.tax_id,
+          p.unit_id,
           c.name as category_name,
           sc.name as subcategory_name,
           b.name as brand_name,
           t.rate as tax_rate,
+          u.name as unit_name,
           ROUND(COALESCE(stock_totals.total_stock, 0), 2) as stock
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
         LEFT JOIN subcategories sc ON p.subcategory_id = sc.id
         LEFT JOIN brands b ON p.brand_id = b.id
         LEFT JOIN tax_rates t ON p.tax_id = t.id
+        LEFT JOIN units u ON p.unit_id = u.id
         LEFT JOIN (
           SELECT product_id, ROUND(SUM(quantity), 2) as total_stock
           FROM stock
@@ -322,7 +325,8 @@ class ProductService {
         created_by,
         color = null,
         acabado = null,
-        estilo = null
+        estilo = null,
+        additional_fields = null
       } = productData;
 
       // Verificar duplicados
@@ -409,6 +413,7 @@ class ProductService {
       const color = productData.color !== undefined ? productData.color : currentProduct.color;
       const acabado = productData.acabado !== undefined ? productData.acabado : currentProduct.acabado;
       const estilo = productData.estilo !== undefined ? productData.estilo : currentProduct.estilo;
+      const additional_fields = productData.additional_fields !== undefined ? productData.additional_fields : currentProduct.additional_fields;
       const updated_by = productData.updated_by;
 
       // Actualizar
@@ -425,7 +430,7 @@ class ProductService {
             price_3 = ?, price_4 = ?, price_5 = ?, price_6 = ?,
             unit_id = ?, weight = ?, show_in_online_store = ?, is_featured = ?, tax_id = ?,
             image = ?, is_active = ?,
-            color = ?, acabado = ?, estilo = ?,
+            color = ?, acabado = ?, estilo = ?, additional_fields = ?,
             updated_by = ?, updated_at = NOW()
           WHERE id = ?
         `;
@@ -434,7 +439,7 @@ class ProductService {
           code, name, short_name, category_id, subcategory_id, brand_id, supplier_id,
           description, cost, price_1, price_2, price_3, price_4, price_5, price_6,
           unit_id, weight, show_in_online_store, is_featured, tax_id, image_url, is_active,
-          color, acabado, estilo,
+          color, acabado, estilo, additional_fields,
           updated_by, id
         ];
       } else {
@@ -446,7 +451,7 @@ class ProductService {
             price_3 = ?, price_4 = ?, price_5 = ?, price_6 = ?,
             unit_id = ?, weight = ?, show_in_online_store = ?, is_featured = ?, tax_id = ?,
             is_active = ?,
-            color = ?, acabado = ?, estilo = ?,
+            color = ?, acabado = ?, estilo = ?, additional_fields = ?,
             updated_by = ?, updated_at = NOW()
           WHERE id = ?
         `;
@@ -455,7 +460,7 @@ class ProductService {
           code, name, short_name, category_id, subcategory_id, brand_id, supplier_id,
           description, cost, price_1, price_2, price_3, price_4, price_5, price_6,
           unit_id, weight, show_in_online_store, is_featured, tax_id, is_active,
-          color, acabado, estilo,
+          color, acabado, estilo, additional_fields,
           updated_by, id
         ];
       }

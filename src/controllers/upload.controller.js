@@ -315,6 +315,78 @@ class UploadController {
   }
 
   /**
+   * Subir avatar de usuario
+   */
+  static async uploadUserAvatar(req, res) {
+    try {
+      if (!req.file) {
+        return sendErrorResponse(res, 400, 'No se proporcionó ningún archivo');
+      }
+
+      const { userId } = req.body;
+
+      if (!userId) {
+        return sendErrorResponse(res, 400, 'userId es requerido');
+      }
+
+      // Verificar que el usuario existe
+      const [users] = await db.execute(
+        'SELECT id FROM users WHERE id = ? AND deleted_at IS NULL',
+        [userId]
+      );
+
+      if (users.length === 0) {
+        return sendErrorResponse(res, 404, 'Usuario no encontrado');
+      }
+
+      const gcs = getInstance();
+
+      // Procesar imagen (avatar)
+      const processedBuffer = await UploadController.processImage(req.file.buffer, 'avatar');
+
+      const extension = req.file.mimetype.split('/')[1];
+
+      // Generar nombre de archivo único
+      const timestamp = Date.now();
+      const fileName = `user_${userId}_avatar_${timestamp}.${extension}`;
+
+      // Subir a Google Cloud Storage
+      const result = await gcs.uploadFile(
+        processedBuffer,
+        fileName,
+        'avatars',
+        {
+          contentType: req.file.mimetype,
+          metadata: {
+            originalName: req.file.originalname,
+            uploadedBy: req.user?.id,
+            size: processedBuffer.length,
+            userId
+          }
+        }
+      );
+
+      // Actualizar URL del avatar en la base de datos
+      await db.execute(
+        'UPDATE users SET avatar = ?, updated_at = NOW() WHERE id = ?',
+        [result.url, userId]
+      );
+
+      logger.info('User avatar uploaded successfully', {
+        userId,
+        url: result.url,
+        uploadedBy: req.user?.id
+      });
+
+      return sendSuccessResponse(res, result, 'Avatar subido exitosamente');
+
+    } catch (error) {
+      logger.error('Error uploading user avatar:', error);
+      return sendErrorResponse(res, 500, 'Error al subir avatar: ' + error.message);
+    }
+  }
+
+  /**
    * Subir archivo genérico a Google Cloud Storage
    */
   static async uploadGenericFile(req, res) {
@@ -395,7 +467,7 @@ class UploadController {
   /**
    * Procesar imagen: optimizar, redimensionar, comprimir
    * @param {Buffer} buffer - Buffer de la imagen original
-   * @param {string} type - Tipo de imagen (main, thumb, gallery, category)
+   * @param {string} type - Tipo de imagen (main, thumb, gallery, category, avatar)
    * @returns {Promise<Buffer>} - Buffer procesado
    */
   static async processImage(buffer, type = 'main') {
@@ -423,6 +495,11 @@ class UploadController {
           width = 800;
           height = 800;
           quality = 85;
+          break;
+        case 'avatar':
+          width = 400;
+          height = 400;
+          quality = 90;
           break;
         default:
           width = 1200;

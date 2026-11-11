@@ -16,6 +16,7 @@ class StockHistoryService {
       // Construir fechas para el filtro
       const dateFrom = filters.date_from || '1900-01-01';
       const dateTo = filters.date_to || '2099-12-31';
+      const groupByWarehouses = filters.group_by_warehouses !== false; // Por defecto true
 
       let query = `
         SELECT
@@ -24,9 +25,12 @@ class StockHistoryService {
           p.name AS product_name,
           p.image AS image,
           c.name AS category_name,
+          sc.name AS subcategory_name,
           b.name AS brand_name,
+          w.id AS warehouse_id,
+          w.nombre AS warehouse_name,
 
-          -- Stock actual (final_quantity)
+          -- Stock actual por bodega (final_quantity)
           COALESCE(s.quantity, 0) AS final_quantity,
 
           -- Cantidad inicial: Stock actual menos todos los movimientos del período
@@ -43,13 +47,16 @@ class StockHistoryService {
 
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
+        LEFT JOIN subcategories sc ON p.subcategory_id = sc.id
         LEFT JOIN brands b ON p.brand_id = b.id
-        LEFT JOIN stock s ON p.id = s.product_id
+        CROSS JOIN warehouses w
+        LEFT JOIN stock s ON p.id = s.product_id AND s.warehouse_id = w.id
 
-        -- Cargos (de la tabla cargo_descargo con document_type = 'cargo')
+        -- Cargos (de la tabla cargo_descargo con document_type = 'cargo') por bodega
         LEFT JOIN (
           SELECT
             cdd.product_id,
+            cd.warehouse_id,
             SUM(cdd.quantity) AS cantidad_cargada
           FROM cargo_descargo_details cdd
           INNER JOIN cargo_descargo cd ON cdd.cargo_descargo_id = cd.id
@@ -57,13 +64,14 @@ class StockHistoryService {
             AND cd.status = 'procesado'
             AND cd.registration_date >= ?
             AND cd.registration_date <= ?
-          GROUP BY cdd.product_id
-        ) AS cargos ON p.id = cargos.product_id
+          GROUP BY cdd.product_id, cd.warehouse_id
+        ) AS cargos ON p.id = cargos.product_id AND w.id = cargos.warehouse_id
 
-        -- Descargos (de la tabla cargo_descargo con document_type = 'descargo')
+        -- Descargos (de la tabla cargo_descargo con document_type = 'descargo') por bodega
         LEFT JOIN (
           SELECT
             cdd.product_id,
+            cd.warehouse_id,
             SUM(cdd.quantity) AS cantidad_descargada
           FROM cargo_descargo_details cdd
           INNER JOIN cargo_descargo cd ON cdd.cargo_descargo_id = cd.id
@@ -71,26 +79,27 @@ class StockHistoryService {
             AND cd.status = 'procesado'
             AND cd.registration_date >= ?
             AND cd.registration_date <= ?
-          GROUP BY cdd.product_id
-        ) AS descargos ON p.id = descargos.product_id
+          GROUP BY cdd.product_id, cd.warehouse_id
+        ) AS descargos ON p.id = descargos.product_id AND w.id = descargos.warehouse_id
 
-        -- Ventas (de facturas)
+        -- Ventas (de facturas) por bodega
         LEFT JOIN (
           SELECT
             ii.product_id,
+            i.warehouse_id,
             SUM(ii.quantity) AS cantidad_vendida
           FROM invoice_items ii
           INNER JOIN invoices i ON ii.invoice_id = i.id
           WHERE i.deleted_at IS NULL
             AND i.created_at >= ?
             AND i.created_at <= ?
-          GROUP BY ii.product_id
-        ) AS ventas ON p.id = ventas.product_id
+          GROUP BY ii.product_id, i.warehouse_id
+        ) AS ventas ON p.id = ventas.product_id AND w.id = ventas.warehouse_id
 
-        WHERE p.deleted_at IS NULL
+        WHERE p.deleted_at IS NULL AND w.deleted_at IS NULL
       `;
 
-      // Agregar parámetros de fecha (4 veces: cargos, descargos, ventas)
+      // Agregar parámetros de fecha (6 veces: cargos, descargos, ventas)
       params.push(dateFrom, dateTo); // Para cargos
       params.push(dateFrom, dateTo); // Para descargos
       params.push(dateFrom + ' 00:00:00', dateTo + ' 23:59:59'); // Para ventas
@@ -111,7 +120,12 @@ class StockHistoryService {
         params.push(filters.product_id);
       }
 
-      query += ' ORDER BY p.name ASC';
+      if (filters.warehouse_id) {
+        query += ' AND w.id = ?';
+        params.push(filters.warehouse_id);
+      }
+
+      query += ' ORDER BY w.nombre ASC, p.name ASC';
 
       logger.info('=== Stock History Query ===');
       logger.info('Date from:', dateFrom);
@@ -126,24 +140,80 @@ class StockHistoryService {
         logger.info('First row:', JSON.stringify(rows[0], null, 2));
       }
 
-      // Calcular totales
-      const totals = {
-        initial_quantity: rows.reduce((sum, row) => sum + parseFloat(row.initial_quantity || 0), 0),
-        added_quantity: rows.reduce((sum, row) => sum + parseFloat(row.added_quantity || 0), 0),
-        sold_quantity: rows.reduce((sum, row) => sum + parseFloat(row.sold_quantity || 0), 0),
-        defective_quantity: rows.reduce((sum, row) => sum + parseFloat(row.defective_quantity || 0), 0),
-        final_quantity: rows.reduce((sum, row) => sum + parseFloat(row.final_quantity || 0), 0),
+      // Agrupar por bodega si está habilitado
+      let result;
+      let totals = {
+        initial_quantity: 0,
+        added_quantity: 0,
+        sold_quantity: 0,
+        defective_quantity: 0,
+        final_quantity: 0,
       };
 
+      if (groupByWarehouses) {
+        const groupedData = {};
+
+        rows.forEach(row => {
+          const warehouseKey = row.warehouse_id || 'UNKNOWN';
+
+          if (!groupedData[warehouseKey]) {
+            groupedData[warehouseKey] = {
+              warehouse_id: row.warehouse_id,
+              warehouse_name: row.warehouse_name,
+              items: [],
+              totals: {
+                initial_quantity: 0,
+                added_quantity: 0,
+                sold_quantity: 0,
+                defective_quantity: 0,
+                final_quantity: 0,
+              }
+            };
+          }
+
+          groupedData[warehouseKey].items.push(row);
+
+          // Sumar totales por bodega
+          groupedData[warehouseKey].totals.initial_quantity += parseFloat(row.initial_quantity || 0);
+          groupedData[warehouseKey].totals.added_quantity += parseFloat(row.added_quantity || 0);
+          groupedData[warehouseKey].totals.sold_quantity += parseFloat(row.sold_quantity || 0);
+          groupedData[warehouseKey].totals.defective_quantity += parseFloat(row.defective_quantity || 0);
+          groupedData[warehouseKey].totals.final_quantity += parseFloat(row.final_quantity || 0);
+
+          // Sumar totales generales
+          totals.initial_quantity += parseFloat(row.initial_quantity || 0);
+          totals.added_quantity += parseFloat(row.added_quantity || 0);
+          totals.sold_quantity += parseFloat(row.sold_quantity || 0);
+          totals.defective_quantity += parseFloat(row.defective_quantity || 0);
+          totals.final_quantity += parseFloat(row.final_quantity || 0);
+        });
+
+        result = Object.values(groupedData);
+      } else {
+        // Sin agrupación
+        rows.forEach(row => {
+          totals.initial_quantity += parseFloat(row.initial_quantity || 0);
+          totals.added_quantity += parseFloat(row.added_quantity || 0);
+          totals.sold_quantity += parseFloat(row.sold_quantity || 0);
+          totals.defective_quantity += parseFloat(row.defective_quantity || 0);
+          totals.final_quantity += parseFloat(row.final_quantity || 0);
+        });
+
+        result = rows;
+      }
+
       return {
-        data: rows,
+        data: result,
         totals,
+        grouped_by_warehouses: groupByWarehouses,
         filters: {
           date_from: filters.date_from,
           date_to: filters.date_to,
           category_id: filters.category_id,
+          subcategory_id: filters.subcategory_id,
           product_id: filters.product_id,
           warehouse_id: filters.warehouse_id,
+          group_by_warehouses: groupByWarehouses,
         }
       };
     } catch (error) {

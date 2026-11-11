@@ -31,6 +31,34 @@ class OfferModel {
         params.push(is_active ? 1 : 0);
       }
 
+      // Filtrar ofertas no suspendidas
+      if (is_active !== null && is_active) {
+        whereClause += ' AND o.suspendida = 0';
+      }
+
+      // Filtrar por día actual
+      if (is_active !== null && is_active) {
+        const now = new Date();
+        const dayOfWeek = now.getDay();
+        const dayNames = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+        const dayField = `aplica_${dayNames[dayOfWeek]}`;
+        whereClause += ` AND o.${dayField} = 1`;
+      }
+
+      // Filtrar por fechas
+      if (is_active !== null && is_active) {
+        const currentDate = new Date().toISOString().split('T')[0];
+        whereClause += ' AND (o.limitar_fecha = 0 OR (o.fecha_desde <= ? AND o.fecha_hasta >= ?))';
+        params.push(currentDate, currentDate);
+      }
+
+      // Filtrar por horas
+      if (is_active !== null && is_active) {
+        const currentTime = new Date().toTimeString().split(' ')[0];
+        whereClause += ' AND (o.limitar_hora = 0 OR (o.hora_desde <= ? AND o.hora_hasta >= ?))';
+        params.push(currentTime, currentTime);
+      }
+
       if (agencia_id) {
         whereClause += ' AND o.agencia_id = ?';
         params.push(agencia_id);

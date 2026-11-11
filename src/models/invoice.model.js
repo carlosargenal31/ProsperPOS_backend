@@ -237,7 +237,14 @@ class Invoice {
       const invoiceNumber = invoiceData.invoice_number || await this.generateInvoiceNumber(connection);
 
       // Calculate totals
-      const totals = this.calculateTotals(items, invoiceData.discount_type, invoiceData.discount_value);
+      const totals = this.calculateTotals(
+        items,
+        invoiceData.discount_type,
+        invoiceData.discount_value,
+        invoiceData.shipping_cost,
+        invoiceData.coupons_discount,
+        invoiceData.offers_discount
+      );
 
       // Get active resolution with its number
       const [resolutions] = await connection.query(
@@ -663,27 +670,33 @@ class Invoice {
    */
   static async generateInvoiceNumber(connection) {
     try {
-      // Get settings
-      const [settings] = await connection.query(
-        'SELECT invoice_prefix, last_invoice_number, invoice_number_length FROM billing_settings LIMIT 1'
+      // Get active resolution
+      const [resolutions] = await connection.query(
+        'SELECT id, prefijo_control, nro_actual_control, nro_final_control FROM resolutions WHERE is_active = 1 LIMIT 1'
       );
 
-      if (settings.length === 0) {
-        throw new Error('Configuración de facturación no encontrada');
+      if (resolutions.length === 0) {
+        throw new Error('No hay una resolución activa configurada');
       }
 
-      const { invoice_prefix, last_invoice_number, invoice_number_length } = settings[0];
-      const nextNumber = last_invoice_number + 1;
+      const resolution = resolutions[0];
+      const currentNumber = resolution.nro_actual_control || 0;
+      const nextNumber = currentNumber + 1;
 
-      // Update last number
+      // Check if we've reached the limit
+      if (nextNumber > resolution.nro_final_control) {
+        throw new Error('Se ha alcanzado el número final de la resolución activa');
+      }
+
+      // Update the current number
       await connection.query(
-        'UPDATE billing_settings SET last_invoice_number = ? WHERE id = 1',
-        [nextNumber]
+        'UPDATE resolutions SET nro_actual_control = ? WHERE id = ?',
+        [nextNumber, resolution.id]
       );
 
-      // Format number with padding
-      const paddedNumber = String(nextNumber).padStart(invoice_number_length, '0');
-      return `${invoice_prefix}-${paddedNumber}`;
+      // Format: PREFIJO-NUMERO (e.g., 000-002-01-00040063)
+      const paddedNumber = String(nextNumber).padStart(8, '0');
+      return `${resolution.prefijo_control}-${paddedNumber}`;
     } catch (error) {
       logger.error('Error generating invoice number:', error);
       throw error;
@@ -695,12 +708,15 @@ class Invoice {
    * @param {Array} items - Invoice items
    * @param {string} discountType - 'percentage' or 'fixed'
    * @param {number} discountValue - Discount value
+   * @param {number} shippingCost - Shipping/surcharge cost
+   * @param {number} couponsDiscount - Total discount from coupons
+   * @param {number} offersDiscount - Total discount from offers
    * @returns {Object} Totals
    */
-  static calculateTotals(items, discountType = null, discountValue = 0) {
+  static calculateTotals(items, discountType = null, discountValue = 0, shippingCost = 0, couponsDiscount = 0, offersDiscount = 0) {
     let subtotal = 0;
-    let taxAmount = 0;
 
+    // Calculate subtotal from items (with item-level discounts)
     items.forEach(item => {
       const itemTotals = this.calculateItemTotals(
         item.quantity,
@@ -711,24 +727,38 @@ class Invoice {
       );
 
       subtotal += itemTotals.subtotal;
-      taxAmount += itemTotals.tax_amount;
     });
 
-    // Calculate invoice-level discount
-    let discountAmount = 0;
+    // Calculate invoice-level discount (global discount)
+    let globalDiscount = 0;
     if (discountType === 'percentage' && discountValue > 0) {
-      discountAmount = (subtotal * discountValue) / 100;
-    } else if (discountType === 'fixed' && discountValue > 0) {
-      discountAmount = discountValue;
+      globalDiscount = (subtotal * discountValue) / 100;
+    } else if ((discountType === 'fixed' || discountType === 'amount') && discountValue > 0) {
+      globalDiscount = discountValue;
     }
 
-    const subtotalAfterDiscount = subtotal - discountAmount;
-    const total = subtotalAfterDiscount + taxAmount;
+    // Total discount = global + coupons + offers
+    const coupons = parseFloat(couponsDiscount) || 0;
+    const offers = parseFloat(offersDiscount) || 0;
+    const totalDiscount = globalDiscount + coupons + offers;
+
+    // Calculate subtotal after all discounts
+    const subtotalAfterDiscount = subtotal - totalDiscount;
+
+    // Calculate tax on the discounted subtotal
+    // Use the tax rate from the first item (assuming all items have the same tax rate)
+    const taxRate = items.length > 0 ? (items[0].tax_rate || 15.00) : 15.00;
+    const taxAmount = (subtotalAfterDiscount * taxRate) / 100;
+
+    // Add shipping cost
+    const shipping = parseFloat(shippingCost) || 0;
+    const total = subtotalAfterDiscount + taxAmount + shipping;
 
     return {
       subtotal,
-      discount_amount: discountAmount,
+      discount_amount: totalDiscount,
       tax_amount: taxAmount,
+      shipping_cost: shipping,
       total
     };
   }

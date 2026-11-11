@@ -402,13 +402,15 @@ class SalesReturnsController {
 
       const returnData = returns[0];
 
-      // Obtener los items de la devolución con códigos de producto
+      // Obtener los items de la devolución con códigos de producto y unidad
       const itemsSql = `
         SELECT
           sri.*,
-          p.code as product_code
+          p.code as product_code,
+          COALESCE(u.name, 'UNIDAD') as product_unit
         FROM sales_return_items sri
         LEFT JOIN products p ON sri.product_id = p.id
+        LEFT JOIN units u ON p.unit_id = u.id
         WHERE sri.sales_return_id = ?
       `;
 
@@ -420,6 +422,7 @@ class SalesReturnsController {
         product_id: item.product_id,
         product_code: item.product_code,
         product_name: item.product_name,
+        product_unit: item.product_unit,
         return_quantity: item.quantity,
         unit_price: item.unit_price,
         discount_value: item.discount_value,

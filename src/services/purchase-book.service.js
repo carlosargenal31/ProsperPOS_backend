@@ -26,12 +26,12 @@ class PurchaseBookService {
 
       // Filtro de fechas
       if (date_from) {
-        whereConditions.push('DATE(p.purchase_date) >= ?');
+        whereConditions.push('DATE(p.created_at) >= ?');
         params.push(date_from);
       }
 
       if (date_to) {
-        whereConditions.push('DATE(p.purchase_date) <= ?');
+        whereConditions.push('DATE(p.created_at) <= ?');
         params.push(date_to);
       }
 
@@ -71,8 +71,8 @@ class PurchaseBookService {
       const query = `
         SELECT
           p.id,
-          DATE_FORMAT(p.purchase_date, '%d/%m/%Y %H:%i:%S') as fecha,
-          p.purchase_date as fecha_raw,
+          DATE_FORMAT(p.created_at, '%d/%m/%Y %H:%i:%S') as fecha,
+          p.created_at as fecha_raw,
           COALESCE(p.purchase_number, CONCAT('COMP-', LPAD(p.id, 6, '0'))) as numero_factura,
           COALESCE(p.supplier_name, 'N/A') as proveedor,
           COALESCE(p.supplier_id_number, '') as rtn_proveedor,
@@ -81,6 +81,13 @@ class PurchaseBookService {
           COALESCE(p.surcharge_amount, 0) as recargo,
           COALESCE(p.tax_amount, 0) as isv,
           COALESCE(p.total_amount, 0) as total,
+          COALESCE(
+            (SELECT ABS(SUM(pr.total))
+             FROM purchase_returns pr
+             WHERE pr.purchase_id = p.id
+             AND pr.deleted_at IS NULL),
+            0
+          ) as devuelto,
           CASE
             WHEN p.status = 'Returned' THEN 'DEVUELTO'
             WHEN p.status = 'Completed' THEN 'COMPLETADO'
@@ -98,8 +105,8 @@ class PurchaseBookService {
 
         SELECT
           CONCAT('DEV-', pr.id) as id,
-          DATE_FORMAT(pr.emission_date, '%d/%m/%Y %H:%i:%S') as fecha,
-          pr.emission_date as fecha_raw,
+          DATE_FORMAT(pr.created_at, '%d/%m/%Y %H:%i:%S') as fecha,
+          pr.created_at as fecha_raw,
           CONCAT('DEVOLUCION-', LPAD(pr.id, 6, '0')) as numero_factura,
           COALESCE(p.supplier_name, 'N/A') as proveedor,
           COALESCE(p.supplier_id_number, '') as rtn_proveedor,
@@ -108,6 +115,7 @@ class PurchaseBookService {
           0 as recargo,
           -COALESCE(pr.tax, 0) as isv,
           -COALESCE(pr.total, 0) as total,
+          0 as devuelto,
           CONCAT('NC-', COALESCE(pr.credit_note_number, LPAD(pr.id, 6, '0')), ' - FAC: ', COALESCE(p.purchase_number, CONCAT('COMP-', LPAD(p.id, 6, '0')))) as estatus,
           'Returned' as estatus_raw,
           COALESCE(CONCAT(u.first_name, ' ', u.last_name), u.username, 'Sistema') as usuario,
@@ -117,8 +125,8 @@ class PurchaseBookService {
         LEFT JOIN purchases_documents p ON pr.purchase_id = p.id
         LEFT JOIN users u ON pr.created_by = u.id
         WHERE pr.deleted_at IS NULL
-        AND DATE(pr.emission_date) >= ?
-        AND DATE(pr.emission_date) <= ?
+        AND DATE(pr.created_at) >= ?
+        AND DATE(pr.created_at) <= ?
 
         ORDER BY fecha_raw DESC
       `;
@@ -202,12 +210,12 @@ class PurchaseBookService {
 
       // Filtro de fechas
       if (date_from) {
-        whereConditions.push('DATE(p.purchase_date) >= ?');
+        whereConditions.push('DATE(p.created_at) >= ?');
         params.push(date_from);
       }
 
       if (date_to) {
-        whereConditions.push('DATE(p.purchase_date) <= ?');
+        whereConditions.push('DATE(p.created_at) <= ?');
         params.push(date_to);
       }
 
@@ -235,24 +243,24 @@ class PurchaseBookService {
 
       switch (groupBy) {
         case 'day':
-          selectClause = `DATE(p.purchase_date) as group_key, DATE_FORMAT(p.purchase_date, '%d/%m/%Y') as group_label`;
-          groupByClause = 'DATE(p.purchase_date)';
+          selectClause = `DATE(p.created_at) as group_key, DATE_FORMAT(p.created_at, '%d/%m/%Y') as group_label`;
+          groupByClause = 'DATE(p.created_at)';
           break;
         case 'week':
-          selectClause = `YEARWEEK(p.purchase_date) as group_key, CONCAT('Semana ', WEEK(p.purchase_date), ' - ', YEAR(p.purchase_date)) as group_label`;
-          groupByClause = 'YEARWEEK(p.purchase_date)';
+          selectClause = `YEARWEEK(p.created_at) as group_key, CONCAT('Semana ', WEEK(p.created_at), ' - ', YEAR(p.created_at)) as group_label`;
+          groupByClause = 'YEARWEEK(p.created_at)';
           break;
         case 'month':
-          selectClause = `DATE_FORMAT(p.purchase_date, '%Y-%m') as group_key, DATE_FORMAT(p.purchase_date, '%M %Y') as group_label`;
-          groupByClause = 'DATE_FORMAT(p.purchase_date, \'%Y-%m\')';
+          selectClause = `DATE_FORMAT(p.created_at, '%Y-%m') as group_key, DATE_FORMAT(p.created_at, '%M %Y') as group_label`;
+          groupByClause = 'DATE_FORMAT(p.created_at, \'%Y-%m\')';
           break;
         case 'supplier':
           selectClause = `p.supplier_name as group_key, p.supplier_name as group_label`;
           groupByClause = 'p.supplier_name';
           break;
         default:
-          selectClause = `DATE(p.purchase_date) as group_key, DATE_FORMAT(p.purchase_date, '%d/%m/%Y') as group_label`;
-          groupByClause = 'DATE(p.purchase_date)';
+          selectClause = `DATE(p.created_at) as group_key, DATE_FORMAT(p.created_at, '%d/%m/%Y') as group_label`;
+          groupByClause = 'DATE(p.created_at)';
       }
 
       const query = `
@@ -318,9 +326,10 @@ class PurchaseBookService {
         'RTN': purchase.rtn_proveedor,
         'Subtotal': purchase.subtotal,
         'Descuento': purchase.descuento,
-        'Recargo': purchase.recargo,
         'ISV': purchase.isv,
+        'Recargo': purchase.recargo,
         'Total': purchase.total,
+        'Devuelto': purchase.devuelto || 0,
         'Estatus': purchase.estatus,
         'Usuario': purchase.usuario
       }));
@@ -408,15 +417,16 @@ class PurchaseBookService {
       const tableTop = doc.y;
       const colWidths = {
         fecha: 55,
-        numero: 75,
-        proveedor: 110,
-        rtn: 75,
-        subtotal: 50,
-        descuento: 50,
-        recargo: 50,
-        isv: 50,
-        total: 55,
-        estatus: 80
+        numero: 70,
+        proveedor: 100,
+        rtn: 70,
+        subtotal: 48,
+        descuento: 48,
+        isv: 48,
+        recargo: 48,
+        total: 50,
+        devuelto: 50,
+        estatus: 73
       };
 
       let xPos = 30;
@@ -444,14 +454,17 @@ class PurchaseBookService {
       doc.text('DESCUENTO', xPos + 2, tableTop + 5, { width: colWidths.descuento, align: 'center' });
       xPos += colWidths.descuento;
 
-      doc.text('RECARGO', xPos + 2, tableTop + 5, { width: colWidths.recargo, align: 'center' });
-      xPos += colWidths.recargo;
-
       doc.text('ISV', xPos + 2, tableTop + 5, { width: colWidths.isv, align: 'center' });
       xPos += colWidths.isv;
 
+      doc.text('RECARGO', xPos + 2, tableTop + 5, { width: colWidths.recargo, align: 'center' });
+      xPos += colWidths.recargo;
+
       doc.text('TOTAL', xPos + 2, tableTop + 5, { width: colWidths.total, align: 'center' });
       xPos += colWidths.total;
+
+      doc.text('DEVUELTO', xPos + 2, tableTop + 5, { width: colWidths.devuelto, align: 'center' });
+      xPos += colWidths.devuelto;
 
       doc.text('ESTATUS', xPos + 2, tableTop + 5, { width: colWidths.estatus, align: 'center' });
 
@@ -482,12 +495,14 @@ class PurchaseBookService {
           xPos += colWidths.subtotal;
           doc.text('DESCUENTO', xPos + 2, yPos + 5, { width: colWidths.descuento, align: 'center' });
           xPos += colWidths.descuento;
-          doc.text('RECARGO', xPos + 2, yPos + 5, { width: colWidths.recargo, align: 'center' });
-          xPos += colWidths.recargo;
           doc.text('ISV', xPos + 2, yPos + 5, { width: colWidths.isv, align: 'center' });
           xPos += colWidths.isv;
+          doc.text('RECARGO', xPos + 2, yPos + 5, { width: colWidths.recargo, align: 'center' });
+          xPos += colWidths.recargo;
           doc.text('TOTAL', xPos + 2, yPos + 5, { width: colWidths.total, align: 'center' });
           xPos += colWidths.total;
+          doc.text('DEVUELTO', xPos + 2, yPos + 5, { width: colWidths.devuelto, align: 'center' });
+          xPos += colWidths.devuelto;
           doc.text('ESTATUS', xPos + 2, yPos + 5, { width: colWidths.estatus, align: 'center' });
 
           yPos += 22;
@@ -526,14 +541,17 @@ class PurchaseBookService {
         doc.text(formatCurrency(purchase.descuento), xPos + 2, yPos, { width: colWidths.descuento, align: 'right' });
         xPos += colWidths.descuento;
 
-        doc.text(formatCurrency(purchase.recargo), xPos + 2, yPos, { width: colWidths.recargo, align: 'right' });
-        xPos += colWidths.recargo;
-
         doc.text(formatCurrency(purchase.isv), xPos + 2, yPos, { width: colWidths.isv, align: 'right' });
         xPos += colWidths.isv;
 
+        doc.text(formatCurrency(purchase.recargo), xPos + 2, yPos, { width: colWidths.recargo, align: 'right' });
+        xPos += colWidths.recargo;
+
         doc.text(formatCurrency(purchase.total), xPos + 2, yPos, { width: colWidths.total, align: 'right' });
         xPos += colWidths.total;
+
+        doc.text(formatCurrency(purchase.devuelto || 0), xPos + 2, yPos, { width: colWidths.devuelto, align: 'right' });
+        xPos += colWidths.devuelto;
 
         doc.text(purchase.estatus || '', xPos + 2, yPos, { width: colWidths.estatus, align: 'center' });
 
@@ -556,13 +574,16 @@ class PurchaseBookService {
       doc.text(formatCurrency(totals.descuento_total), xPos + 2, yPos + 5, { width: colWidths.descuento, align: 'right' });
       xPos += colWidths.descuento;
 
-      doc.text(formatCurrency(totals.recargo_total), xPos + 2, yPos + 5, { width: colWidths.recargo, align: 'right' });
-      xPos += colWidths.recargo;
-
       doc.text(formatCurrency(totals.isv_total), xPos + 2, yPos + 5, { width: colWidths.isv, align: 'right' });
       xPos += colWidths.isv;
 
+      doc.text(formatCurrency(totals.recargo_total), xPos + 2, yPos + 5, { width: colWidths.recargo, align: 'right' });
+      xPos += colWidths.recargo;
+
       doc.text(formatCurrency(totals.total_total), xPos + 2, yPos + 5, { width: colWidths.total, align: 'right' });
+      xPos += colWidths.total;
+
+      doc.text(formatCurrency(totals.total_devuelto), xPos + 2, yPos + 5, { width: colWidths.devuelto, align: 'right' });
 
       // Resumen adicional
       yPos += 30;

@@ -137,7 +137,14 @@ class BillingService {
       });
 
       // Calculate totals to get the total amount
-      const totals = Invoice.calculateTotals(items, invoiceData.discount_type, invoiceData.discount_value);
+      const totals = Invoice.calculateTotals(
+        items,
+        invoiceData.discount_type,
+        invoiceData.discount_value,
+        invoiceData.shipping_cost,
+        invoiceData.coupons_discount,
+        invoiceData.offers_discount
+      );
 
       // If invoice is marked as paid, set paid_amount to total
       if (invoiceData.payment_status === 'paid') {

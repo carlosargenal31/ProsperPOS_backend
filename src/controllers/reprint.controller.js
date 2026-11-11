@@ -109,7 +109,7 @@ class ReprintController {
               'FACTURA' as document_type
             FROM invoices i
             WHERE i.deleted_at IS NULL
-              AND i.payment_status IN ('paid', 'pending', 'partial')
+              AND i.payment_status IN ('paid', 'pending', 'partial', 'returned')
           `;
 
           if (searchQuery) {
@@ -157,6 +157,9 @@ class ReprintController {
               CONCAT(u.first_name, ' ', u.last_name) as created_by_name,
               pi.total,
               pi.status,
+              pi.orden_compra,
+              pi.constancia_exonerado,
+              pi.registro_sag,
               'FACT EN ESPERA' as document_type
             FROM pending_invoices pi
             LEFT JOIN users u ON pi.created_by = u.id
@@ -358,6 +361,18 @@ class ReprintController {
         console.log('===========================');
       }
 
+      if (documentType === 'DEVOLUCION') {
+        console.log('=== ENVIANDO DEVOLUCIÓN AL FRONTEND ===');
+        console.log('Return ID:', documentData.id);
+        console.log('subtotal_bruto:', documentData.subtotal_bruto);
+        console.log('descuento:', documentData.descuento);
+        console.log('recargo:', documentData.recargo);
+        console.log('importe_gravado_15:', documentData.importe_gravado_15);
+        console.log('isv_15:', documentData.isv_15);
+        console.log('total_final:', documentData.total_final);
+        console.log('=======================================');
+      }
+
       res.json({
         success: true,
         data: documentData
@@ -400,6 +415,26 @@ class ReprintController {
 
     const creditNote = results[0];
 
+    // AGREGAR DESGLOSE DE IMPUESTOS
+    // IMPORTANTE: el subtotal en credit_notes es NETO (ya con descuento aplicado)
+    // Para obtener el BRUTO, sumamos el subtotal + descuento
+    const subtotalNeto = parseFloat(creditNote.subtotal || 0);
+    const descuento = parseFloat(creditNote.discount || 0);
+    const subtotalBruto = subtotalNeto + descuento;
+    const recargo = parseFloat(creditNote.shipping_cost || 0);
+    const taxAmount = parseFloat(creditNote.tax || 0);
+
+    creditNote.subtotal_bruto = subtotalBruto;
+    creditNote.descuento = descuento;
+    creditNote.importe_exento = 0;
+    creditNote.importe_exonerado = 0;
+    creditNote.importe_gravado_15 = subtotalNeto;
+    creditNote.importe_gravado_18 = 0;
+    creditNote.isv_15 = taxAmount;
+    creditNote.isv_18 = 0;
+    creditNote.recargo = recargo;
+    creditNote.total_final = parseFloat(creditNote.total || 0);
+
     // Obtener items
     const itemsSql = `
       SELECT
@@ -426,6 +461,7 @@ class ReprintController {
         sr.correlative,
         i.customer_rtn,
         i.invoice_number,
+        i.shipping_cost,
         b.nombre as branch_name
       FROM sales_returns sr
       LEFT JOIN invoices i ON sr.invoice_id = i.id
@@ -437,6 +473,26 @@ class ReprintController {
     if (!results || results.length === 0) return null;
 
     const returnData = results[0];
+
+    // AGREGAR DESGLOSE DE IMPUESTOS
+    // IMPORTANTE: el subtotal en sales_returns es NETO (ya con descuento aplicado)
+    // Para obtener el BRUTO, sumamos el subtotal + descuento
+    const subtotalNeto = parseFloat(returnData.subtotal || 0);
+    const descuento = parseFloat(returnData.discount || 0);
+    const subtotalBruto = subtotalNeto + descuento;
+    const recargo = parseFloat(returnData.shipping_cost || 0);
+    const taxAmount = parseFloat(returnData.tax || 0);
+
+    returnData.subtotal_bruto = subtotalBruto;
+    returnData.descuento = descuento;
+    returnData.importe_exento = 0;
+    returnData.importe_exonerado = 0;
+    returnData.importe_gravado_15 = subtotalNeto;
+    returnData.importe_gravado_18 = 0;
+    returnData.isv_15 = taxAmount;
+    returnData.isv_18 = 0;
+    returnData.recargo = recargo;
+    returnData.total_final = parseFloat(returnData.total || 0);
 
     // Obtener items
     const itemsSql = `
@@ -499,6 +555,25 @@ class ReprintController {
     console.log('registro_sag:', invoice.registro_sag);
     console.log('============================');
 
+    // AGREGAR DESGLOSE DE IMPUESTOS
+    const subtotalBruto = parseFloat(invoice.subtotal || 0);
+    const descuento = parseFloat(invoice.discount_amount || 0);
+    const recargo = parseFloat(invoice.shipping_cost || 0);
+    const taxAmount = parseFloat(invoice.tax_amount || 0);
+
+    // Por ahora, asumimos que todo el monto es gravado al 15%
+    // En el futuro se pueden agregar campos para exento, exonerado y 18%
+    invoice.subtotal_bruto = subtotalBruto;
+    invoice.descuento = descuento;
+    invoice.importe_exento = 0;
+    invoice.importe_exonerado = 0;
+    invoice.importe_gravado_15 = subtotalBruto - descuento;
+    invoice.importe_gravado_18 = 0;
+    invoice.isv_15 = taxAmount;
+    invoice.isv_18 = 0;
+    invoice.recargo = recargo;
+    invoice.total_final = parseFloat(invoice.total || 0);
+
     // Obtener items
     const itemsSql = `
       SELECT
@@ -524,6 +599,12 @@ class ReprintController {
         pi.*,
         pi.customer_rtn,
         pi.document_number as correlative,
+        pi.discount,
+        pi.discount_type,
+        pi.discount_value,
+        pi.orden_compra,
+        pi.constancia_exonerado,
+        pi.registro_sag,
         b.nombre as branch_name
       FROM pending_invoices pi
       LEFT JOIN branches b ON pi.branch_id = b.id
@@ -534,6 +615,23 @@ class ReprintController {
     if (!results || results.length === 0) return null;
 
     const order = results[0];
+
+    // AGREGAR DESGLOSE DE IMPUESTOS
+    const subtotalBruto = parseFloat(order.subtotal || 0);
+    const descuento = parseFloat(order.discount || 0);
+    const recargo = parseFloat(order.shipping_cost || 0);
+    const taxAmount = parseFloat(order.tax || 0);
+
+    order.subtotal_bruto = subtotalBruto;
+    order.descuento = descuento;
+    order.importe_exento = 0;
+    order.importe_exonerado = 0;
+    order.importe_gravado_15 = subtotalBruto - descuento;
+    order.importe_gravado_18 = 0;
+    order.isv_15 = taxAmount;
+    order.isv_18 = 0;
+    order.recargo = recargo;
+    order.total_final = parseFloat(order.total || 0);
 
     // Obtener items
     const itemsSql = `
@@ -570,6 +668,23 @@ class ReprintController {
     if (!results || results.length === 0) return null;
 
     const quote = results[0];
+
+    // AGREGAR DESGLOSE DE IMPUESTOS
+    const subtotalBruto = parseFloat(quote.subtotal || 0);
+    const descuento = parseFloat(quote.discount || 0);
+    const recargo = parseFloat(quote.shipping_cost || 0);
+    const taxAmount = parseFloat(quote.tax || 0);
+
+    quote.subtotal_bruto = subtotalBruto;
+    quote.descuento = descuento;
+    quote.importe_exento = 0;
+    quote.importe_exonerado = 0;
+    quote.importe_gravado_15 = subtotalBruto - descuento;
+    quote.importe_gravado_18 = 0;
+    quote.isv_15 = taxAmount;
+    quote.isv_18 = 0;
+    quote.recargo = recargo;
+    quote.total_final = parseFloat(quote.total || 0);
 
     // Obtener items
     const itemsSql = `

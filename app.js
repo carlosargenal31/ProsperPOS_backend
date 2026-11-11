@@ -156,6 +156,7 @@ app.use(express.urlencoded({
 // Archivos estáticos
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/docs', express.static(path.join(__dirname, 'docs')));
+app.use('/manuales', express.static(path.join(__dirname, '../template/public/manuales')));
 
 // ===================================================================
 // LOGGING

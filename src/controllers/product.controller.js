@@ -323,7 +323,12 @@ class ProductController {
       return sendSuccessResponse(res, product, 'Producto actualizado exitosamente');
 
     } catch (error) {
-      logger.error('Error updating product:', error);
+      logger.error('Error updating product:', {
+        error: error.message,
+        stack: error.stack,
+        productId: id,
+        userId: req.user?.id
+      });
 
       if (error.message.includes('ya existe')) {
         return sendErrorResponse(res, 409, error.message);
@@ -333,7 +338,7 @@ class ProductController {
         return sendErrorResponse(res, 404, error.message);
       }
 
-      return sendErrorResponse(res, 500, 'Error al actualizar producto');
+      return sendErrorResponse(res, 500, `Error al actualizar producto: ${error.message}`);
     }
   }
 

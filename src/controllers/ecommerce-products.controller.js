@@ -107,13 +107,18 @@ class EcommerceProductsController {
             discountValue = offer.descuento_monto;
           }
         } else if (offer.tipo_aplicacion === 'grupo') {
-          // Aplicar a productos que coincidan con la categoría o subcategoría
+          // Aplicar a productos que coincidan con producto, categoría o subcategoría
           discountValue = offer.valor_descuento;
           targetProductIds = productIds.filter(pid => {
             const pInfo = productInfoMap[pid];
             if (!pInfo) {
               console.log(`[OFFER DEBUG] Product ${pid} not found in productInfoMap`);
               return false;
+            }
+
+            // Si la oferta tiene producto_id específico, SOLO aplicar a ese producto
+            if (offer.producto_id) {
+              return pid === offer.producto_id;
             }
 
             // Si la oferta tiene subcategoría, verificar coincidencia
