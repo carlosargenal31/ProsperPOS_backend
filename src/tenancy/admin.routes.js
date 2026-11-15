@@ -9,7 +9,13 @@ const bcrypt = require('bcryptjs');
 const logger = require('../utils/logger');
 const db = require('../utils/database');
 const control = require('./control-db');
-const { provisionTenant, registerExistingTenant, templateReady } = require('./provisioning');
+const multer = require('multer');
+const { provisionTenant, registerExistingTenant, importTenantFromDump, templateReady } = require('./provisioning');
+
+const dumpUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: (parseInt(process.env.MAX_DUMP_MB, 10) || 300) * 1024 * 1024 }
+});
 const { subscriptionAccess, todayHonduras, addDays, toDateStr, cleanHost } = require('./tenant.middleware');
 
 const router = express.Router();
@@ -185,6 +191,20 @@ router.post('/tenants', wrap(async (req, res) => {
     ? await registerExistingTenant({ ...data, db_name: data.existing_db }, req.admin.id)
     : await provisionTenant(data, req.admin.id);
   ok(res, result, 'Empresa creada');
+}));
+
+// Crear empresa desde un respaldo .sql (mysqldump) con todos sus datos
+router.post('/tenants/import', dumpUpload.single('dump'), wrap(async (req, res) => {
+  if (!req.file) return fail(res, 400, 'Adjunte el archivo .sql');
+  const data = { ...req.body };
+  if (data.domains) {
+    try { data.domains = JSON.parse(data.domains); } catch { data.domains = []; }
+    data.domains = data.domains.map(d => ({ ...d, host: cleanHost(d.host) })).filter(d => d.host);
+  }
+  if (data.plan_id === '') delete data.plan_id;
+  if (data.monthly_price === '') data.monthly_price = null;
+  const result = await importTenantFromDump(data, req.file.buffer.toString('utf8'), req.admin.id);
+  ok(res, result, `Empresa importada (${result.statements} sentencias)`);
 }));
 
 const EDITABLE = ['name', 'legal_name', 'rtn', 'business_type', 'contact_name', 'contact_email', 'contact_phone',

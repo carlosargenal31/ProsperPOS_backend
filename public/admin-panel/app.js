@@ -8,10 +8,11 @@
   const setToken = (t) => { try { t ? localStorage.setItem(TOKEN_KEY, t) : localStorage.removeItem(TOKEN_KEY); } catch {} };
 
   async function api(method, path, body) {
-    const headers = { 'Content-Type': 'application/json' };
+    const isForm = body instanceof FormData;
+    const headers = isForm ? {} : { 'Content-Type': 'application/json' };
     const token = getToken();
     if (token) headers.Authorization = `Bearer ${token}`;
-    const res = await fetch(API + path, { method, headers, body: body ? JSON.stringify(body) : undefined });
+    const res = await fetch(API + path, { method, headers, body: body ? (isForm ? body : JSON.stringify(body)) : undefined });
     let data = null;
     try { data = await res.json(); } catch {}
     if (res.status === 401 && path !== '/auth/login') {
@@ -139,6 +140,27 @@
           plan_id: f.plan_id || null, monthly_price: f.monthly_price === '' ? null : Number(f.monthly_price),
           domains
         };
+        if (f.mode === 'dump') {
+          const file = this.$refs.dumpFile && this.$refs.dumpFile.files[0];
+          if (!file) { this.notify('Seleccione el archivo .sql', 'danger'); return; }
+          const fd = new FormData();
+          Object.entries(body).forEach(([k, v]) => {
+            if (v === null || v === undefined) return;
+            fd.append(k, k === 'domains' ? JSON.stringify(v) : v);
+          });
+          fd.append('status', 'active');
+          if (f.paid_until) fd.append('paid_until', f.paid_until);
+          fd.append('dump', file);
+          await this.run(async () => {
+            this.notify('Importando respaldo... puede tardar unos minutos', 'info');
+            const r = await api('POST', '/tenants/import', fd);
+            this.modal = null;
+            this.notify(`Empresa importada (${r.db_name})`);
+            await this.loadTenants();
+            await this.openTenant(r.id);
+          });
+          return;
+        }
         if (f.mode === 'existing') {
           Object.assign(body, { existing_db: f.existing_db, status: 'active', paid_until: f.paid_until || null });
         } else {
@@ -481,6 +503,7 @@
       <h2 class="h5 mb-3">Nueva empresa</h2>
       <div class="btn-group mb-3 w-100">
         <button type="button" class="btn btn-sm" :class="form.mode==='new' ? 'btn-dark' : 'btn-outline-dark'" @click="form.mode='new'">Empresa nueva (base vacía)</button>
+        <button type="button" class="btn btn-sm" :class="form.mode==='dump' ? 'btn-dark' : 'btn-outline-dark'" @click="form.mode='dump'">Desde respaldo .sql</button>
         <button type="button" class="btn btn-sm" :class="form.mode==='existing' ? 'btn-dark' : 'btn-outline-dark'" @click="form.mode='existing'">Base existente</button>
       </div>
       <form @submit.prevent="createTenant" class="row g-2">
@@ -506,11 +529,16 @@
           <div class="col-md-6"><label class="form-label small">Correo *</label><input v-model="form.admin.email" type="email" class="form-control" required></div>
           <div class="col-md-6"><label class="form-label small">Contraseña inicial * (mín. 8)</label><input v-model="form.admin.password" type="text" minlength="8" class="form-control" autocomplete="new-password" required></div>
         </template>
+        <template v-else-if="form.mode==='dump'">
+          <div class="col-md-8"><label class="form-label small">Respaldo de la base (.sql de mysqldump) *</label><input ref="dumpFile" type="file" accept=".sql" class="form-control" required></div>
+          <div class="col-md-4"><label class="form-label small">Pagada hasta</label><input v-model="form.paid_until" type="date" class="form-control"></div>
+          <div class="col-12 small pp-muted">Se crea una base nueva con todos los datos del respaldo (usuarios, productos, facturas...). Los usuarios entran con sus mismas contraseñas.</div>
+        </template>
         <template v-else>
           <div class="col-md-6"><label class="form-label small">Nombre de la base existente *</label><input v-model="form.existing_db" class="form-control pp-domain" required></div>
           <div class="col-md-6"><label class="form-label small">Pagada hasta</label><input v-model="form.paid_until" type="date" class="form-control"></div>
         </template>
-        <div class="col-12 text-end mt-3"><button type="button" class="btn btn-light me-2" @click="modal=null">Cancelar</button><button class="btn btn-pp" :disabled="loading">{{ loading ? 'Creando...' : 'Crear empresa' }}</button></div>
+        <div class="col-12 text-end mt-3"><button type="button" class="btn btn-light me-2" @click="modal=null">Cancelar</button><button class="btn btn-pp" :disabled="loading">{{ loading ? (form.mode==='dump' ? 'Importando...' : 'Creando...') : 'Crear empresa' }}</button></div>
       </form>
     </div>
   </div>

@@ -260,7 +260,53 @@ async function registerExistingTenant(data, adminId = null) {
   return { id: insert.insertId, slug, db_name: data.db_name };
 }
 
+/**
+ * Crea una empresa a partir de un respaldo .sql (mysqldump) con todos sus
+ * datos. Se usa para migrar empresas que ya trabajaban con ProsperPOS.
+ */
+async function importTenantFromDump(data, sqlText, adminId = null) {
+  const slug = String(data.slug || '').trim().toLowerCase();
+  if (!SLUG_RE.test(slug)) throw Object.assign(new Error('Identificador inválido: use letras minúsculas, números y guiones'), { status: 400 });
+  if (!data.name) throw Object.assign(new Error('El nombre de la empresa es requerido'), { status: 400 });
+  if (!sqlText || sqlText.length < 100) throw Object.assign(new Error('El archivo de respaldo está vacío'), { status: 400 });
+
+  const dbName = dbNameForSlug(slug);
+  const dup = await control.query('SELECT id FROM tenants WHERE slug = ? OR db_name = ?', [slug, dbName]);
+  if (dup.length) throw Object.assign(new Error('Ya existe una empresa con ese identificador'), { status: 409 });
+
+  let conn;
+  let created = false;
+  try {
+    conn = await serverConnection();
+    const [existing] = await conn.query('SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?', [dbName]);
+    if (existing.length) throw Object.assign(new Error(`La base ${dbName} ya existe en el servidor`), { status: 409 });
+    await conn.query(`CREATE DATABASE \`${dbName}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`);
+    created = true;
+    await conn.changeUser({ database: dbName });
+    const { importSql } = require('./sql-import');
+    const { executed } = await importSql(conn, sqlText);
+    logger.info(`📥 Respaldo importado en ${dbName}: ${executed} sentencias`);
+
+    const result = await registerExistingTenant({ ...data, slug, db_name: dbName, status: data.status || 'active' }, adminId);
+
+    // Migraciones (agrega columnas nuevas que el respaldo no tenga)
+    const DatabaseMigrator = require('../utils/database-migrator');
+    await runWithTenant({ ...result, name: data.name }, () => DatabaseMigrator.runMigrations()).catch(error => {
+      logger.error(`Migraciones después de importar ${slug}:`, error);
+    });
+    return { ...result, statements: executed };
+  } catch (error) {
+    if (created && conn) {
+      await conn.query(`DROP DATABASE IF EXISTS \`${dbName}\``).catch(() => {});
+    }
+    throw Object.assign(new Error(`No se pudo importar el respaldo: ${error.message}`), { status: error.status || 500 });
+  } finally {
+    if (conn) await conn.end().catch(() => {});
+  }
+}
+
 module.exports = {
+  importTenantFromDump,
   provisionTenant,
   registerExistingTenant,
   dbNameForSlug,
