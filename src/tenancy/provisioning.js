@@ -43,8 +43,32 @@ function readTemplate(file) {
   return fs.existsSync(full) ? fs.readFileSync(full, 'utf8') : '';
 }
 
+/**
+ * Plantilla: si TEMPLATE_SOURCE_DB está definida se genera en el momento a
+ * partir de esa base (ej. pp_ceramicas_universal); si no, se leen los
+ * archivos de database/tenant-template.
+ */
+async function loadTemplate() {
+  const source = process.env.TEMPLATE_SOURCE_DB;
+  if (source) {
+    if (!/^[a-zA-Z0-9_]+$/.test(source)) throw new Error('TEMPLATE_SOURCE_DB inválido');
+    const cfg = db.dbConfig;
+    const conn = await mysql.createConnection({
+      host: cfg.host, port: cfg.port, user: cfg.user, password: cfg.password,
+      database: source, charset: 'utf8mb4', dateStrings: true
+    });
+    try {
+      const { buildTemplate } = require('./template-builder');
+      return await buildTemplate(conn, source);
+    } finally {
+      await conn.end().catch(() => {});
+    }
+  }
+  return { schema: readTemplate('schema.sql'), seed: readTemplate('seed.sql') };
+}
+
 function templateReady() {
-  return Boolean(readTemplate('schema.sql').trim());
+  return Boolean(process.env.TEMPLATE_SOURCE_DB) || Boolean(readTemplate('schema.sql').trim());
 }
 
 /** Datos que se personalizan con la información de la empresa nueva */
@@ -162,10 +186,11 @@ async function provisionTenant(data, adminId = null) {
     conn = await serverConnection();
     await conn.query(`CREATE DATABASE \`${dbName}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`);
     await conn.changeUser({ database: dbName });
+    const template = await loadTemplate();
+    if (!template.schema.trim()) throw new Error('La plantilla está vacía');
     await conn.query('SET FOREIGN_KEY_CHECKS = 0');
-    await conn.query(readTemplate('schema.sql'));
-    const seed = readTemplate('seed.sql');
-    if (seed.trim()) await conn.query(seed);
+    await conn.query(template.schema);
+    if (template.seed.trim()) await conn.query(template.seed);
     await conn.query('SET FOREIGN_KEY_CHECKS = 1');
 
     const tenant = { id: tenantId, slug, name: data.name, legal_name: data.legal_name, rtn: data.rtn,
