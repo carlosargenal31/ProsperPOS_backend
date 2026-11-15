@@ -4,6 +4,7 @@
 
 const mysql = require('mysql2/promise');
 const logger = require('./logger');
+const { getCurrentDatabase } = require('../tenancy/context');
 
 // ===================================================================
 // CONFIGURACIÓN DE CONEXIÓN
@@ -55,7 +56,27 @@ const dbConfig = {
 // POOL DE CONEXIONES
 // ===================================================================
 
-let pool = null;
+// Un pool por base de datos (una base de datos por empresa en modo multi-empresa)
+const pools = new Map();
+
+function currentDatabase() {
+  return getCurrentDatabase(dbConfig.database);
+}
+
+function getPool(database = currentDatabase()) {
+  let pool = pools.get(database);
+  if (!pool) {
+    const isDefault = database === dbConfig.database;
+    pool = mysql.createPool({
+      ...dbConfig,
+      database,
+      // Las empresas comparten el servidor MySQL: pools pequeños por empresa
+      connectionLimit: isDefault ? dbConfig.connectionLimit : (parseInt(process.env.TENANT_DB_CONNECTION_LIMIT) || 5)
+    });
+    pools.set(database, pool);
+  }
+  return pool;
+}
 
 // ===================================================================
 // FUNCIONES DE CONEXIÓN
@@ -66,13 +87,12 @@ let pool = null;
  */
 async function connectDatabase() {
   try {
-    if (pool) {
-      logger.info('Pool de conexiones ya existe');
+    const database = currentDatabase();
+    const exists = pools.has(database);
+    const pool = getPool(database);
+    if (exists) {
       return pool;
     }
-
-    // Crear pool de conexiones
-    pool = mysql.createPool(dbConfig);
 
     // Verificar conexión y configurar UTF-8
     const connection = await pool.getConnection();
@@ -83,7 +103,7 @@ async function connectDatabase() {
     connection.release();
 
     logger.info('Pool de conexiones MySQL creado exitosamente');
-    logger.info(`Base de datos: ${dbConfig.database}`);
+    logger.info(`Base de datos: ${database}`);
     logger.info(`Host: ${dbConfig.host}:${dbConfig.port}`);
     
     return pool;
@@ -98,10 +118,7 @@ async function connectDatabase() {
  */
 async function getConnection() {
   try {
-    if (!pool) {
-      await connectDatabase();
-    }
-    return await pool.getConnection();
+    return await getPool().getConnection();
   } catch (error) {
     logger.error('Error obteniendo conexión:', error.message);
     throw error;
@@ -113,11 +130,11 @@ async function getConnection() {
  */
 async function closeDatabase() {
   try {
-    if (pool) {
+    for (const [name, pool] of pools) {
       await pool.end();
-      pool = null;
-      logger.info('Pool de conexiones cerrado');
+      pools.delete(name);
     }
+    logger.info('Pools de conexiones cerrados');
   } catch (error) {
     logger.error('Error cerrando pool:', error.message);
     throw error;
@@ -234,7 +251,7 @@ async function tableExists(tableName) {
       WHERE table_schema = ? AND table_name = ?
     `;
     
-    const result = await query(sql, [dbConfig.database, tableName]);
+    const result = await query(sql, [currentDatabase(), tableName]);
     return result[0].count > 0;
   } catch (error) {
     logger.error(`Error verificando tabla ${tableName}:`, error.message);
@@ -271,7 +288,7 @@ async function getDatabaseStats() {
       SELECT table_name, table_rows 
       FROM information_schema.tables 
       WHERE table_schema = ?
-    `, [dbConfig.database]);
+    `, [currentDatabase()]);
 
     stats.tables = tablesResult;
     stats.totalRecords = tablesResult.reduce((sum, table) => sum + (table.table_rows || 0), 0);
@@ -281,7 +298,7 @@ async function getDatabaseStats() {
       SELECT ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS size_mb
       FROM information_schema.tables 
       WHERE table_schema = ?
-    `, [dbConfig.database]);
+    `, [currentDatabase()]);
 
     stats.size = `${sizeResult[0].size_mb || 0} MB`;
 
@@ -331,5 +348,8 @@ module.exports = {
   tableExists,
   getTableStructure,
   getDatabaseStats,
-  pool: () => pool
+  pool: () => getPool(),
+  getPool,
+  currentDatabase,
+  dbConfig
 };

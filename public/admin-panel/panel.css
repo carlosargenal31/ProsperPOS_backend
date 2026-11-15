@@ -1,0 +1,57 @@
+:root {
+  --pp-ink: #0f172a;
+  --pp-ink-2: #1e293b;
+  --pp-accent: #f97316;
+  --pp-accent-ink: #9a3412;
+  --pp-bg: #f1f5f9;
+  --pp-card: #ffffff;
+  --pp-muted: #64748b;
+  --pp-border: #e2e8f0;
+}
+[v-cloak] { display: none; }
+body { background: var(--pp-bg); color: var(--pp-ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+
+.pp-login { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; background: linear-gradient(135deg, var(--pp-ink), var(--pp-ink-2)); }
+.pp-login .card { width: 100%; max-width: 400px; border: 0; border-radius: 16px; }
+.pp-brand { font-weight: 800; letter-spacing: -.02em; }
+.pp-brand span { color: var(--pp-accent); }
+
+.pp-shell { display: flex; min-height: 100vh; }
+.pp-side { width: 232px; background: var(--pp-ink); color: #cbd5e1; padding: 20px 12px; flex-shrink: 0; position: sticky; top: 0; height: 100vh; }
+.pp-side .pp-brand { color: #fff; font-size: 20px; padding: 0 10px 20px; }
+.pp-side a { display: block; color: #cbd5e1; text-decoration: none; padding: 9px 12px; border-radius: 8px; margin-bottom: 2px; font-size: 14px; cursor: pointer; }
+.pp-side a:hover { background: var(--pp-ink-2); color: #fff; }
+.pp-side a.active { background: var(--pp-accent); color: #fff; font-weight: 600; }
+.pp-side .pp-user { position: absolute; bottom: 16px; left: 12px; right: 12px; font-size: 12px; color: #94a3b8; }
+.pp-main { flex: 1; padding: 24px; min-width: 0; }
+.pp-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.pp-top h1 { font-size: 22px; font-weight: 700; margin: 0; }
+
+.pp-card { background: var(--pp-card); border: 1px solid var(--pp-border); border-radius: 12px; padding: 18px; }
+.pp-kpi .label { color: var(--pp-muted); font-size: 13px; }
+.pp-kpi .value { font-size: 26px; font-weight: 700; }
+.table { font-size: 14px; }
+.table td, .table th { vertical-align: middle; }
+.pp-badge { font-size: 12px; padding: 3px 8px; border-radius: 999px; font-weight: 600; display: inline-block; }
+.pp-badge.trial { background: #e0f2fe; color: #075985; }
+.pp-badge.active { background: #dcfce7; color: #166534; }
+.pp-badge.suspended { background: #fee2e2; color: #991b1b; }
+.pp-badge.cancelled { background: #e2e8f0; color: #334155; }
+.pp-access.ok { color: #166534; }
+.pp-access.warning { color: #b45309; }
+.pp-access.blocked { color: #b91c1c; }
+.pp-muted { color: var(--pp-muted); }
+.btn-pp { background: var(--pp-accent); border-color: var(--pp-accent); color: #fff; }
+.btn-pp:hover { background: #ea580c; border-color: #ea580c; color: #fff; }
+.pp-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, .55); display: flex; align-items: flex-start; justify-content: center; padding: 40px 16px; z-index: 1000; overflow-y: auto; }
+.pp-modal .pp-card { width: 100%; max-width: 640px; }
+.pp-toast { position: fixed; right: 16px; bottom: 16px; z-index: 2000; max-width: 360px; }
+.pp-domain { font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
+
+@media (max-width: 860px) {
+  .pp-shell { flex-direction: column; }
+  .pp-side { width: 100%; height: auto; position: static; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+  .pp-side .pp-brand { width: 100%; padding-bottom: 8px; }
+  .pp-side .pp-user { position: static; width: 100%; margin-top: 8px; }
+  .pp-main { padding: 16px; }
+}

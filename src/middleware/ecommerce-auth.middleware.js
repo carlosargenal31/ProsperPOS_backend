@@ -3,6 +3,7 @@
 // ===================================================================
 
 const jwt = require('jsonwebtoken');
+const { getJwtSecret } = require('../tenancy/context');
 const { logError } = require('../utils/logger');
 
 /**
@@ -25,7 +26,7 @@ const verifyCustomerToken = (req, res, next) => {
     // Verificar token
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET || 'prosperpos-secret-key'
+      getJwtSecret()
     );
 
     // Verificar que es un token de cliente web
@@ -84,7 +85,7 @@ const optionalCustomerAuth = (req, res, next) => {
 
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET || 'prosperpos-secret-key'
+      getJwtSecret()
     );
 
     if (decoded.type === 'web_customer' || decoded.type === 'ecommerce_customer') {

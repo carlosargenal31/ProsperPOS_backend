@@ -2,7 +2,8 @@
 // PROSPERPOS - CONTROLADOR DE AUTENTICACIÓN E-COMMERCE
 // ===================================================================
 
-const WebCustomer = require('../models/web-customer.model');
+const WebCustomer = require('../models/web-customer.model');
+const { getJwtSecret } = require('../tenancy/context');
 const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');
 
@@ -65,7 +66,7 @@ class EcommerceAuthController {
           email: result.email,
           type: 'web_customer'
         },
-        process.env.JWT_SECRET || 'prosperpos-secret-key',
+        getJwtSecret(),
         { expiresIn: '30d' }
       );
 
@@ -115,7 +116,7 @@ class EcommerceAuthController {
           email: customer.email,
           type: 'web_customer'
         },
-        process.env.JWT_SECRET || 'prosperpos-secret-key',
+        getJwtSecret(),
         { expiresIn: '30d' }
       );
 

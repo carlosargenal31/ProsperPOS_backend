@@ -2,7 +2,8 @@
 // PROSPERPOS - MIDDLEWARE DE AUTENTICACIÓN (CORREGIDO)
 // ===================================================================
 
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
+const { getJwtSecret } = require('../tenancy/context');
 const db = require('../utils/database');
 const logger = require('../utils/logger');
 const { sendErrorResponse } = require('../utils/response');
@@ -34,7 +35,7 @@ const authenticateToken = async (req, res, next) => {
     const token = authHeader.substring(7); // Remover 'Bearer '
 
     // Verificar token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'prosperpos_secret_key');
+    const decoded = jwt.verify(token, getJwtSecret());
     
     // Buscar usuario en la base de datos
     const userQuery = `

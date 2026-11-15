@@ -22,6 +22,12 @@ const rateLimitMiddleware = require('./src/middleware/rate-limit.middleware');
 // Rutas principales
 const routes = require('./src/routes');
 
+// Multi-empresa
+const { isMultiTenant, runWithTenant } = require('./src/tenancy/context');
+const { tenantMiddleware } = require('./src/tenancy/tenant.middleware');
+const controlDb = require('./src/tenancy/control-db');
+const adminRoutes = require('./src/tenancy/admin.routes');
+
 // ===================================================================
 // CREAR APLICACIÓN EXPRESS
 // ===================================================================
@@ -42,8 +48,22 @@ async function initializeDatabase() {
       throw new Error('No se pudo conectar a la base de datos');
     }
 
-    // Ejecutar migraciones automáticas
-    await DatabaseMigrator.runMigrations();
+    if (isMultiTenant()) {
+      // Base de control (empresas, planes, pagos) y migraciones de cada empresa
+      await controlDb.initControlDatabase();
+      const tenants = await controlDb.listActiveTenants();
+      for (const tenant of tenants) {
+        try {
+          logger.info(`🔄 Migraciones de ${tenant.name} (${tenant.db_name})`);
+          await runWithTenant(tenant, () => DatabaseMigrator.runMigrations());
+        } catch (error) {
+          logger.error(`❌ Migraciones fallaron para ${tenant.slug}:`, error);
+        }
+      }
+    } else {
+      // Ejecutar migraciones automáticas (una sola empresa)
+      await DatabaseMigrator.runMigrations();
+    }
     
     logger.info('📊 Base de datos inicializada correctamente');
     return true;
@@ -103,26 +123,38 @@ const allowedOrigins = [
   .map(origin => (origin || '').trim().replace(/\/$/, ''))
   .filter(Boolean);
 
-app.use(cors({
-  origin: function (origin, callback) {
-    // Permitir requests sin origin (como mobile apps, curl requests, y Google OAuth)
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      // Permitir también orígenes de Google para OAuth
-      if (origin && origin.includes('google.com')) {
-        callback(null, true);
-      } else {
-        callback(new Error('No permitido por CORS'));
-      }
-    }
-  },
+const corsOptions = {
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Access-Control-Allow-Origin'],
-  exposedHeaders: ['Content-Length', 'X-Request-Id']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Access-Control-Allow-Origin', 'X-Tenant-Host'],
+  exposedHeaders: ['Content-Length', 'X-Request-Id', 'X-Subscription-Warning', 'X-Tenant']
+};
+const ROOT_DOMAIN = (process.env.ROOT_DOMAIN || '').toLowerCase();
+
+async function isOriginAllowed(origin, req) {
+  // Sin Origin: apps móviles, curl, Google OAuth
+  if (!origin) return true;
+  const clean = origin.replace(/\/$/, '');
+  if (allowedOrigins.includes(clean)) return true;
+  let host;
+  try { host = new URL(clean).hostname.toLowerCase(); } catch { return false; }
+  // Mismo dominio (panel, o frontends que pasan por el proxy de Vercel)
+  const reqHost = (req.get('X-Forwarded-Host') || req.get('Host') || '').split(',')[0].trim().toLowerCase().replace(/:\d+$/, '');
+  if (host === reqHost) return true;
+  if (host.endsWith('google.com')) return true;
+  // Subdominios propios (ej. ceramicas.myprosperpos.com)
+  if (ROOT_DOMAIN && (host === ROOT_DOMAIN || host.endsWith(`.${ROOT_DOMAIN}`))) return true;
+  // Dominios propios de cada empresa registrados en el panel
+  if (isMultiTenant()) {
+    try { return Boolean(await controlDb.findTenantByHost(host)); } catch { return false; }
+  }
+  return false;
+}
+
+app.use(cors((req, callback) => {
+  isOriginAllowed(req.get('Origin'), req)
+    .then(allowed => callback(allowed ? null : new Error('No permitido por CORS'), { ...corsOptions, origin: allowed }))
+    .catch(error => callback(error));
 }));
 
 // Rate limiting - usando el middleware importado
@@ -269,8 +301,29 @@ if (process.env.NODE_ENV === 'development') {
   });
 }
 
-// Rutas de la API
-app.use('/api', routes);
+// Panel del propietario: admin.<dominio> y /panel
+const adminPanelDir = path.join(__dirname, 'public', 'admin-panel');
+// El panel usa plantillas de Vue compiladas en el navegador (requiere 'unsafe-eval')
+const panelCsp = (req, res, next) => {
+  res.setHeader('Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'");
+  next();
+};
+app.use('/panel', panelCsp, express.static(adminPanelDir));
+app.use((req, res, next) => {
+  const host = (req.get('X-Forwarded-Host') || req.get('Host') || '').toLowerCase();
+  if (host.startsWith('admin.') && !req.path.startsWith('/api') && req.path !== '/health') {
+    return panelCsp(req, res, () =>
+      express.static(adminPanelDir)(req, res, () => res.sendFile(path.join(adminPanelDir, 'index.html'))));
+  }
+  next();
+});
+
+// API del panel del propietario (no pertenece a ninguna empresa)
+app.use('/api/admin', adminRoutes);
+
+// Rutas de la API (cada petición se ejecuta dentro de su empresa)
+app.use('/api', tenantMiddleware, routes);
 
 // ===================================================================
 // MANEJO DE RUTAS NO ENCONTRADAS

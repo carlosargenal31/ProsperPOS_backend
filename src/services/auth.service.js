@@ -2,7 +2,8 @@
 // PROSPERPOS - SERVICIO DE AUTENTICACIÓN
 // ===================================================================
 
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
+const { getJwtSecret } = require('../tenancy/context');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { OAuth2Client } = require('google-auth-library');
@@ -172,7 +173,7 @@ class AuthService {
           email: ecommerceCustomer.email,
           type: 'ecommerce_customer'
         },
-        process.env.JWT_SECRET || 'prosperpos-secret-key',
+        getJwtSecret(),
         { expiresIn }
       );
 
@@ -695,7 +696,7 @@ class AuthService {
     try {
       const decoded = jwt.verify(
         token, 
-        process.env.JWT_SECRET || 'prosperpos_secret_key'
+        getJwtSecret()
       );
 
       // Verificar si la sesión existe y está activa
@@ -852,7 +853,7 @@ class AuthService {
         username: user.username,
         storeId: user.store_id
       },
-      process.env.JWT_SECRET || 'prosperpos_secret_key',
+      getJwtSecret(),
       { expiresIn }
     );
   }
@@ -933,7 +934,7 @@ class AuthService {
           username: 'admin',
           storeId: 1
         },
-        process.env.JWT_SECRET || 'prosperpos_secret_key',
+        getJwtSecret(),
         { expiresIn: '24h' }
       );
 

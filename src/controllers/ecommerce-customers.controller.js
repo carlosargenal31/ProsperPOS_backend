@@ -1,8 +1,8 @@
 const bcrypt = require('bcryptjs');
+const { getJwtSecret } = require('../tenancy/context');
 const jwt = require('jsonwebtoken');
 const { getConnection } = require('../utils/database');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'prosperpos-secret-key';
 
 exports.register = async (req, res) => {
   const connection = await getConnection();
@@ -57,7 +57,7 @@ exports.register = async (req, res) => {
         email: email,
         type: 'ecommerce_customer'
       },
-      JWT_SECRET,
+      getJwtSecret(),
       { expiresIn: '30d' }
     );
 
@@ -131,7 +131,7 @@ exports.login = async (req, res) => {
         email: customer.email,
         type: 'ecommerce_customer'
       },
-      JWT_SECRET,
+      getJwtSecret(),
       { expiresIn: '30d' }
     );
 

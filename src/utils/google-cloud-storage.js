@@ -5,6 +5,7 @@
 const { Storage } = require('@google-cloud/storage');
 const path = require('path');
 const logger = require('./logger');
+const { getTenant } = require('../tenancy/context');
 
 class GoogleCloudStorageService {
   constructor() {
@@ -40,7 +41,10 @@ class GoogleCloudStorageService {
     try {
       // Sanitizar nombre de archivo
       const sanitizedFileName = this.sanitizeFileName(fileName);
-      const destination = `${folder}/${sanitizedFileName}`;
+      // En modo multi-empresa cada empresa guarda sus archivos en su propia carpeta
+      const tenant = getTenant();
+      const prefix = tenant ? `${tenant.slug}/` : '';
+      const destination = `${prefix}${folder}/${sanitizedFileName}`;
 
       // Crear referencia al archivo
       const file = this.bucket.file(destination);
